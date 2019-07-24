@@ -35,6 +35,18 @@ export default class Real {
     return x;
   }
 
+  isZero() {
+    return this.s === 0n;
+  }
+
+  isPositive() {
+    return this.s > 0;
+  }
+
+  isNegitive() {
+    return this.s < 0;
+  }
+
   cmp(y: Real): number {
     if (this.e !== y.e) return this.e > y.e ? 1 : -1;
     return this.s === y.s ? 0 : this.s > y.s ? 1 : -1;
@@ -89,19 +101,19 @@ export default class Real {
   }
 
   floor() {
-    if (this.s < 0) {
-      // todo: floor(x) = -ceil(-x)
-      return this.trunc();
+    const ip = this.trunc();
+    if (this.isNegitive() && !this.minus(ip).isZero()) {
+      return ip.minus(new Real(1n));
     }
-    return this.trunc();
+    return ip;
   }
 
   ceil() {
-    if (this.s > 0) {
-      // todo: ceil(x) = -floor(-x)
-      return this.trunc();
+    const ip = this.trunc();
+    if (this.isPositive() && !this.minus(ip).isZero()) {
+      return ip.add(new Real(1n));
     }
-    return this.trunc();
+    return ip;
   }
 
   toBigInt() {
