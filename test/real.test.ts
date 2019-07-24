@@ -56,6 +56,17 @@ test('reals from strings', t => {
   t.is(new Real('90071992.54740993333').toString(), '9007199254740993333e-11');
 });
 
+test('clone', t => {
+  const x = new Real('1');
+  const y = x.clone();
+
+  // @ts-ignore
+  y.s = 2n;
+
+  t.is(x.valueOf(), 1);
+  t.is(y.valueOf(), 2);
+});
+
 test('cmp', t => {
   t.is(new Real('1').cmp(new Real('1')), 0);
   t.is(new Real('1').cmp(new Real('-1')), 1);
@@ -101,7 +112,7 @@ test('inv', t => {
   t.is(new Real('10').inv().valueOf(), 0.1);
   t.is(new Real('0.1').inv().valueOf(), 10);
   t.is(new Real('2').inv().valueOf(), 0.5);
-  t.is(new Real('3').inv().valueOf(), 0.33333333333333);
+  t.is(new Real('3').inv().valueOf(), 0.3333333333333333);
 });
 
 test('div', t => {
@@ -109,7 +120,7 @@ test('div', t => {
   t.is(new Real('1').div(new Real('-1')).valueOf(), -1);
   t.is(new Real('10').div(new Real('5')).valueOf(), 2);
   t.is(new Real('1.0').div(new Real('0.5')).valueOf(), 2);
-  t.is(new Real('10').div(new Real('3')).valueOf(), 3.3333333333333);
+  t.is(new Real('10').div(new Real('3')).valueOf(), 3.3333333333333335);
   t.is(new Real('1').div(new Real('2')).valueOf(), 0.5);
 });
 
