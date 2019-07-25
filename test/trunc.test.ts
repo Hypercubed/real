@@ -23,9 +23,9 @@ test('trunc', t => {
 
   t.is(trunc('900719.9254740992').toString(), '900719');
   t.is(trunc('90071992.54740994').toString(), '90071992');
-  t.is(trunc(10_000_000.00000).toString(), '10000000');
+  t.is(trunc(10_000_000.00000).toString(), '1e7');
 
   t.is(trunc('-900719.9254740992').toString(), '-900719');
   t.is(trunc('-90071992.54740994').toString(), '-90071992');
-  t.is(trunc(-10_000_000.00000).toString(), '-10000000');
+  t.is(trunc(-10_000_000.00000).toString(), '-1e7');
 });

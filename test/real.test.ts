@@ -67,61 +67,7 @@ test('clone', t => {
   t.is(y.valueOf(), 2);
 });
 
-test('cmp', t => {
-  t.is(new Real('1').cmp(new Real('1')), 0);
-  t.is(new Real('1').cmp(new Real('-1')), 1);
-  t.is(new Real('1').cmp(new Real('10')), -1);
-
-  t.is(new Real('15').cmp(new Real('1.5')), 1);
-  t.is(new Real('1.5').cmp(new Real('15')), -1);
+test('normalize', t => {
+  t.is(new Real(1e11).div(new Real(1)).toString(), '1e11');
 });
-
-test('add', t => {
-  t.is(new Real('1').add(new Real('1')).valueOf(), 2);
-  t.is(new Real('1').add(new Real('-1')).valueOf(), 0);
-  t.is(new Real('1').add(new Real('10')).valueOf(), 11);
-
-  t.is(new Real('1').add(new Real('1.5')).valueOf(), 2.5);
-  t.is(new Real('1000').add(new Real('0.0001')).valueOf(), 1000.0001);
-  t.is(new Real('0.2').add(new Real('0.1')).valueOf(), 0.3);
-});
-
-test('minus', t => {
-  t.is(new Real('1').minus(new Real('1')).valueOf(), 0);
-  t.is(new Real('1').minus(new Real('-1')).valueOf(), 2);
-  t.is(new Real('1').minus(new Real('10')).valueOf(), -9);
-
-  t.is(new Real('1').minus(new Real('1.5')).valueOf(), -0.5);
-  t.is(new Real('1000').minus(new Real('0.0001')).valueOf(), 999.9999);
-  t.is(new Real('0.2').minus(new Real('0.1')).valueOf(), 0.1);
-});
-
-test('mul', t => {
-  t.is(new Real('1').mul(new Real('1')).valueOf(), 1);
-  t.is(new Real('1').mul(new Real('-1')).valueOf(), -1);
-  t.is(new Real('1').mul(new Real('10')).valueOf(), 10);
-
-  t.is(new Real('2.5').mul(new Real('2')).valueOf(), 5);
-  t.is(new Real('3').mul(new Real('2.5')).valueOf(), 7.5);
-  t.is(new Real('1000').mul(new Real('0.001')).valueOf(), 1);
-  t.is(new Real('100').mul(new Real('0.333')).valueOf(), 33.3);
-});
-
-test('inv', t => {
-  t.is(new Real('1').inv().valueOf(), 1);
-  t.is(new Real('10').inv().valueOf(), 0.1);
-  t.is(new Real('0.1').inv().valueOf(), 10);
-  t.is(new Real('2').inv().valueOf(), 0.5);
-  t.is(new Real('3').inv().valueOf(), 0.3333333333333333);
-});
-
-test('div', t => {
-  t.is(new Real('1').div(new Real('1')).valueOf(), 1);
-  t.is(new Real('1').div(new Real('-1')).valueOf(), -1);
-  t.is(new Real('10').div(new Real('5')).valueOf(), 2);
-  t.is(new Real('1.0').div(new Real('0.5')).valueOf(), 2);
-  t.is(new Real('10').div(new Real('3')).valueOf(), 3.3333333333333335);
-  t.is(new Real('1').div(new Real('2')).valueOf(), 0.5);
-});
-
 

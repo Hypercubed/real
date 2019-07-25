@@ -23,9 +23,9 @@ test('floor', t => {
 
   t.is(floor('900719.9254740992').toString(), '900719');
   t.is(floor('90071992.54740994').toString(), '90071992');
-  t.is(floor(10_000_000.00000).toString(), '10000000');
+  t.is(floor(10_000_000.00000).toString(), '1e7');
 
-  t.is(floor('-900719.9254740992').toString(), '-900720');
+  t.is(floor('-900719.9254740992').toString(), '-90072e1');
   t.is(floor('-90071992.54740994').toString(), '-90071993');
-  t.is(floor(-10_000_000.00000).toString(), '-10000000');
+  t.is(floor(-10_000_000.00000).toString(), '-1e7');
 });

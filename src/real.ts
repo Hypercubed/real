@@ -1,12 +1,12 @@
 
 export default class Real {
   protected s: bigint = 0n;
-  protected e: number = 0;
+  protected e: bigint = 0n;
 
   constructor(value: bigint | number | string) {
     // tslint:disable-next-line
     if (typeof value === 'bigint') {
-      this.e = 0;
+      this.e = 0n;
       this.s = value;
       return; 
     }
@@ -18,7 +18,7 @@ export default class Real {
     // todo: read exponent
     let str = value.replace(/[._]/g, '');
     const k = value.indexOf('.');
-    this.e = k < 0 ? 0 : k - str.length;
+    this.e = BigInt(k < 0 ? 0 : k - str.length);
     this.s = BigInt(str);
   }
 
@@ -27,6 +27,10 @@ export default class Real {
     x.s = this.s;
     x.e = this.e;
     return x;
+  }
+
+  sgn() {
+    return this.s < 0 ? -1 : 1;
   }
 
   abs() {
@@ -57,9 +61,9 @@ export default class Real {
     let yd = y.s;
     let xd = x.s;
     if (y.e > x.e) {
-      yd = yd * BigInt(10 ** (y.e - x.e));
+      yd = yd * 10n ** (y.e - x.e);
     } else if (y.e < x.e) {
-      xd = xd * BigInt(10 ** (x.e - y.e));
+      xd = xd * 10n ** (x.e - y.e);
       x.e = y.e;
     }
     x.s = xd + yd;
@@ -81,10 +85,9 @@ export default class Real {
 
   inv() {
     const x = this.clone();
-    const N = 20; // precision
+    const N = 20n; // precision
     x.s = 10n ** BigInt(N) / x.s;
     x.e = -x.e - N;
-    // TODO: normalize
     return x;
   }
 
@@ -108,6 +111,12 @@ export default class Real {
     return ip;
   }
 
+  /**
+   * TODO: ln, exp, pow, sqrt, modulo
+   * sin, cos, tan
+   * asin, acos, atan
+   */
+
   ceil() {
     const ip = this.trunc();
     if (this.isPositive() && !this.minus(ip).isZero()) {
@@ -124,7 +133,8 @@ export default class Real {
   }
 
   toString(): string {
-    if (this.e === 0) {
+    this.normalize();
+    if (this.e === 0n) {
       return this.s.toString();
     }
     return this.s.toString() + 'e' + this.e;
@@ -132,5 +142,13 @@ export default class Real {
 
   valueOf(): number {
     return +this.toString();
+  }
+
+  private normalize() {
+    while ((this.s > 1n || this.s < -1n) && this.s % 10n === 0n) {
+      this.s /= 10n;
+      this.e += 1n;
+    }
+    return this;
   }
 }
