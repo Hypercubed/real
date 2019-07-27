@@ -1,8 +1,8 @@
 import test from 'ava';
-import Real from "../src/real"
+import Irrational from '../../src/irrational';
 
 test('abs', t => {
-  const abs = (v: any) => new Real(v).abs().toString();
+  const abs = (v: any) => new Irrational(v).abs().toString();
 
   t.is(abs(0), '0');
   t.is(abs(-0), '0');

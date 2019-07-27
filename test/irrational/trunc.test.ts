@@ -1,5 +1,5 @@
 import test from 'ava';
-import Real from "../src/real"
+import Real from '../../src/irrational';
 
 test('trunc', t => {
   const trunc = (x: any) => new Real(x).trunc();

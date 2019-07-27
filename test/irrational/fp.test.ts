@@ -1,8 +1,8 @@
 import test from 'ava';
-import Real from "../src/real"
+import Irrational from '../../src/irrational';
 
 test('trunc', t => {
-  const fp = (x: any) => new Real(x).fp();
+  const fp = (x: any) => new Irrational(x).fp();
 
   t.is(fp(1).valueOf(), 0);
   t.is(fp(-1).valueOf(), 0);
