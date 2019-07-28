@@ -1,35 +1,11 @@
 import Real from './real';
-
-function parseValue(value: bigint | number | string | null | undefined): [bigint, number] {
-  if (value === null || value === undefined) {
-    return [0n, 0];
-  }
-
-  // tslint:disable-next-line
-  if (typeof value === 'bigint') {
-    return [value, 0];
-  }
-
-  if (typeof value === 'number') {
-    value = '' + value;
-  }
-
-  const s = value.replace(/[._]/g, '');
-  const n = BigInt(value.replace(/[._]/g, ''));
-  const k = value.indexOf('.');
-
-  if (k === -1) {
-    return [n, 0];
-  }
-
-  return [n, k < 0 ? 0 : k - s.length];
-}
+import { parseValue } from './util';
 
 export default class Rational implements Real<Rational> {
   protected n: bigint = 0n;
   protected d: bigint = 1n;
 
-  constructor(n: bigint | number | string, d?: bigint | number | string) {
+  constructor(n: bigint | number | string, d?: bigint | number | string | null) {
     const [ns, ne] = parseValue(n);
     const [ds, de] = (d === null || typeof d === 'undefined') ? [1n, 0] : parseValue(d);
 
@@ -37,6 +13,10 @@ export default class Rational implements Real<Rational> {
 
     this.n = ns * (e > 1 ? 10n ** BigInt(e) : 1n);
     this.d = ds * (e < 1 ? 10n ** BigInt(-e) : 1n);
+
+    if (this.d === 0n) {
+      throw new Error('DivisionByZero');
+    }
 
     this.normalize();
   }
@@ -71,8 +51,9 @@ export default class Rational implements Real<Rational> {
   }
 
   cmp(y: Rational): number {
-    // TBD
-    throw new Error('TBD');
+    const left = this.n * y.d;
+    const right = y.n * this.d;
+    return left === right ? 0 : left > right ? 1 : -1;
   }
 
   abs() {
@@ -163,7 +144,7 @@ export default class Rational implements Real<Rational> {
   }
 }
 
-function gcd(a: bigint, b: bigint): bigint {
+/* function gcd(a: bigint, b: bigint): bigint {
   if (a === 0n) return b;
   if (b === 0n) return a;
   if (a === b) return a;
@@ -182,4 +163,8 @@ function gcd(a: bigint, b: bigint): bigint {
 
   const p = sa < sb ? sa : sb;
   return 10n ** p;
-};
+}; */
+
+function gcd(a: bigint, b: bigint): bigint {
+  return b ? gcd(b, a % b) : (a > 0n ? a : -a);
+}

@@ -1,4 +1,5 @@
 import Real from './real';
+import { parseValue } from './util';
 
 export default class Irrational implements Real<Irrational> {
   protected s: bigint = 0n;
@@ -6,21 +7,7 @@ export default class Irrational implements Real<Irrational> {
 
   constructor(value: bigint | number | string) {
     // tslint:disable-next-line
-    if (typeof value === 'bigint') {
-      this.e = 0;
-      this.s = value;
-      return; 
-    }
-    
-    if (typeof value === 'number') {
-      value = '' + value;
-    }
-
-    // todo: read exponent
-    let str = value.replace(/[._]/g, '');
-    const k = value.indexOf('.');
-    this.e = k < 0 ? 0 : k - str.length;
-    this.s = BigInt(str);
+    [this.s, this.e] = parseValue(value);
   }
 
   clone() {
