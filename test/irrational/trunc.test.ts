@@ -23,9 +23,9 @@ test('trunc', t => {
 
   t.is(trunc('900719.9254740992').toString(), (900719).toExponential());
   t.is(trunc('90071992.54740994').toString(), (90071992).toExponential());
-  t.is(trunc(10_000_000.00000).toString(), '1e+7');
+  t.is(trunc(10_000_000.00000).toString(), '1.0000000e+7');
 
   t.is(trunc('-900719.9254740992').toString(), '-9.00719e+5');
   t.is(trunc('-90071992.54740994').toString(), '-9.0071992e+7');
-  t.is(trunc(-10_000_000.00000).toString(), '-1e+7');
+  t.is(trunc(-10_000_000.00000).toString(), '-1.0000000e+7');
 });

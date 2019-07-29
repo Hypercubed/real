@@ -2,6 +2,7 @@ import Real from './real';
 import { parseValue } from './util';
 
 export default class Irrational implements Real<Irrational> {
+  static CP = 25;
   static DP = 20;
 
   protected s: bigint = 0n;
@@ -75,7 +76,7 @@ export default class Irrational implements Real<Irrational> {
 
   inv() {
     const x = this.clone();
-    const N = Irrational.DP; // precision
+    const N = Irrational.CP;
     x.s = 10n ** BigInt(N) / x.s;
     x.e = -x.e - N;
     return x;
@@ -116,6 +117,9 @@ export default class Irrational implements Real<Irrational> {
   }
 
   exp() {
+    if (this.isZero()) {
+      return new Irrational(1);
+    }
     // Not to precision
     return this.expm1().add(new Irrational(1));
   }
@@ -163,10 +167,8 @@ export default class Irrational implements Real<Irrational> {
   }
 
   toString(): string {
-    // todo: if rounding, add '...'
     const x = this.clone();
-    x.normalize();
-    x.roundToPrecision();
+    const rounded = x.roundToPrecision();
     const n = x.isNegitive() ? 2 : 1;
     let ss = x.s.toString();
     if (ss.length > n) {
@@ -174,26 +176,30 @@ export default class Irrational implements Real<Irrational> {
       ss = ss.slice(0, n) + '.' + ss.slice(n);      
     }
     if (x.e === 0) return ss;
+    if (rounded) ss += '…';
     const se = x.e > 0 ? '+' + x.e : x.e;
     return ss + 'e' + se;
   }
 
   valueOf(): number {
-    return Number(this.toString());
+    return Number(this.toString().replace('…', ''));
   }
 
   private sigFigs() {
     const n = this.isNegitive() ? 1 : 0;
-    return this.s.toString().slice(0, Irrational.DP + n);
+    return this.s.toString().slice(0, Irrational.CP + n);
   }
 
   private roundToPrecision() {
+    this.e = this.e | 0;
     // TODO: Rounding method
     const n = this.isNegitive() ? 1 : 0;
+    const rounded = this.s.toString().length - n > Irrational.DP;
     while (this.s.toString().length - n > Irrational.DP) { 
       this.s /= 10n;
       this.e += 1;
     }
+    return rounded;
   }
 
   private normalize() {
@@ -202,7 +208,6 @@ export default class Irrational implements Real<Irrational> {
       this.s /= 10n;
       this.e += 1;
     }
-    return this;
   }
 }
 

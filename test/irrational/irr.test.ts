@@ -78,7 +78,4 @@ test('clone', t => {
   t.is(y.valueOf(), 2);
 });
 
-test('normalize', t => {
-  t.is(new Irrational(1e11).div(new Irrational(1)).toString(), '1e+11');
-});
 
