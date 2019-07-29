@@ -18,7 +18,7 @@ export default class Irrational implements Real<Irrational> {
   }
 
   sgn() {
-    return this.s < 0 ? -1 : 1;
+    return sign(this.s);
   }
 
   abs() {
@@ -113,6 +113,24 @@ export default class Irrational implements Real<Irrational> {
     return ip;
   }
 
+  pow(y: Irrational) {
+    // Not to precision
+    const x = this.clone();
+    const _y = y.s * BigInt(10 ** y.e);
+    x.s = this.s ** _y;
+    x.e = this.e * Number(_y);
+  }
+
+  log10() {
+    // Not to precision
+    return new Irrational(this.e + Math.log10(Number(this.s)));
+  }
+
+  ln() {
+    // Not to precision
+    return new Irrational(this.e * Math.log(10) + Math.log(Number(this.s)));
+  }
+
   toBigInt() {
     if (this.e < 0) {
       return this.s / 10n ** BigInt(-this.e);
@@ -140,4 +158,10 @@ export default class Irrational implements Real<Irrational> {
     }
     return this;
   }
+}
+
+function sign(value: bigint) {
+  if (value > 0n) return 1;
+  if (value < 0n) return -1;
+  return 0;
 }
