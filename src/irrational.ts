@@ -2,6 +2,8 @@ import Real from './real';
 import { parseValue } from './util';
 
 export default class Irrational implements Real<Irrational> {
+  static DP = 20;
+
   protected s: bigint = 0n;
   protected e: number = 0;
 
@@ -73,7 +75,7 @@ export default class Irrational implements Real<Irrational> {
 
   inv() {
     const x = this.clone();
-    const N = 20; // precision
+    const N = Irrational.DP; // precision
     x.s = 10n ** BigInt(N) / x.s;
     x.e = -x.e - N;
     return x;
@@ -113,6 +115,28 @@ export default class Irrational implements Real<Irrational> {
     return ip;
   }
 
+  exp() {
+    // Not to precision
+    return this.expm1().add(new Irrational(1));
+  }
+
+  expm1() {
+    // Not to precision??
+    let n = this.clone();
+    let d = 1;
+    let s = n;
+    for (let i = 2; i < 100; i++) {
+      n = n.mul(this);
+      d = d * i;
+      const t = s;
+      s = s.add(n.div(new Irrational(d)));
+      if (s.sigFigs() === t.sigFigs()) {
+        return s;
+      }
+    }
+    return s;
+  }
+
   pow(y: Irrational) {
     // Not to precision
     const x = this.clone();
@@ -139,15 +163,37 @@ export default class Irrational implements Real<Irrational> {
   }
 
   toString(): string {
-    this.normalize();
-    if (this.e === 0) {
-      return this.s.toString();
+    // todo: if rounding, add '...'
+    const x = this.clone();
+    x.normalize();
+    x.roundToPrecision();
+    const n = x.isNegitive() ? 2 : 1;
+    let ss = x.s.toString();
+    if (ss.length > n) {
+      x.e += ss.length - n;
+      ss = ss.slice(0, n) + '.' + ss.slice(n);      
     }
-    return this.s.toString() + 'e' + this.e;
+    if (x.e === 0) return ss;
+    const se = x.e > 0 ? '+' + x.e : x.e;
+    return ss + 'e' + se;
   }
 
   valueOf(): number {
-    return +this.toString();
+    return Number(this.toString());
+  }
+
+  private sigFigs() {
+    const n = this.isNegitive() ? 1 : 0;
+    return this.s.toString().slice(0, Irrational.DP + n);
+  }
+
+  private roundToPrecision() {
+    // TODO: Rounding method
+    const n = this.isNegitive() ? 1 : 0;
+    while (this.s.toString().length - n > Irrational.DP) { 
+      this.s /= 10n;
+      this.e += 1;
+    }
   }
 
   private normalize() {
@@ -165,3 +211,4 @@ function sign(value: bigint) {
   if (value < 0n) return -1;
   return 0;
 }
+

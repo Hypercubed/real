@@ -12,8 +12,8 @@ test('Irrationals from bigints', t => {
   t.is(new Irrational(2n).valueOf(), 2);
   t.is(new Irrational(-2n).valueOf(), -2);
 
-  t.is(new Irrational(9007199254740993n).toString(), '9007199254740993');
-  t.is(new Irrational(9007199254740993333n).toString(), '9007199254740993333');
+  t.is(new Irrational(9007199254740993n).toString(), '9.007199254740993e+15');
+  t.is(new Irrational(9007199254740993333n).toString(), '9.007199254740993333e+18');
 });
 
 test('Irrationals from numbers', t => {
@@ -24,7 +24,7 @@ test('Irrationals from numbers', t => {
   t.is(new Irrational(-2).valueOf(), -2);
 
   // numbers (floats)
-  t.is(new Irrational(1.5).valueOf(), 1.5);
+  t.is(new Irrational(1.5).toString(), '1.5');
   t.is(new Irrational(-1.5).valueOf(), -1.5);
   t.is(new Irrational(2.5).valueOf(), 2.5);
   t.is(new Irrational(-2.5).valueOf(), -2.5);
@@ -42,8 +42,8 @@ test('Irrationals from strings', t => {
   t.is(new Irrational('2').valueOf(), 2);
   t.is(new Irrational('-2').valueOf(), -2);
 
-  t.is(new Irrational('9007199254740993').toString(), '9007199254740993');
-  t.is(new Irrational('9007199254740993333').toString(), '9007199254740993333');
+  t.is(new Irrational('9007199254740993').toString(), '9.007199254740993e+15');
+  t.is(new Irrational('9007199254740993333').toString(), '9.007199254740993333e+18');
 
   // strings (floats)
   t.is(new Irrational('1.5').valueOf(), 1.5);
@@ -59,12 +59,12 @@ test('Irrationals from strings', t => {
   t.is(new Irrational('0.000314159').valueOf(), 0.000314159);
   t.is(new Irrational('-0.0271828').valueOf(), -0.0271828);
 
-  t.is(new Irrational('90071992.54740993').toString(), '9007199254740993e-8');
-  t.is(new Irrational('90071992.54740993333').toString(), '9007199254740993333e-11');
+  t.is(new Irrational('90071992.54740993').toString(), '9.007199254740993e+7');
+  t.is(new Irrational('90071992.54740993333').toString(), '9.007199254740993333e+7');
 
   // strings (exp)
-  t.is(new Irrational('9007199254740993e-8').toString(), '9007199254740993e-8');
-  t.is(new Irrational('9007199254740993333e11').toString(), '9007199254740993333e11');
+  t.is(new Irrational('9007199254740993e-8').toString(), '9.007199254740993e+7');
+  t.is(new Irrational('9007199254740993333e11').toString(), '9.007199254740993333e+29');
 });
 
 test('clone', t => {
@@ -79,6 +79,6 @@ test('clone', t => {
 });
 
 test('normalize', t => {
-  t.is(new Irrational(1e11).div(new Irrational(1)).toString(), '1e11');
+  t.is(new Irrational(1e11).div(new Irrational(1)).toString(), '1e+11');
 });
 
