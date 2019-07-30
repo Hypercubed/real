@@ -9,7 +9,6 @@ export default class Irrational implements Real<Irrational> {
   protected e: number = 0;
 
   constructor(value: bigint | number | string) {
-    // tslint:disable-next-line
     [this.s, this.e] = parseValue(value);
   }
 
@@ -75,8 +74,9 @@ export default class Irrational implements Real<Irrational> {
   }
 
   inv() {
+    // Not very good!!
     const x = this.clone();
-    const N = Irrational.CP;
+    const N = Irrational.CP + this.sigfigs();
     x.s = 10n ** BigInt(N) / x.s;
     x.e = -x.e - N;
     return x;
@@ -120,21 +120,19 @@ export default class Irrational implements Real<Irrational> {
     if (this.isZero()) {
       return new Irrational(1);
     }
-    // Not to precision
     return this.expm1().add(new Irrational(1));
   }
 
-  expm1() {
-    // Not to precision??
+  protected expm1() {
     let n = this.clone();
-    let d = 1;
+    let d = 1n;
     let s = n;
-    for (let i = 2; i < 100; i++) {
+    for (let i = 2n; i < 100n; i++) {
       n = n.mul(this);
       d = d * i;
       const t = s;
-      s = s.add(n.div(new Irrational(d)));
-      if (s.sigFigs() === t.sigFigs()) {
+      s = s.add(n.mul(new Irrational(d).inv()));
+      if (s.digits() === t.digits()) {
         return s;
       }
     }
@@ -185,12 +183,18 @@ export default class Irrational implements Real<Irrational> {
     return Number(this.toString().replace('…', ''));
   }
 
-  private sigFigs() {
+  private sigfigs() {
+    const n = this.isNegitive() ? 1 : 0;
+    return this.digits().length - n;
+  }
+
+  private digits() {
     const n = this.isNegitive() ? 1 : 0;
     return this.s.toString().slice(0, Irrational.CP + n);
   }
 
   private roundToPrecision() {
+    if (this.s === 0n) this.e = 0;
     this.e = this.e | 0;
     // TODO: Rounding method
     const n = this.isNegitive() ? 1 : 0;
@@ -200,14 +204,6 @@ export default class Irrational implements Real<Irrational> {
       this.e += 1;
     }
     return rounded;
-  }
-
-  private normalize() {
-    this.e = this.e | 0;
-    while ((this.s > 1n || this.s < -1n) && this.s % 10n === 0n) {
-      this.s /= 10n;
-      this.e += 1;
-    }
   }
 }
 
