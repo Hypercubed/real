@@ -5,6 +5,9 @@ export default class Irrational implements Real<Irrational> {
   static CP = 25;
   static DP = 20;
 
+  static ZERO = new Irrational(0);
+  static ONE = new Irrational(1);
+
   protected s: bigint = 0n;
   protected e: number = 0;
 
@@ -50,10 +53,11 @@ export default class Irrational implements Real<Irrational> {
     const x = this.clone();
     let yd = y.s;
     let xd = x.s;
-    if (y.e > x.e) {
-      yd = yd * BigInt(10 ** (y.e - x.e));
-    } else if (y.e < x.e) {
-      xd = xd * BigInt(10 ** (x.e - y.e));
+    const d = y.e - x.e;
+    if (d > 0) {
+      yd = yd * 10n ** BigInt(d);
+    } else if (d < 0) {
+      xd = xd * 10n ** BigInt(-d);
       x.e = y.e;
     }
     x.s = xd + yd;
@@ -74,11 +78,11 @@ export default class Irrational implements Real<Irrational> {
   }
 
   inv() {
-    // Not very good!!
+    // TODO: Better
     const x = this.clone();
-    const N = Irrational.CP + this.sigfigs();
-    x.s = 10n ** BigInt(N) / x.s;
-    x.e = -x.e - N;
+    const d = Irrational.CP + this.sigfigs();
+    x.s = 10n ** BigInt(d) / x.s;
+    x.e = -x.e - d;
     return x;
   }
 
@@ -97,7 +101,7 @@ export default class Irrational implements Real<Irrational> {
   floor() {
     const ip = this.trunc();
     if (this.isNegitive() && !this.minus(ip).isZero()) {
-      return ip.minus(new Irrational(1n));
+      return ip.minus(Irrational.ONE);
     }
     return ip;
   }
@@ -111,7 +115,7 @@ export default class Irrational implements Real<Irrational> {
   ceil() {
     const ip = this.trunc();
     if (this.isPositive() && !this.minus(ip).isZero()) {
-      return ip.add(new Irrational(1n));
+      return ip.add(Irrational.ONE);
     }
     return ip;
   }
@@ -120,7 +124,7 @@ export default class Irrational implements Real<Irrational> {
     if (this.isZero()) {
       return new Irrational(1);
     }
-    return this.expm1().add(new Irrational(1));
+    return this.expm1().add(Irrational.ONE);
   }
 
   protected expm1() {
@@ -131,7 +135,7 @@ export default class Irrational implements Real<Irrational> {
       n = n.mul(this);
       d = d * i;
       const t = s;
-      s = s.add(n.mul(new Irrational(d).inv()));
+      s = s.add(n.div(new Irrational(d)));
       if (s.digits() === t.digits()) {
         return s;
       }
@@ -142,7 +146,7 @@ export default class Irrational implements Real<Irrational> {
   pow(y: Irrational) {
     // Not to precision
     const x = this.clone();
-    const _y = y.s * BigInt(10 ** y.e);
+    const _y = y.s * 10n ** BigInt(y.e);
     x.s = this.s ** _y;
     x.e = this.e * Number(_y);
   }
@@ -185,7 +189,7 @@ export default class Irrational implements Real<Irrational> {
 
   private sigfigs() {
     const n = this.isNegitive() ? 1 : 0;
-    return this.digits().length - n;
+    return this.s.toString().length - n;
   }
 
   private digits() {
