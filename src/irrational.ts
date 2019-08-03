@@ -9,6 +9,13 @@ export default class Irrational implements Real<Irrational> {
   static ONE = new Irrational(1);
   static TWO = new Irrational(2);
 
+  static E = Irrational.ONE.exp();
+  static LN2 = Irrational.TWO.ln();
+  static LN10 = new Irrational(10).ln();
+  static LOG10E = Irrational.E.log10();
+
+  static INVLN10 = Irrational.LN10.inv();
+
   protected s: bigint = 0n;  // Significand
   protected e: number = 0;   // Exponent
 
@@ -109,7 +116,7 @@ export default class Irrational implements Real<Irrational> {
   }
 
   /**
-   * TODO: ln, exp, pow, sqrt, modulo
+   * TODO: pow, sqrt, modulo
    * sin, cos, tan
    * asin, acos, atan
    */
@@ -129,6 +136,9 @@ export default class Irrational implements Real<Irrational> {
     return this.expm1().add(Irrational.ONE);
   }
 
+  /**
+   * calculates e^x - 1 using Taylor series
+   */
   protected expm1() {
     let n = this.clone();
     let d = 1n;
@@ -150,23 +160,21 @@ export default class Irrational implements Real<Irrational> {
   }
 
   log10() {
-    // Not to precision
-    return new Irrational(this.e + Math.log10(Number(this.s)));
+    return this.ln().div(Irrational.LN10)
   }
 
   ln() {
-    // Not to precision
     return this.sub(Irrational.ONE).log1p();
   }
 
   protected log1p() {
-    // only works for abs(x) <= 1
-    const a = this.div(Irrational.TWO.add(this));
+    // identity in terms of the inverse hyperbolic tangent
+    // high precision value for small values of x
+    const a = this.div(Irrational.TWO.add(this)).arctanh();
     return Irrational.TWO.mul(a);
   }
 
   protected arctanh() {
-    // only works for abs(x) <= 1
     let n = this.clone();
     let sum = n;
     let d = 1n;

@@ -78,4 +78,16 @@ test('clone', t => {
   t.is(y.valueOf(), 2);
 });
 
+test('constants', t => {
+  t.is(Irrational.ZERO.toString(), '0');
+  t.is(Irrational.ONE.toString(), '1');
+  t.is(Irrational.TWO.toString(), '2');
+
+  t.is(Irrational.E.toString(), '2.7182818284590452353');
+
+  t.is(Irrational.LN2.toString(), '6.9314718055994530941…e-1');
+  t.is(Irrational.LN10.toString(), '2.3025850929940456838');
+  t.is(Irrational.LOG10E.toString(), '4.3429448190325182767…e-1');
+});
+
 
