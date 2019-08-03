@@ -68,7 +68,7 @@ export default class Rational implements Real<Rational> {
     return new Rational(n, d);
   }
 
-  minus(y: Rational): Rational {
+  sub(y: Rational): Rational {
     y = y.clone();
     y.n = -1n * y.n;
     return this.add(y);
@@ -95,20 +95,20 @@ export default class Rational implements Real<Rational> {
   }
 
   fp() {
-    return this.minus(this.trunc()).abs();
+    return this.sub(this.trunc()).abs();
   }
 
   floor() {
     const ip = this.trunc();
-    if (this.isNegitive() && !this.minus(ip).isZero()) {
-      return ip.minus(new Rational(1n));
+    if (this.isNegitive() && !this.sub(ip).isZero()) {
+      return ip.sub(new Rational(1n));
     }
     return ip;
   }
 
   ceil() {
     const ip = this.trunc();
-    if (this.isPositive() && !this.minus(ip).isZero()) {
+    if (this.isPositive() && !this.sub(ip).isZero()) {
       return ip.add(new Rational(1n));
     }
     return ip;
