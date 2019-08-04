@@ -252,7 +252,7 @@ export default class Irrational implements Real<Irrational> {
   }
 
   protected arctanh() {
-    let n = this.clone();
+    let n = this.simplify();
     let sum = n;
     let d = 1;
     for (let i = 2; i < 100; i++) {
@@ -310,13 +310,16 @@ export default class Irrational implements Real<Irrational> {
   }
 
   protected simplify() {
-    const sgn = BigInt(sign(this.s));
-    this.s *= sgn;
-    while (this.s % 10n === 0n && this.s > 1n) { 
-      this.s /= 10n;
-      this.e += 1;
+    const x = this.clone();
+
+    const sgn = BigInt(sign(x.s));
+    x.s *= sgn;
+    while (x.s % 10n === 0n && x.s > 1n) { 
+      x.s /= 10n;
+      x.e += 1;
     }
-    this.s *= sgn;
+    x.s *= sgn;
+    return x;
   }
 
   protected roundToCP() {
