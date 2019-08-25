@@ -100,6 +100,7 @@ test('div', t => {
   t.is(Math.div(1.234, 3.456).toString(), '3.5706018518518518518e-1');
                                         // 0.357060185185185185185185185185185185185185185185185185185...
   t.is(Math.div(1n, 3n).toString(), '1/3');
+  t.is(Math.div(1n, 3).toString(), '3.3333333333333333333e-1');
 
   t.is(Math.div(new Rational(1.234), new Rational(3.456)).toString(), '617/1728');
   t.is(Math.div(new Irrational(1.234), new Irrational(3.456)).toString(), '3.5706018518518518518e-1');

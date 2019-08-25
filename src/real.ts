@@ -12,21 +12,22 @@ export default abstract class Real {
   abstract isZero(): boolean;
   abstract isPositive(): boolean;
   abstract isNegitive(): boolean;
-  abstract cmp(x: Real): number;
+  abstract cmp(y: any): number;
+  abstract neg(): Real;
 
-  abstract add(x: Real): Real;
-  abstract sub(x: Real): Real;
-  abstract mul(x: Real): Real;
+  abstract add(y: Real): Real;
+  abstract sub(y: Real): Real;
+
+  abstract mul(y: Real): Real;
   abstract inv(): Real;
-  abstract div(x: Real): Real;
+  abstract div(y: Real): Real;
 
-  abstract trunc(): Real;
   abstract fp(): Real;
-  abstract floor(): Real;
-  abstract ceil(): Real;
+
+  abstract trunc(): bigint;
+  abstract floor(): bigint;
+  abstract ceil(): bigint;
 
   abstract toString(): string;
   abstract valueOf(): number;
-
-  abstract toBigInt(): bigint;
 }

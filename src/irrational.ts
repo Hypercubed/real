@@ -59,21 +59,21 @@ export default class Irrational extends Real {
     return sign(this.s);
   }
 
-  abs() {
+  abs(): Irrational {
     const x = this.clone();
     if (x.s < 0) x.s = x.s * -1n;
     return x;
   }
 
-  isZero() {
+  isZero(): boolean {
     return this.s === 0n;
   }
 
-  isPositive() {
+  isPositive(): boolean {
     return this.s > 0;
   }
 
-  isNegitive() {
+  isNegitive(): boolean {
     return this.s < 0;
   }
 
@@ -98,14 +98,14 @@ export default class Irrational extends Real {
     return x;
   }
 
+  sub(y: Irrational): Irrational {
+    return this.add(y.neg());
+  }
+
   neg(): Irrational {
     const x = this.clone();
     x.s = -1n * x.s;
     return x;
-  }
-
-  sub(y: Irrational): Irrational {
-    return this.add(y.neg());
   }
 
   mul(y: Irrational): Irrational {
@@ -128,36 +128,40 @@ export default class Irrational extends Real {
     return this.mul(y.inv());
   }
 
-  trunc() {
-    return new Irrational(this.toBigInt());
+  trunc(): bigint {
+    if (this.e < 0) {
+      return this.s / 10n ** BigInt(-this.e);
+    }
+    return this.s * 10n ** BigInt(this.e);
   }
 
-  fp() {
-    const t = -this.toBigInt();
-    return this.add(new Irrational(t)).abs();
-  }
-
-  floor() {
+  floor(): bigint {
     const ip = this.trunc();
-    if (this.isNegitive() && !this.sub(ip).isZero()) {
-      return ip.sub(Irrational.ONE);
+    if (this.isNegitive() && !this.sub(new Irrational(ip)).isZero()) {
+      return ip - 1n;
     }
     return ip;
   }
 
+  ceil(): bigint {
+    const ip = this.trunc();
+    if (this.isPositive() && !this.sub(new Irrational(ip)).isZero()) {
+      return ip + 1n;
+    }
+    return ip;
+  }
+
+  fp() {
+    const t = -this.trunc();
+    return this.add(new Irrational(t)).abs();
+  }
+
+  
   /**
    * TODO: pow, sqrt, modulo
    * sin, cos, tan
    * asin, acos, atan
    */
-
-  ceil() {
-    const ip = this.trunc();
-    if (this.isPositive() && !this.sub(ip).isZero()) {
-      return ip.add(Irrational.ONE);
-    }
-    return ip;
-  }
 
   exp() {
     if (this.isZero()) {
@@ -218,13 +222,6 @@ export default class Irrational extends Real {
       }
     }
     return sum;
-  }
-
-  toBigInt() {
-    if (this.e < 0) {
-      return this.s / 10n ** BigInt(-this.e);
-    }
-    return this.s * 10n ** BigInt(this.e);
   }
 
   toString(): string {

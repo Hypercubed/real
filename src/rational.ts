@@ -34,9 +34,8 @@ export default class Rational extends Real {
     this.normalize();
   }
 
-  clone() {
-    const x = new Rational(this.n, this.d);
-    return x;
+  clone(): Rational {
+    return new Rational(this.n, this.d);
   }
 
   sgn() {
@@ -69,7 +68,7 @@ export default class Rational extends Real {
     return left === right ? 0 : left > right ? 1 : -1;
   }
 
-  abs() {
+  abs(): Rational {
     const n = this.n < 0 ? -1n * this.n : this.n;
     const d = this.d < 0 ? -1n * this.d : this.d;
     return new Rational(n, d);
@@ -81,14 +80,14 @@ export default class Rational extends Real {
     return new Rational(n, d);
   }
 
+  sub(y: Rational): Rational {
+    return this.add(y.neg());
+  }
+
   neg(): Rational {
     const x = this.clone();
     x.n = -1n * x.n;
     return x;
-  }
-
-  sub(y: Rational): Rational {
-    return this.add(y.neg());
   }
 
   mul(y: Rational): Rational {
@@ -105,32 +104,32 @@ export default class Rational extends Real {
     return this.mul(y.inv());
   }
 
-  trunc() {
-    return new Rational(this.toBigInt());
+  trunc(): bigint {
+    return this.n / this.d;
+  }
+
+  floor(): bigint {
+    const ip = this.trunc();
+    const rm = this.n % this.d;
+    if (this.isNegitive() && rm !== 0n) {
+      return ip - 1n;
+    }
+    return ip;
+  }
+
+  ceil(): bigint {
+    const ip = this.trunc();
+    const rm = this.n % this.d;
+    if (this.isPositive() && rm !== 0n) {
+      return ip + 1n;
+    }
+    return ip;
   }
 
   fp() {
     const x = this.clone();
-    x.n -= this.toBigInt() * this.d;
+    x.n -= this.trunc() * this.d;
     return x.abs();
-  }
-
-  floor() {
-    const ip = this.toBigInt();
-    const rm = this.n % this.d;
-    if (this.isNegitive() && rm !== 0n) {
-      return new Rational(ip - 1n);
-    }
-    return new Rational(ip);
-  }
-
-  ceil() {
-    const ip = this.toBigInt();
-    const rm = this.n % this.d;
-    if (this.isPositive() && rm !== 0n) {
-      return new Rational(ip + 1n);
-    }
-    return new Rational(ip);
   }
 
   toString(): string {
@@ -144,10 +143,6 @@ export default class Rational extends Real {
   valueOf() {
     // TODO: maybe this is be done as an irrational
     return Number(this.n) / Number(this.d);
-  }
-
-  toBigInt() {
-    return this.n / this.d;
   }
 
   toArray() {

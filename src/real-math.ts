@@ -19,6 +19,7 @@ dynamo.add(Real);
 dynamo.add(Rational);
 dynamo.add(Irrational);
 
+// Returns the absolute value of a number.
 class Abs {
   name = 'abs';
 
@@ -40,6 +41,7 @@ class Abs {
 
 export const abs = dynamo.function(Abs);
 
+// Returns the integer part of the number x, removing any fractional digits.
 class Trunc {
   name = 'trunc';
 
@@ -55,12 +57,13 @@ class Trunc {
 
   @signature()
   rational(a: Real): bigint {
-    return a.trunc().toBigInt();
+    return a.trunc();
   }
 }
 
 export const trunc = dynamo.function(Trunc);
 
+// Returns the smallest integer greater than or equal to a number.
 class Ceil {
   name = 'ceil';
 
@@ -76,12 +79,13 @@ class Ceil {
 
   @signature()
   irrational(a: Real): bigint {
-    return a.ceil().toBigInt();
+    return a.ceil();
   }
 }
 
 export const ceil = dynamo.function(Ceil);
 
+// Returns the largest integer less than or equal to a number.
 class Floor {
   name = 'floor';
 
@@ -97,7 +101,7 @@ class Floor {
 
   @signature()
   irrational(a: Real): bigint {
-    return a.floor().toBigInt();
+    return a.floor();
   }
 }
 
@@ -218,6 +222,7 @@ class Inv {
 
 export const inv = dynamo.function(Inv);
 
+// Returns the natural logarithm (loge, also ln) of a number
 class Ln {
   name = 'ln';
 
