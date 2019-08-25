@@ -1,9 +1,22 @@
-import Real from './real';
+import IReal from './ireal';
 import { parseValue } from './util';
 
-export default class Rational implements Real<Rational> {
+import { guard, conversion } from '@hypercubed/dynamo';
+
+export default class Rational implements IReal<Rational> {
   protected n: bigint = 0n;
   protected d: bigint = 1n;
+
+  @guard()
+  static isRational(x: unknown): x is Rational {
+    return x instanceof Rational;
+  }
+
+  @conversion(Number)
+  @conversion(BigInt)
+  static fromNumber(x: number | bigint): Rational {
+    return new Rational(x);
+  }
 
   constructor(n: bigint | number | string, d?: bigint | number | string | null) {
     const [ns, ne] = parseValue(n);
@@ -128,6 +141,10 @@ export default class Rational implements Real<Rational> {
 
   toBigInt() {
     return this.n / this.d;
+  }
+
+  toArray() {
+    return [this.n, this.d];
   }
 
   private normalize() {

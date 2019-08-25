@@ -1,7 +1,10 @@
-import Real from './real';
+import IReal from './ireal';
 import { parseValue } from './util';
+import Rational from './rational';
 
-export default class Irrational implements Real<Irrational> {
+import { guard, conversion } from '@hypercubed/dynamo';
+
+export default class Irrational implements IReal<Irrational> {
   static CP = 25;
   static DP = 20;
 
@@ -18,6 +21,27 @@ export default class Irrational implements Real<Irrational> {
 
   protected s: bigint = 0n;  // Significand
   protected e: number = 0;   // Exponent
+
+  @guard()
+  static isIrrational(x: unknown): x is Irrational {
+    return x instanceof Irrational;
+  }
+
+  @conversion()
+  static fromRational(x: Rational): Irrational {
+    const [n, d] = x.toArray();
+    return new Irrational(n).div(new Irrational(d));
+  }
+
+  @conversion(BigInt)
+  static fromNumber(x: bigint): Irrational {
+    return new Irrational(x);
+  }
+
+  @conversion(BigInt)
+  static fromBigint(x: bigint): Irrational {
+    return new Irrational(x);
+  }
 
   constructor(value: bigint | number | string) {
     [this.s, this.e] = parseValue(value);
