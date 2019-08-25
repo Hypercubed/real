@@ -54,7 +54,7 @@ export default class Rational extends Real {
   isNegitive() {
     const sn = this.n < 0;
     const sd = this.d < 0;
-    return (sn && sd) || (!sn && !sd);
+    return (sn && !sd) || (!sn && sd);
   }
 
   isZero() {
@@ -81,10 +81,14 @@ export default class Rational extends Real {
     return new Rational(n, d);
   }
 
+  neg(): Rational {
+    const x = this.clone();
+    x.n = -1n * x.n;
+    return x;
+  }
+
   sub(y: Rational): Rational {
-    y = y.clone();
-    y.n = -1n * y.n;
-    return this.add(y);
+    return this.add(y.neg());
   }
 
   mul(y: Rational): Rational {
@@ -98,9 +102,7 @@ export default class Rational extends Real {
   }
 
   div(y: Rational): Rational {
-    const n = this.n * y.d;
-    const d = y.n * this.d;
-    return new Rational(n, d);
+    return this.mul(y.inv());
   }
 
   trunc() {
@@ -108,23 +110,27 @@ export default class Rational extends Real {
   }
 
   fp() {
-    return this.sub(this.trunc()).abs();
+    const x = this.clone();
+    x.n -= this.toBigInt() * this.d;
+    return x.abs();
   }
 
   floor() {
-    const ip = this.trunc();
-    if (this.isNegitive() && !this.sub(ip).isZero()) {
-      return ip.sub(new Rational(1n));
+    const ip = this.toBigInt();
+    const rm = this.n % this.d;
+    if (this.isNegitive() && rm !== 0n) {
+      return new Rational(ip - 1n);
     }
-    return ip;
+    return new Rational(ip);
   }
 
   ceil() {
-    const ip = this.trunc();
-    if (this.isPositive() && !this.sub(ip).isZero()) {
-      return ip.add(new Rational(1n));
+    const ip = this.toBigInt();
+    const rm = this.n % this.d;
+    if (this.isPositive() && rm !== 0n) {
+      return new Rational(ip + 1n);
     }
-    return ip;
+    return new Rational(ip);
   }
 
   toString(): string {
@@ -135,7 +141,8 @@ export default class Rational extends Real {
     return this.n.toString() + '/' + this.d.toString();
   }
 
-  valueOf() {        
+  valueOf() {
+    // TODO: maybe this is be done as an irrational
     return Number(this.n) / Number(this.d);
   }
 

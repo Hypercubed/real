@@ -40,8 +40,34 @@ class Abs {
 
 export const abs = dynamo.function(Abs);
 
+class Trunc {
+  name = 'trunc';
+
+  @signature()
+  bigint(a: bigint): bigint {
+    return a;
+  }
+
+  @signature()
+  number(a: number): number {
+    return Math.trunc(a);
+  }
+
+  @signature()
+  rational(a: Real): bigint {
+    return a.trunc().toBigInt();
+  }
+}
+
+export const trunc = dynamo.function(Trunc);
+
 class Ceil {
   name = 'ceil';
+
+  @signature()
+  bigint(a: bigint): bigint {
+    return a;
+  }
 
   @signature()
   number(a: number): number {
@@ -49,17 +75,33 @@ class Ceil {
   }
 
   @signature()
-  rational(a: Rational): Rational {
-    return a.ceil();
-  }
-
-  @signature()
-  irrational(a: Irrational): Rational {
-    return new Rational(a.ceil().toBigInt());
+  irrational(a: Real): bigint {
+    return a.ceil().toBigInt();
   }
 }
 
 export const ceil = dynamo.function(Ceil);
+
+class Floor {
+  name = 'floor';
+
+  @signature()
+  bigint(a: bigint): bigint {
+    return a;
+  }
+
+  @signature()
+  number(a: number): number {
+    return Math.floor(a);
+  }
+
+  @signature()
+  irrational(a: Real): bigint {
+    return a.floor().toBigInt();
+  }
+}
+
+export const floor = dynamo.function(Floor);
 
 class Add {
   name = 'add';

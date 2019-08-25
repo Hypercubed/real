@@ -98,10 +98,14 @@ export default class Irrational extends Real {
     return x;
   }
 
+  neg(): Irrational {
+    const x = this.clone();
+    x.s = -1n * x.s;
+    return x;
+  }
+
   sub(y: Irrational): Irrational {
-    y = y.clone();
-    y.s = -1n * y.s;
-    return this.add(y);
+    return this.add(y.neg());
   }
 
   mul(y: Irrational): Irrational {
@@ -129,7 +133,8 @@ export default class Irrational extends Real {
   }
 
   fp() {
-    return this.sub(this.trunc()).abs();
+    const t = -this.toBigInt();
+    return this.add(new Irrational(t)).abs();
   }
 
   floor() {
@@ -237,7 +242,7 @@ export default class Irrational extends Real {
   }
 
   valueOf(): number {
-    return Number(this.toString().replace('…', ''));
+    return Number(this.toString());
   }
 
   protected sigfigs() {

@@ -27,4 +27,6 @@ export default abstract class Real {
 
   abstract toString(): string;
   abstract valueOf(): number;
+
+  abstract toBigInt(): bigint;
 }

@@ -8,16 +8,50 @@ test('abs', t => {
   t.is(Math.abs(-3), 3);
   t.is(Math.abs(-3n), 3n);
 
-  t.is(Math.abs(new Rational(-1)).toString(), '1');
+  t.is(Math.abs(new Rational(-1)).toString(),   '1');
   t.is(Math.abs(new Irrational(-3)).toString(), '3.0000000000000000000e+0');
 });
 
-test('ceil', t => {
-  t.is(Math.ceil(1.234).toString(), '2');
-  // t.is(Math.abs(3.456), 4n);
+test('trunc', t => {
+  t.is(Math.trunc(1.234), 1);
+  t.is(Math.trunc(3n), 3n);
 
-  t.is(Math.ceil(new Rational(1.234)).toString(), '2');
-  t.is(Math.ceil(new Irrational(3.456)).toString(), '4');
+  t.is(Math.trunc(new Rational(1.234)), 1n);
+  t.is(Math.trunc(new Irrational(3.456)), 3n);
+
+  t.is(Math.trunc(-1.234), -1);
+  t.is(Math.trunc(-3n), -3n);
+
+  t.is(Math.trunc(new Rational(-1.234)), -1n);
+  t.is(Math.trunc(new Irrational(-3.456)), -3n);
+});
+
+test('ceil', t => {
+  t.is(Math.ceil(1.234), 2);
+  t.is(Math.ceil(3n), 3n);
+
+  t.is(Math.ceil(new Rational(1.234)), 2n);
+  t.is(Math.ceil(new Irrational(3.456)), 4n);
+
+  t.is(Math.ceil(-1.234), -1);
+  t.is(Math.ceil(-3n), -3n);
+
+  t.is(Math.ceil(new Rational(-1.234)), -1n);
+  t.is(Math.ceil(new Irrational(-3.456)), -3n);
+});
+
+test('floor', t => {
+  t.is(Math.floor(1.234), 1);
+  t.is(Math.floor(3n), 3n);
+
+  t.is(Math.floor(new Rational(1.234)), 1n);
+  t.is(Math.floor(new Irrational(3.456)), 3n);
+
+  t.is(Math.floor(-1.234), -2);
+  t.is(Math.floor(-3n), -3n);
+
+  t.is(Math.floor(new Rational(-1.234)), -2n);
+  t.is(Math.floor(new Irrational(-3.456)), -4n);
 });
 
 test('add', t => {
