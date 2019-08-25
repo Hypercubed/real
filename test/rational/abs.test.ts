@@ -4,13 +4,13 @@ import Rational from '../../src/rational';
 test('abs', t => {
   const abs = (n: any, d?: any) => new Rational(n, d).abs().toString();
 
-  t.is(abs(0), '0');
-  t.is(abs(-0), '0');
-  t.is(abs(1), '1');
-  t.is(abs(-1), '1');
-  t.is(abs(0.5), '1/2');
+  t.is(abs(0),    '0');
+  t.is(abs(-0),   '0');
+  t.is(abs(1),    '1');
+  t.is(abs(-1),   '1');
+  t.is(abs(0.5),  '1/2');
   t.is(abs(-0.5), '1/2');
-  t.is(abs(1.5), '3/2');
+  t.is(abs(1.5),  '3/2');
   t.is(abs(-1.5), '3/2');
 
   t.is(abs(-602214085700000000000000n), '602214085700000000000000');

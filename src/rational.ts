@@ -1,9 +1,9 @@
-import IReal from './ireal';
+import Real from './real';
 import { parseValue } from './util';
 
 import { guard, conversion } from '@hypercubed/dynamo';
 
-export default class Rational implements IReal<Rational> {
+export default class Rational extends Real {
   protected n: bigint = 0n;
   protected d: bigint = 1n;
 
@@ -12,13 +12,13 @@ export default class Rational implements IReal<Rational> {
     return x instanceof Rational;
   }
 
-  @conversion(Number)
-  @conversion(BigInt)
-  static fromNumber(x: number | bigint): Rational {
+  @conversion()
+  static fromNumber(x: bigint): Rational {
     return new Rational(x);
   }
 
   constructor(n: bigint | number | string, d?: bigint | number | string | null) {
+    super();
     const [ns, ne] = parseValue(n);
     const [ds, de] = (d === null || typeof d === 'undefined') ? [1n, 0] : parseValue(d);
 

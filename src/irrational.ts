@@ -1,10 +1,10 @@
-import IReal from './ireal';
+import Real from './real';
 import { parseValue } from './util';
 import Rational from './rational';
 
 import { guard, conversion } from '@hypercubed/dynamo';
 
-export default class Irrational implements IReal<Irrational> {
+export default class Irrational extends Real {
   static CP = 25;
   static DP = 20;
 
@@ -33,17 +33,18 @@ export default class Irrational implements IReal<Irrational> {
     return new Irrational(n).div(new Irrational(d));
   }
 
-  @conversion(BigInt)
-  static fromNumber(x: bigint): Irrational {
+  @conversion()
+  static fromNumber(x: number): Irrational {
     return new Irrational(x);
   }
 
-  @conversion(BigInt)
-  static fromBigint(x: bigint): Irrational {
+  @conversion()
+  static fromBigInt(x: bigint): Irrational {
     return new Irrational(x);
   }
 
   constructor(value: bigint | number | string) {
+    super();
     [this.s, this.e] = parseValue(value);
   }
 
@@ -223,16 +224,15 @@ export default class Irrational implements IReal<Irrational> {
 
   toString(): string {
     const x = this.clone();
-    const rounded = x.roundToPrecision();
+    x.roundToPrecision();
     const n = x.isNegitive() ? 2 : 1;
     let ss = x.s.toString();
-    if (ss.length > n) {
-      x.e += ss.length - n;
-      ss = ss.slice(0, n) + '.' + ss.slice(n);      
+    x.e += ss.length - n;
+    ss = ss.slice(0, n) + '.' + ss.slice(n);   
+    while (ss.length < Irrational.DP + n) {
+      ss += '0';
     }
-    if (x.e === 0) return ss;
-    if (rounded) ss += '…';
-    const se = x.e > 0 ? '+' + x.e : x.e;
+    const se = x.e >= 0 ? '+' + x.e : x.e;
     return ss + 'e' + se;
   }
 
