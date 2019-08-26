@@ -12,9 +12,17 @@ type InputValue = bigint | number | string | Irrational;
  * asin, acos, atan
  */
 
+enum RoundingMethod {
+  Truncate = 'trunc',
+  Round = 'round',
+  Floor = 'floor',
+  Ciel = 'ceil'
+}
+
 export default class Irrational extends Real {
   static CP = 22;
   static DP = 20;
+  static RM = RoundingMethod.Round;
 
   static ZERO = new Irrational(0);
   static ONE = new Irrational(1);
@@ -226,10 +234,10 @@ export default class Irrational extends Real {
     if (y.isNegitive()) { // x^-y = 1/x^y
       return this.pow(y.abs()).inv();
     }
-    if (y.cmp(Irrational.ONE) === 0) {
+    if (y.eq(Irrational.ONE)) {
       return this.clone();
     }
-    if (y.cmp(Irrational.TWO) === 0) {  // convert this to Exponentiation by squaring
+    if (y.eq(Irrational.TWO)) {  // convert this to Exponentiation by squaring
       return this.mul(this);
     }
     const u = y.trunc();
@@ -372,6 +380,7 @@ export default class Irrational extends Real {
   }
 
   protected simplify() {
+    this.normalize();
     const sgn = BigInt(this.sgn());
     const x = this.abs();
     while (x.s % 10n === 0n && x.s > 1n) { 
@@ -387,11 +396,19 @@ export default class Irrational extends Real {
     x.normalize();
 
     // TODO: Rounding method
-    n += x.isNegitive() ? 1 : 0;
-    if (x.s !== 0n && x.s.toString().length > n) {
-      const d = x.s.toString().length - n;
+    const neg = x.isNegitive();
+    n += neg ? 1 : 0;
+    const ss = x.s.toString();
+    const l = ss.length;
+    if (x.s !== 0n && l > n) {
+      const d = l - n;
       x.s /= 10n ** BigInt(d);
       x.e += d;
+
+      if (Irrational.RM !== RoundingMethod.Truncate) {
+        const s = (neg ? -1 : 1) * +ss[n];
+        x.s += BigInt(Math[Irrational.RM](s / 10));
+      }
     }
     return x;
   }
