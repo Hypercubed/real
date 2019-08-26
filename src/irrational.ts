@@ -13,19 +13,17 @@ type InputValue = bigint | number | string | Irrational;
  */
 
 export default class Irrational extends Real {
-  static CP = 25;
+  static CP = 22;
   static DP = 20;
 
   static ZERO = new Irrational(0);
   static ONE = new Irrational(1);
   static TWO = new Irrational(2);
 
-  static LN10 = new Irrational('2.302585092994045684017991454684364207601101488628772976033');
-
-  static E = Irrational.ONE.exp().roundToPrecision(Irrational.CP);
-  static LN2 = Irrational.TWO.ln().roundToPrecision(Irrational.CP);
-
-  static LOG10E = Irrational.LN10.inv().roundToPrecision(Irrational.CP);
+  static LN10 =   new Irrational('2.30258509299404568401799145468');
+  static E =      new Irrational('2.71828182845904523536028747135');
+  static LN2 =    new Irrational('0.69314718055994530941723212145');
+  static LOG10E = new Irrational('0.43429448190325182765112891891');
 
   protected s: bigint = 0n;  // Significand
   protected e: number = 0;   // Exponent
@@ -98,6 +96,14 @@ export default class Irrational extends Real {
 
   cmp(y: Irrational): number {
     return this.sub(y).sgn();
+  }
+
+  eq(y: Irrational): boolean {
+    return this.cmp(y) === 0;
+  }
+
+  gt(y: Irrational): boolean {
+    return this.cmp(y) === 1;
   }
 
   add(y: Irrational): Irrational {
@@ -256,43 +262,70 @@ export default class Irrational extends Real {
   /**
    * calculates logarithm of x to the base 10
    * 
-   * log(s*10^e) = log(s) + e
-   *             = ln(s)/ln(10) + e
-   *             = log1p(s - 1)*log10(e) + e
+   * log(x) = log(s*10^n)
+   *        = log(s) + log(10^n)
+   *        = ln(s)/ln(10) + n*log(10)
+   *        = ln(s)*log10(e) + n
    */
   log10() {
-    let a = Irrational.log1p(this.s - 1n).mul(Irrational.LOG10E);
-    if (this.e !== 0) {
-      a = a.add(new Irrational(this.e));
+    let s = this.simplify();
+    let n = s.e;
+
+    s = new Irrational(this.s);
+    
+    let a = s.ln().mul(Irrational.LOG10E);
+    if (n === 0) {
+      return a
     }
-    return a;
+    return a.add(new Irrational(n));
   }
 
   /**
    * calculates natural logarithm of x
    * 
-   * ln(s*10^e) = ln(s) + e*ln(10);
-   *            = log1p(s - 1) + e*ln10
+   * ln(x)     = ln(s*e^n)
+   *           = ln(s) + n*ln(e);
+   *           = log1p(s - 1) + e
    */
   ln(): Irrational {
-    return this.sub(Irrational.ONE).log1p();
+    if (this.eq(Irrational.ONE)) {
+      return Irrational.ZERO;
+    }
+
+    let s = this.clone();
+    let n = 0;
+
+    // reduce value to 0 < x < 1
+    while (s.gt(Irrational.ONE)) {
+      s = s.div(Irrational.E);
+      n += 1;      
+    }
+
+    const a = s.sub(Irrational.ONE).log1p();
+    if (n === 0) {
+      return a;
+    }
+    return a.add(new Irrational(n));
   }
 
+  /**
+   * returns the natural logarithm (base e) of 1 + a number
+   * identity in terms of the inverse hyperbolic tangent
+   * high precision value for small values of x
+   */
   protected log1p() {
-    // identity in terms of the inverse hyperbolic tangent
-    // high precision value for small values of x
-    const a = this.div(Irrational.TWO.add(this)).arctanh();
+    const a = this.div(Irrational.TWO.add(this)).atanh();
     return Irrational.TWO.mul(a);
   }
 
   /**
    * calculates inverse hyperbolic tangent of x
    */
-  protected arctanh() {
+  protected atanh() {
     let n = this.clone();
     let sum = n;
     let d = 1;
-    for (let i = 2; i < 100; i++) {
+    for (let i = 2; i < 300; i++) {
       d += 2;
       n = n.mul(this).mul(this);
       const t = sum;
@@ -361,37 +394,6 @@ export default class Irrational extends Real {
       x.e += d;
     }
     return x;
-  }
-
-  /**
- * calculates natural log of x + 1
- * 
- * identity in terms of the inverse hyperbolic tangent
- * high precision value for small values of x
- * log1p(x) = 2 * arctan(x/(2 + x))
- */
-  static log1p(x: bigint) {
-    // log1p(x) = 2 * arctan(x/(2 + x))
-    const xi = new Irrational(x);
-    const xpo = new Irrational(x + 2n);
-    const a = xi.div(xpo).arctanh();
-    a.s *= 2n;
-    return a;
-
-    /* const xx = new Irrational(x);
-    let sum = xx;
-    let d = xx;
-    for (let k = 2; k < 100; k++) {
-      const s = new Irrational((-1) ** k);
-      d = d.mul(xx);
-      const n = s.mul(d).div(new Irrational(k));
-      const t = sum;
-      sum = sum.add(n);
-      if (sum.digits() === t.digits()) {
-        return sum;
-      }
-    }
-    return sum; */
   }
 }
 
