@@ -1,11 +1,24 @@
 import Real from './real';
 import { parseValue } from './util';
 
-export default class Rational implements Real<Rational> {
+import { guard, conversion } from '@hypercubed/dynamo';
+
+export default class Rational extends Real {
   protected n: bigint = 0n;
   protected d: bigint = 1n;
 
+  @guard()
+  static isRational(x: unknown): x is Rational {
+    return x instanceof Rational;
+  }
+
+  @conversion()
+  static fromNumber(x: bigint): Rational {
+    return new Rational(x);
+  }
+
   constructor(n: bigint | number | string, d?: bigint | number | string | null) {
+    super();
     const [ns, ne] = parseValue(n);
     const [ds, de] = (d === null || typeof d === 'undefined') ? [1n, 0] : parseValue(d);
 
@@ -21,9 +34,8 @@ export default class Rational implements Real<Rational> {
     this.normalize();
   }
 
-  clone() {
-    const x = new Rational(this.n, this.d);
-    return x;
+  clone(): Rational {
+    return new Rational(this.n, this.d);
   }
 
   sgn() {
@@ -41,7 +53,7 @@ export default class Rational implements Real<Rational> {
   isNegitive() {
     const sn = this.n < 0;
     const sd = this.d < 0;
-    return (sn && sd) || (!sn && !sd);
+    return (sn && !sd) || (!sn && sd);
   }
 
   isZero() {
@@ -56,7 +68,7 @@ export default class Rational implements Real<Rational> {
     return left === right ? 0 : left > right ? 1 : -1;
   }
 
-  abs() {
+  abs(): Rational {
     const n = this.n < 0 ? -1n * this.n : this.n;
     const d = this.d < 0 ? -1n * this.d : this.d;
     return new Rational(n, d);
@@ -69,9 +81,13 @@ export default class Rational implements Real<Rational> {
   }
 
   sub(y: Rational): Rational {
-    y = y.clone();
-    y.n = -1n * y.n;
-    return this.add(y);
+    return this.add(y.neg());
+  }
+
+  neg(): Rational {
+    const x = this.clone();
+    x.n = -1n * x.n;
+    return x;
   }
 
   mul(y: Rational): Rational {
@@ -85,33 +101,35 @@ export default class Rational implements Real<Rational> {
   }
 
   div(y: Rational): Rational {
-    const n = this.n * y.d;
-    const d = y.n * this.d;
-    return new Rational(n, d);
+    return this.mul(y.inv());
   }
 
-  trunc() {
-    return new Rational(this.toBigInt());
+  trunc(): bigint {
+    return this.n / this.d;
+  }
+
+  floor(): bigint {
+    const ip = this.trunc();
+    const rm = this.n % this.d;
+    if (this.isNegitive() && rm !== 0n) {
+      return ip - 1n;
+    }
+    return ip;
+  }
+
+  ceil(): bigint {
+    const ip = this.trunc();
+    const rm = this.n % this.d;
+    if (this.isPositive() && rm !== 0n) {
+      return ip + 1n;
+    }
+    return ip;
   }
 
   fp() {
-    return this.sub(this.trunc()).abs();
-  }
-
-  floor() {
-    const ip = this.trunc();
-    if (this.isNegitive() && !this.sub(ip).isZero()) {
-      return ip.sub(new Rational(1n));
-    }
-    return ip;
-  }
-
-  ceil() {
-    const ip = this.trunc();
-    if (this.isPositive() && !this.sub(ip).isZero()) {
-      return ip.add(new Rational(1n));
-    }
-    return ip;
+    const x = this.clone();
+    x.n -= this.trunc() * this.d;
+    return x.abs();
   }
 
   toString(): string {
@@ -122,12 +140,13 @@ export default class Rational implements Real<Rational> {
     return this.n.toString() + '/' + this.d.toString();
   }
 
-  valueOf() {        
+  valueOf() {
+    // TODO: maybe this is be done as an irrational
     return Number(this.n) / Number(this.d);
   }
 
-  toBigInt() {
-    return this.n / this.d;
+  toArray() {
+    return [this.n, this.d];
   }
 
   private normalize() {

@@ -4,28 +4,28 @@ import Real from '../../src/irrational';
 test('trunc', t => {
   const trunc = (x: any) => new Real(x).trunc();
 
-  t.is(trunc(1).valueOf(), 1);
-  t.is(trunc(-1).valueOf(), -1);
-  t.is(trunc(2).valueOf(), 2);
-  t.is(trunc(-2).valueOf(), -2);
+  t.is(trunc(1),   1n);
+  t.is(trunc(-1), -1n);
+  t.is(trunc(2),   2n);
+  t.is(trunc(-2), -2n);
 
-  t.is(trunc(0.1).valueOf(), 0);
-  t.is(trunc(2.5).valueOf(), 2);
-  t.is(trunc(10).valueOf(), 10);
+  t.is(trunc(0.1), 0n);
+  t.is(trunc(2.5), 2n);
+  t.is(trunc(10),  10n);
 
-  t.is(trunc(-0.1).valueOf(), 0);
-  t.is(trunc(-2.5).valueOf(), -2);
-  t.is(trunc(-10).valueOf(), -10);
+  t.is(trunc(-0.1),  0n);
+  t.is(trunc(-2.5), -2n);
+  t.is(trunc(-10),  -10n);
 
-  t.is(trunc(9007199254740992n).valueOf(), 9007199254740992);
-  t.is(trunc(9007199254740994n).valueOf(), 9007199254740994);
-  t.is(trunc(10_000_000_000_000_000n).valueOf(), 10_000_000_000_000_000);
+  t.is(trunc(9007199254740992n),       9007199254740992n);
+  t.is(trunc(9007199254740994n),       9007199254740994n);
+  t.is(trunc(10_000_000_000_000_000n), 10_000_000_000_000_000n);
 
-  t.is(trunc('900719.9254740992').toString(), (900719).toExponential());
-  t.is(trunc('90071992.54740994').toString(), (90071992).toExponential());
-  t.is(trunc(10_000_000.00000).toString(), '1.0000000e+7');
+  t.is(trunc('900719.9254740992'), 900719n);
+  t.is(trunc('90071992.54740994'), 90071992n);
+  t.is(trunc(10_000_000.00000),    10_000_000n);
 
-  t.is(trunc('-900719.9254740992').toString(), '-9.00719e+5');
-  t.is(trunc('-90071992.54740994').toString(), '-9.0071992e+7');
-  t.is(trunc(-10_000_000.00000).toString(), '-1.0000000e+7');
+  t.is(trunc('-900719.9254740992'), -900719n);
+  t.is(trunc('-90071992.54740994'), -90071992n);
+  t.is(trunc(-10_000_000.00000),    -10_000_000n);
 });

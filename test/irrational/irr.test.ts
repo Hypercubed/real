@@ -12,8 +12,8 @@ test('Irrationals from bigints', t => {
   t.is(new Irrational(2n).valueOf(), 2);
   t.is(new Irrational(-2n).valueOf(), -2);
 
-  t.is(new Irrational(9007199254740993n).toString(), '9.007199254740993e+15');
-  t.is(new Irrational(9007199254740993333n).toString(), '9.007199254740993333e+18');
+  t.is(new Irrational(9007199254740993n).toString(), '9.0071992547409930000e+15');
+  t.is(new Irrational(9007199254740993333n).toString(), '9.0071992547409933330e+18');
 });
 
 test('Irrationals from numbers', t => {
@@ -24,7 +24,7 @@ test('Irrationals from numbers', t => {
   t.is(new Irrational(-2).valueOf(), -2);
 
   // numbers (floats)
-  t.is(new Irrational(1.5).toString(), '1.5');
+  t.is(new Irrational(1.5).toString(), '1.5000000000000000000e+0');
   t.is(new Irrational(-1.5).valueOf(), -1.5);
   t.is(new Irrational(2.5).valueOf(), 2.5);
   t.is(new Irrational(-2.5).valueOf(), -2.5);
@@ -42,8 +42,8 @@ test('Irrationals from strings', t => {
   t.is(new Irrational('2').valueOf(), 2);
   t.is(new Irrational('-2').valueOf(), -2);
 
-  t.is(new Irrational('9007199254740993').toString(), '9.007199254740993e+15');
-  t.is(new Irrational('9007199254740993333').toString(), '9.007199254740993333e+18');
+  t.is(new Irrational('9007199254740993').toString(),    '9.0071992547409930000e+15');
+  t.is(new Irrational('9007199254740993333').toString(), '9.0071992547409933330e+18');
 
   // strings (floats)
   t.is(new Irrational('1.5').valueOf(), 1.5);
@@ -59,12 +59,12 @@ test('Irrationals from strings', t => {
   t.is(new Irrational('0.000314159').valueOf(), 0.000314159);
   t.is(new Irrational('-0.0271828').valueOf(), -0.0271828);
 
-  t.is(new Irrational('90071992.54740993').toString(), '9.007199254740993e+7');
-  t.is(new Irrational('90071992.54740993333').toString(), '9.007199254740993333e+7');
+  t.is(new Irrational('90071992.54740993').toString(),    '9.0071992547409930000e+7');
+  t.is(new Irrational('90071992.54740993333').toString(), '9.0071992547409933330e+7');
 
   // strings (exp)
-  t.is(new Irrational('9007199254740993e-8').toString(), '9.007199254740993e+7');
-  t.is(new Irrational('9007199254740993333e11').toString(), '9.007199254740993333e+29');
+  t.is(new Irrational('9007199254740993e-8').toString(),    '9.0071992547409930000e+7');
+  t.is(new Irrational('9007199254740993333e11').toString(), '9.0071992547409933330e+29');
 });
 
 test('clone', t => {
@@ -79,15 +79,19 @@ test('clone', t => {
 });
 
 test('constants', t => {
-  t.is(Irrational.ZERO.toString(), '0');
-  t.is(Irrational.ONE.toString(), '1');
-  t.is(Irrational.TWO.toString(), '2');
+  t.is(Irrational.ZERO.toString(), '0.0000000000000000000e+0');
+  t.is(Irrational.ONE.toString(), '1.0000000000000000000e+0');
+  t.is(Irrational.TWO.toString(), '2.0000000000000000000e+0');
 
-  t.is(Irrational.E.toString(), '2.7182818284590452353');
+  t.is(Irrational.E.toString(), '2.7182818284590452353e+0');
 
-  t.is(Irrational.LN2.toString(), '6.9314718055994530941…e-1');
-  t.is(Irrational.LN10.toString(), '2.3025850929940456838');
-  t.is(Irrational.LOG10E.toString(), '4.3429448190325182767…e-1');
+  t.is(Irrational.LN2.toString(), '6.9314718055994530941e-1');
+                              // 0.6_93147180559945309417232121458176568075500134360255254120...
+  t.is(Irrational.LN10.toString(), '2.3025850929940456838e+0');
+                                 // 2.302585092994045684017991454684364207601101488628772976033...
+  t.is(Irrational.LOG10E.toString(), '4.3429448190325182767e-1');
+                                 // 0.4_34294481903251827651128918916605082294397005803666566114...
+
 });
 
 

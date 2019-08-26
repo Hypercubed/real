@@ -1,23 +1,33 @@
-export default interface Real<T> {
-  clone(): T;
-  sgn(): number;
-  abs(): T;
-  isZero(): boolean;
-  isPositive(): boolean;
-  isNegitive(): boolean;
-  cmp(x: T): number;
+import { guard } from '@hypercubed/dynamo';
 
-  add(x: T): T;
-  sub(x: T): T;
-  mul(x: T): T;
-  inv(): T;
-  div(x: T): T;
+export default abstract class Real {
+  @guard(Real)
+  static isReal(x: any): x is Real {
+    return x instanceof Real;
+  }
 
-  trunc(): T;
-  fp(): T;
-  floor(): T;
-  ceil(): T;
+  abstract clone(): Real;
+  abstract sgn(): number;
+  abstract abs(): Real;
+  abstract isZero(): boolean;
+  abstract isPositive(): boolean;
+  abstract isNegitive(): boolean;
+  abstract cmp(y: any): number;
+  abstract neg(): Real;
 
-  toString(): string;
-  valueOf(): number;
+  abstract add(y: Real): Real;
+  abstract sub(y: Real): Real;
+
+  abstract mul(y: Real): Real;
+  abstract inv(): Real;
+  abstract div(y: Real): Real;
+
+  abstract fp(): Real;
+
+  abstract trunc(): bigint;
+  abstract floor(): bigint;
+  abstract ceil(): bigint;
+
+  abstract toString(): string;
+  abstract valueOf(): number;
 }

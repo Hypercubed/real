@@ -1,5 +1,8 @@
+import { guard, conversion } from '@hypercubed/dynamo';
+
 import Real from './real';
 import { parseValue } from './util';
+import Rational from './rational';
 
 type InputValue = bigint | number | string | Irrational;
 
@@ -9,7 +12,7 @@ type InputValue = bigint | number | string | Irrational;
  * asin, acos, atan
  */
 
-export default class Irrational implements Real<Irrational> {
+export default class Irrational extends Real {
   static CP = 25;
   static DP = 20;
 
@@ -17,19 +20,44 @@ export default class Irrational implements Real<Irrational> {
   static ONE = new Irrational(1);
   static TWO = new Irrational(2);
 
+  static LN10 = new Irrational('2.302585092994045684017991454684364207601101488628772976033');
+
   static E = Irrational.ONE.exp().roundToPrecision(Irrational.CP);
   static LN2 = Irrational.TWO.ln().roundToPrecision(Irrational.CP);
-  static LN10 = new Irrational(10).ln().roundToPrecision(Irrational.CP);
 
   static LOG10E = Irrational.LN10.inv().roundToPrecision(Irrational.CP);
 
   protected s: bigint = 0n;  // Significand
   protected e: number = 0;   // Exponent
 
+  @guard()
+  static isIrrational(x: unknown): x is Irrational {
+    return x instanceof Irrational;
+  }
+
+  @conversion()
+  static fromRational(x: Rational): Irrational {
+    const [n, d] = x.toArray();
+    return new Irrational(n).div(new Irrational(d));
+  }
+
+  @conversion()
+  static fromNumber(x: number): Irrational {
+    return new Irrational(x);
+  }
+
+  @conversion()
+  static fromBigInt(x: bigint): Irrational {
+    return new Irrational(x);
+  }
+
   constructor(value: InputValue) {
+    super();
+
     if (value instanceof Irrational) {
       return value.clone();
     }
+
     [this.s, this.e] = parseValue(value);
   }
 
@@ -60,11 +88,11 @@ export default class Irrational implements Real<Irrational> {
     return this.s === 0n;
   }
 
-  isPositive() {
+  isPositive(): boolean {
     return this.s > 0;
   }
 
-  isNegitive() {
+  isNegitive(): boolean {
     return this.s < 0;
   }
 
@@ -112,28 +140,24 @@ export default class Irrational implements Real<Irrational> {
   }
 
   isInteger() {
-    const u = new Irrational(this.toBigInt());
+    const u = new Irrational(this.trunc());
     return this.sub(u).isZero();
   }
 
-  trunc() {
-    return new Irrational(this.toBigInt());
-  }
-
-  /**
-   * maps tp the frational part of x
-   */
-  fp() {
-    return this.sub(this.trunc()).abs();
+  trunc(): bigint {
+    if (this.e < 0) {
+      return this.s / 10n ** BigInt(-this.e);
+    }
+    return this.s * 10n ** BigInt(this.e);
   }
 
   /**
    * maps x to the greatest integer greater than or equal to x
    */
-  floor() {
-    const ip = this.trunc()
-    if (this.isNegitive() && !this.sub(ip).isZero()) {
-      return ip.sub(Irrational.ONE);
+  floor(): bigint {
+    const ip = this.trunc();
+    if (this.isNegitive() && !this.sub(new Irrational(ip)).isZero()) {
+      return ip - 1n;
     }
     return ip;
   }
@@ -141,12 +165,20 @@ export default class Irrational implements Real<Irrational> {
   /**
    * maps x to the least integer greater than or equal to x
    */
-  ceil() {
+  ceil(): bigint {
     const ip = this.trunc();
-    if (this.isPositive() && !this.sub(ip).isZero()) {
-      return ip.add(Irrational.ONE);
+    if (this.isPositive() && !this.sub(new Irrational(ip)).isZero()) {
+      return ip + 1n;
     }
     return ip;
+  }
+
+  /**
+   * maps tp the frational part of x
+   */
+  fp() {
+    const t = -this.trunc();
+    return this.add(new Irrational(t)).abs();
   }
 
   /**
@@ -194,7 +226,7 @@ export default class Irrational implements Real<Irrational> {
     if (y.cmp(Irrational.TWO) === 0) {  // convert this to Exponentiation by squaring
       return this.mul(this);
     }
-    const u = y.toBigInt();
+    const u = y.trunc();
     const v = y.valueOf();
     if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
       const x = this.clone();
@@ -229,11 +261,11 @@ export default class Irrational implements Real<Irrational> {
    *             = log1p(s - 1)*log10(e) + e
    */
   log10() {
-    let a = new Irrational(this.s - 1n).log1p().mul(Irrational.LOG10E);
+    let a = Irrational.log1p(this.s - 1n).mul(Irrational.LOG10E);
     if (this.e !== 0) {
       a = a.add(new Irrational(this.e));
     }
-    return a.roundToPrecision(Irrational.CP);
+    return a;
   }
 
   /**
@@ -243,71 +275,52 @@ export default class Irrational implements Real<Irrational> {
    *            = log1p(s - 1) + e*ln10
    */
   ln(): Irrational {
-    const a = new Irrational(this.s - 1n).log1p();
-    if (this.e !== 0) {
-      const b = Irrational.LN10.mul(new Irrational(this.e));
-      return a.add(b);
-    }
-    return a.roundToPrecision(Irrational.CP);
+    return this.sub(Irrational.ONE).log1p();
   }
 
-  /**
-   * calculates natural log of x + 1
-   * 
-   * identity in terms of the inverse hyperbolic tangent
-   * high precision value for small values of x
-   * log1p(x) = 2 * arctan(x/(2 + x))
-   */
   protected log1p() {
-    const a = this.div(this.add(Irrational.TWO)).arctanh();
-    a.s *= 2n;
-    return a;
+    // identity in terms of the inverse hyperbolic tangent
+    // high precision value for small values of x
+    const a = this.div(Irrational.TWO.add(this)).arctanh();
+    return Irrational.TWO.mul(a);
   }
 
   /**
    * calculates inverse hyperbolic tangent of x
    */
   protected arctanh() {
-    let n = this.simplify();
+    let n = this.clone();
     let sum = n;
     let d = 1;
     for (let i = 2; i < 100; i++) {
       d += 2;
       n = n.mul(this).mul(this);
       const t = sum;
-      sum = sum.add(n.div(new Irrational(d)));
+      sum = sum.add(n.mul(new Irrational(1 / d)));
       if (sum.digits() === t.digits()) {
         return sum;
       }
     }
-    return sum.roundToPrecision(Irrational.CP);
-  }
-
-  toBigInt() {
-    if (this.e < 0) {
-      return this.s / 10n ** BigInt(-this.e);
-    }
-    return this.s * 10n ** BigInt(this.e);
+    return sum;
   }
 
   toString(): string {
-    this.normalize();
     const x = this.roundToPrecision(Irrational.DP);
-    const n = this.isNegitive() ? 2 : 1;
-    const rounded = x.s !== this.s;
+    const n = x.isNegitive() ? 2 : 1;
     let ss = x.s.toString();
-    if (ss.length > n) {
-      x.e += ss.length - n;
-      ss = ss.slice(0, n) + '.' + ss.slice(n);      
+    x.e += ss.length - n;
+    ss = ss.slice(0, n) + '.' + ss.slice(n);
+    if (ss.length < Irrational.DP + n) {
+      const d = Irrational.DP + n - ss.length;
+      ss += '0'.repeat(d);
     }
-    if (x.e === 0) return ss;
-    if (rounded) ss += '…';
-    const se = x.e > 0 ? '+' + x.e : x.e;
+    ss = ss.slice(0, Irrational.DP + n);
+    const se = x.e >= 0 ? '+' + x.e : x.e;
     return ss + 'e' + se;
   }
 
   valueOf(): number {
-    return Number(this.toString().replace('…', ''));
+    return Number(this.toString());
   }
 
   protected sigfigs() {
@@ -338,20 +351,48 @@ export default class Irrational implements Real<Irrational> {
 
   protected roundToPrecision(n: number) {
     const x = this.clone();
+    x.normalize();
 
     // TODO: Rounding method
     n += x.isNegitive() ? 1 : 0;
-    while (x.s.toString().length > n) { 
-      x.s /= 10n;
-      x.e += 1;
+    if (x.s !== 0n && x.s.toString().length > n) {
+      const d = x.s.toString().length - n;
+      x.s /= 10n ** BigInt(d);
+      x.e += d;
     }
     return x;
   }
+
+  /**
+ * calculates natural log of x + 1
+ * 
+ * identity in terms of the inverse hyperbolic tangent
+ * high precision value for small values of x
+ * log1p(x) = 2 * arctan(x/(2 + x))
+ */
+  static log1p(x: bigint) {
+    // log1p(x) = 2 * arctan(x/(2 + x))
+    const xi = new Irrational(x);
+    const xpo = new Irrational(x + 2n);
+    const a = xi.div(xpo).arctanh();
+    a.s *= 2n;
+    return a;
+
+    /* const xx = new Irrational(x);
+    let sum = xx;
+    let d = xx;
+    for (let k = 2; k < 100; k++) {
+      const s = new Irrational((-1) ** k);
+      d = d.mul(xx);
+      const n = s.mul(d).div(new Irrational(k));
+      const t = sum;
+      sum = sum.add(n);
+      if (sum.digits() === t.digits()) {
+        return sum;
+      }
+    }
+    return sum; */
+  }
 }
 
-function sign(value: bigint) {
-  if (value > 0n) return 1;
-  if (value < 0n) return -1;
-  return 0;
-}
 

@@ -67,5 +67,8 @@
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "@hypercubed/dynamo": "^1.0.2"
   }
 }
