@@ -8,12 +8,12 @@
 import * as RealMath from '@hypercubed/real';
 ```
 
-`RealMath` provides several math functions that work with `Number` and `BigInt`.  These two types, however, are not sufficient in many cases.  `@hypercuged/real` provides two addition classes that represent broader numeric types:
+`RealMath` provides several math functions that work with `Number` and `BigInt`.  These two types, however, are not sufficient in many cases.  `@hypercubed/real` provides two additional classes that represent broader numeric types:
 
-- `Rational` - any number that can be expressed as the quotient or fraction of two integers (`p/q`)
+- `Rational` - any number that can be expressed as the quotient (or fraction) of two integers (BigInt) (`p/q`)
 - `Irrational` - an approximation of a number expressed in scientific notation (`m x 10 ^ n`)
 
-When using the `RealMath` functions values are convert, as necessary, for the given function.  Implict conversionsd are as follows:
+When using the `RealMath` functions, values are converted, as necessary, for the given function.  Implict conversions are as follows:
 
 - `BigInt` -> `Rational`
 - `Number` -> `Irrational`
