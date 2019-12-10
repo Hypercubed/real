@@ -1,6 +1,6 @@
 # Real
 
-`Real` provides an object with properties and methods for mathematical constants and functions (similar to `Math`) that works with `Number` and `BigInt` as well as two addional classes (`Rational` and `Irrational`).
+`Real` provides an object with properties and methods for mathematical constants and functions (similar to `Math`) that works with `Number` and `BigInt` as well as two additional classes (`Rational` and `Irrational`).
 
 ### Usage
 
