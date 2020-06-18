@@ -141,12 +141,22 @@ export default class Rational extends Real {
   }
 
   valueOf() {
-    // TODO: maybe this is be done as an irrational
     return Number(this.n) / Number(this.d);
   }
 
   toArray() {
     return [this.n, this.d];
+  }
+
+  toFixed(digits: number): string {
+    const ip = this.trunc();
+    if (digits < 1) {
+      return ip.toString();
+    }
+    const f = 10n**BigInt(digits);
+    const fp = this.fp();
+    const fp2 = zeroPad((fp.n*f/fp.d).toString(), digits);
+    return `${ip}.${fp2}`;
   }
 
   private normalize() {
@@ -186,4 +196,8 @@ export default class Rational extends Real {
 
 function gcd(a: bigint, b: bigint): bigint {
   return b ? gcd(b, a % b) : (a > 0n ? a : -a);
+}
+
+function zeroPad(s: string, digits: number) {
+  return (s + '0'.repeat(digits)).slice(0, digits);
 }
