@@ -6,7 +6,6 @@ export default abstract class Real {
     return x instanceof Real;
   }
 
-  abstract clone(): Real;
   abstract sgn(): number;
   abstract abs(): Real;
   abstract isZero(): boolean;

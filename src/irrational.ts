@@ -20,8 +20,6 @@ enum RoundingMethod {
 }
 
 export class Irrational extends Real {
-  // static CP = 22;
-  // static DP = 20;
   static RM = RoundingMethod.Round;
 
   static ZERO = new Irrational(0, 0, 300);  // TODO: these should be rational
@@ -62,7 +60,7 @@ export class Irrational extends Real {
     super();
 
     if (value instanceof Irrational) {
-      return value.clone();
+      return this;
     }
 
     [this.s, this.e, this.p] = parseValue(value);
@@ -73,17 +71,7 @@ export class Irrational extends Real {
     if (typeof p !== 'undefined') {
       this.p = p;
     }
-
-    // TODO: seal object to prevent mutation
-  }
-
-  // TODO: get rid of this... make immutable
-  clone() {
-    const x = new Irrational(0n);
-    x.s = this.s;
-    x.e = this.e;
-    x.p = this.p;
-    return x;
+    Object.freeze(this);
   }
 
   sgn() {
@@ -93,9 +81,7 @@ export class Irrational extends Real {
   }
 
   neg() {
-    const x = this.clone();
-    x.s *= -1n;
-    return x;
+    return new Irrational(this.s * -1n, this.e, this.p);
   }
 
   abs() {
@@ -128,18 +114,21 @@ export class Irrational extends Real {
 
   // TODO: precision error
   add(y: Irrational): Irrational {
-    const x = this.clone();
+    let s = this.s;
+    let e = this.e;
+    const p = this.p;
+    
     let yd = y.s;
-    let xd = x.s;
-    const d = y.e - x.e;
+    let xd = s;
+    const d = y.e - e;
     if (d > 0) {
       yd = yd * 10n ** BigInt(d);
     } else if (d < 0) {
       xd = xd * 10n ** BigInt(-d);
-      x.e = y.e;
+      e = y.e;
     }
-    x.s = xd + yd;
-    return x;
+    s = xd + yd;
+    return new Irrational(s, e, p);
   }
 
   sub(y: Irrational): Irrational {
@@ -154,12 +143,9 @@ export class Irrational extends Real {
   }
 
   inv() {
-    // TODO: Better??
     const n = 2 * this.p;
     const S = 10n ** BigInt(n);
-    const s = S * 1n / this.s;
-    const e = this.e + n;
-    return new Irrational(s, -e, this.p);
+    return new Irrational(S * 1n / this.s, -this.e - n, this.p);
   }
 
   div(y: Irrational): Irrational {
@@ -217,9 +203,7 @@ export class Irrational extends Real {
    */
   exp() {
     if (this.isZero()) {
-      const one = Irrational.ONE.clone();
-      one.p = this.p;
-      return one;
+      return new Irrational(1n, 0, this.p);
     }
     return this.expm1().add(Irrational.ONE);
   }
@@ -227,6 +211,7 @@ export class Irrational extends Real {
   /**
    * calculates e^x - 1 using Taylor series
    */
+  // TODO: improve this
   protected expm1() {
     let n = this.simplify();
     let d = 1;
@@ -250,15 +235,13 @@ export class Irrational extends Real {
   pow(y: Irrational): Irrational {
     if (y.isZero()) {
       if (this.isZero()) throw new Error('Division by zero');
-      const z = Irrational.ZERO.clone();
-      z.p = Math.min(this.p, y.p);
-      return z;
+      return new Irrational(0n, 0, Math.min(this.p, y.p));
     }
     if (y.isNegitive()) { // x^-y = 1/x^y
       return this.pow(y.abs()).inv();
     }
     if (y.eq(Irrational.ONE)) {
-      return this.clone();
+      return this;
     }
     if (y.eq(Irrational.TWO)) {  // convert this to Exponentiation by squaring
       return this.mul(this);
@@ -266,10 +249,7 @@ export class Irrational extends Real {
     const u = y.trunc();
     const v = y.valueOf();
     if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
-      const x = this.clone();
-      x.s = x.s**u;
-      x.e = x.e * v;
-      return x;
+      return new Irrational(this.s**u, this.e*v, this.p);
     }
 
     // x^y = exp(y*ln(x))
@@ -302,13 +282,10 @@ export class Irrational extends Real {
     let s = this.simplify();
     let n = s.e;
 
-    s = new Irrational(this.s);
+    s = new Irrational(this.s, 0, this.p);
     
     let a = s.ln().mul(Irrational.LOG10E);
-    if (n === 0) {
-      return a
-    }
-    return a.add(new Irrational(n));
+    return (n === 0) ? a : a.add(new Irrational(n));
   }
 
   /**
@@ -320,12 +297,10 @@ export class Irrational extends Real {
    */
   ln(): Irrational {
     if (this.eq(Irrational.ONE)) {
-      const zero = Irrational.ZERO.clone();
-      zero.p = this.p;
-      return zero;
+      return new Irrational(0n, 0, this.p);
     }
 
-    let s = this.clone();
+    let s = new Irrational(this.s, this.e, this.p);
     let n = 0;
 
     // reduce value to 0 < x < 1
@@ -356,7 +331,7 @@ export class Irrational extends Real {
    */
   protected atanh() {
     const p = this.p;
-    let n = this.clone();
+    let n = new Irrational(this.s, this.e, this.p);
     let sum = n;
     let d = 1;
     for (let i = 2; i < 300; i++) {
@@ -401,52 +376,27 @@ export class Irrational extends Real {
     return `${ip}.${zeroPadRight(fp, fractionDigits)}e${e >= 0 ? ('+' + e) : e}`;
   }
 
-  protected sigfigs() {
-    const n = this.isNegitive() ? 1 : 0;
-    return this.s.toString().length - n;
-  }
-
+  // TODO: get rid of this
   protected digits() {
     const n = this.isNegitive() ? 1 : 0;
     return this.s.toString().slice(0, this.p + n);
   }
 
-  protected normalize() {
-    if (this.s === 0n) this.e = 0;
-    this.e = this.e | 0;
+  protected normalized() {
+    const e = this.isZero() ? 0 : this.e;
+    return new Irrational(this.s, e | 0, this.p);
   }
 
   protected simplify() {
-    this.normalize();
-    const sgn = BigInt(this.sgn());
-    const x = this.abs();
-    while (x.s % 10n === 0n && x.s > 1n) { 
-      x.s /= 10n;
-      x.e += 1;
+    const sgn = this.s < 0n ? -1n : 1n;
+
+    let s = this.s * sgn;
+    let e = this.isZero() ? 0 : this.e;
+
+    while (s % 10n === 0n && s > 1n) { 
+      s /= 10n;
+      e += 1;
     }
-    x.s *= sgn;
-    return x;
-  }
-
-  protected roundToPrecision(n: number) {
-    const x = this.clone();
-    x.normalize();
-
-    // TODO: Rounding method
-    const neg = x.isNegitive();
-    n += neg ? 1 : 0;
-    const ss = x.s.toString();
-    const l = ss.length;
-    if (x.s !== 0n && l > n) {
-      const d = l - n;
-      x.s /= 10n ** BigInt(d);
-      x.e += d;
-
-      if (Irrational.RM !== RoundingMethod.Truncate) {
-        const s = (neg ? -1 : 1) * +ss[n];
-        x.s += BigInt(Math[Irrational.RM](s / 10));
-      }
-    }
-    return x;
+    return new Irrational(s * sgn, e, this.p);
   }
 }

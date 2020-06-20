@@ -26,10 +26,6 @@ export class SQRT2 /* extends Real */ {
     return x instanceof SQRT2;
   }
 
-  clone(): SQRT2 {
-    return this;
-  }
-
   abs() {
     return this;
   }

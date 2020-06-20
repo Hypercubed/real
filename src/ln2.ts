@@ -22,10 +22,6 @@ export class LN2 /* extends Real */ {
     return x instanceof LN2;
   }
 
-  clone(): LN2 {
-    return this;
-  }
-
   abs() {
     return this;
   }

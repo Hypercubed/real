@@ -31,11 +31,7 @@ export class Rational extends Real {
       throw new Error('DivisionByZero');
     }
 
-    this.normalize();
-  }
-
-  clone(): Rational {
-    return new Rational(this.n, this.d);
+    Object.freeze(this);
   }
 
   sgn() {
@@ -85,9 +81,9 @@ export class Rational extends Real {
   }
 
   neg(): Rational {
-    const x = this.clone();
-    x.n = -1n * x.n;
-    return x;
+    const n = -1n * this.n;
+    const d = this.d;
+    return new Rational(n, d);
   }
 
   mul(y: Rational): Rational {
@@ -131,17 +127,18 @@ export class Rational extends Real {
   }
 
   fp() {
-    const x = this.clone();
-    x.n -= this.trunc() * this.d;
-    return x.abs();
+    const n = this.n - this.trunc() * this.d;
+    const d = this.d;
+
+    return new Rational(n, d).abs();
   }
 
   toString(): string {
-    // this.normalize();
-    if (this.d === 1n) {
-      return this.n.toString();
+    const x = this.normalized();
+    if (x.d === 1n) {
+      return x.n.toString();
     }
-    return this.n.toString() + '/' + this.d.toString();
+    return x.n.toString() + '/' + x.d.toString();
   }
 
   valueOf() {
@@ -176,16 +173,19 @@ export class Rational extends Real {
     return `${ip}.${zeroPadRight(fp, fractionDigits)}e${e >= 0 ? ('+' + e) : e}`;
   }
 
-  private normalize() {
-    const _gcd = gcd(this.n, this.d);
+  private normalized() {
+    let n = this.n;
+    let d = this.d;
+    const _gcd = gcd(n, d);
+
     if (_gcd !== 0n && _gcd !== 1n) {
-      this.n /= _gcd;
-      this.d /= _gcd;      
+      n /= _gcd;
+      d /= _gcd;      
     }
     if (this.d < 0n) {
-      this.n *= -1n;
-      this.d *= -1n;
+      n *= -1n;
+      d *= -1n;
     }
-    return this;
+    return new Rational(n, d);
   }
 }

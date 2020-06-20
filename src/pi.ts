@@ -26,10 +26,6 @@ export class PI /* extends Real */ {
     return x instanceof PI;
   }
 
-  clone(): PI {
-    return this;
-  }
-
   abs() {
     return this;
   }

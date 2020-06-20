@@ -83,17 +83,6 @@ test('rationals from strings', t => {
   t.is(new Rational('9007199254740993333e11').toString(), '900719925474099333300000000000');
 });
 
-test('clone', t => {
-  const x = new Rational('1');
-  const y = x.clone();
-
-  // @ts-ignore
-  y.n = 2n;
-
-  t.is(x.valueOf(), 1);
-  t.is(y.valueOf(), 2);
-});
-
 test('normalize', t => {
   t.is(new Rational(1e11, 1e11).toString(), '1');
   t.is(new Rational(1e10, 1e11).toString(), '1/10');

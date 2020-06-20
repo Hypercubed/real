@@ -7,7 +7,7 @@ test('exp', t => {
   t.is(exp(0).toString(), '1.e+0');
 
                              // 2.71828182845904523536028747135266249775724709369995
-  t.is(exp( 1    ).toString(), '2.e+0');
+  t.is(exp( 1    ).toString(), '2.e+0');  // TODO: precision issue
   t.is(exp('1.0' ).toString(), '2.7e+0');
   t.is(exp('1.00').toString(), '2.70e+0');  // TODO: precision issue
 

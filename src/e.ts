@@ -22,10 +22,6 @@ export class E /* extends Real */ {
     return x instanceof E;
   }
 
-  clone(): E {
-    return this;
-  }
-
   abs() {
     return this;
   }

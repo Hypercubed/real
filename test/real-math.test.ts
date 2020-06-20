@@ -64,7 +64,7 @@ test('add', t => {
   t.is(Math.add(1.234, new Rational(3.456)).toString(), '4.690e+0');
   t.is(Math.add(1n, new Irrational(3.456)).toString(), '4.e+0');
 
-  t.is(Math.add(new Rational(1.234), new Irrational(3.456)).toString(), '4.69e+0');  // precision
+  t.is(Math.add(new Rational(1.234), new Irrational(3.456)).toString(), '4.690e+0');
   t.is(Math.add(new Irrational(1.234), new Rational(3.456)).toString(), '4.690e+0');
 });
 
@@ -78,7 +78,7 @@ test('sub', t => {
   t.is(Math.sub(1.234, new Rational(3.456)).toString(), '-2.222e+0');
   t.is(Math.sub(1n, new Irrational(3.456)).toString(), '-2.e+0');
 
-  t.is(Math.sub(new Rational(1.234), new Irrational(3.456)).toString(), '-2.22e+0');  // precision
+  t.is(Math.sub(new Rational(1.234), new Irrational(3.456)).toString(), '-2.222e+0');
   t.is(Math.sub(new Irrational(1.234), new Rational(3.456)).toString(), '-2.222e+0');
 });
 
@@ -89,11 +89,11 @@ test('mul', t => {
   t.is(Math.mul(new Rational(1.234), new Rational(3.456)).toString(), '66636/15625');
   t.is(Math.mul(new Irrational(1.234), new Irrational(3.456)).toString(), '4.264e+0');
 
-  t.is(Math.mul(1.234, new Rational(3.456)).toString(), '4.26e+0');  // TODO: precision
+  t.is(Math.mul(1.234, new Rational(3.456)).toString(), '4.264e+0');
   t.is(Math.mul(2n, new Irrational(3.456)).toString(),  '6.e+0');
 
-  t.is(Math.mul(new Rational(1.234), new Irrational(3.456)).toString(), '4.26e+0');  // TODO: precision
-  t.is(Math.mul(new Irrational(1.234), new Rational(3.456)).toString(), '4.26e+0');  // TODO: precision
+  t.is(Math.mul(new Rational(1.234), new Irrational(3.456)).toString(), '4.264e+0');
+  t.is(Math.mul(new Irrational(1.234), new Rational(3.456)).toString(), '4.264e+0');
 });
 
 test('div', t => {
@@ -130,7 +130,7 @@ test('ln', t => {
   t.is(Math.ln(3.456).toString(), '1.242e+0');  // precision
                                 // 1.240111850941809188052386196921720467667668148103716205948...
 
-  t.is(Math.ln(new Rational(1.234)).toString(), '2.13e-1'); // precision
+  t.is(Math.ln(new Rational(1.234)).toString(), '2.135e-1'); // precision
                                             // 0.2_102609254831960713608294360152747699866305851127995
 
   t.is(Math.ln(new Irrational(3.456)).toString(), '1.242e+0'); // precision
