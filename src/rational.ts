@@ -1,5 +1,5 @@
 import Real from './real';
-import { parseValue } from './util';
+import { parseValue, zeroPadRight, gcd } from './util';
 
 import { guard, conversion } from '@hypercubed/dynamo';
 
@@ -105,6 +105,10 @@ export default class Rational extends Real {
   }
 
   trunc(): bigint {
+    const t = this.n / this.d;
+    if (t === 0n && this.isNegitive()) {
+      return -0n;
+    }
     return this.n / this.d;
   }
 
@@ -149,14 +153,27 @@ export default class Rational extends Real {
   }
 
   toFixed(digits: number): string {
-    const ip = this.trunc();
+    let ip = this.trunc().toString();
     if (digits < 1) {
       return ip.toString();
     }
+    if (ip === '0' && this.isNegitive()) {
+      ip = '-0';
+    }
     const f = 10n**BigInt(digits);
     const fp = this.fp();
-    const fp2 = zeroPad((fp.n*f/fp.d).toString(), digits);
+    const fp2 = zeroPadRight((fp.n*f/fp.d).toString(), digits);
     return `${ip}.${fp2}`;
+  }
+
+  toExponential(fractionDigits: number) {
+    const n = this.isNegitive() ? 2 : 1;
+    const f = 10n**BigInt(fractionDigits + 1);
+    const s = (this.n*f/this.d).toString();
+    let ip = s.slice(0, n);
+    const fp = s.slice(n);
+    const e = fp.length - fractionDigits - 1;
+    return `${ip}.${zeroPadRight(fp, fractionDigits)}e${e >= 0 ? ('+' + e) : e}`;
   }
 
   private normalize() {
@@ -171,33 +188,4 @@ export default class Rational extends Real {
     }
     return this;
   }
-}
-
-/* function gcd(a: bigint, b: bigint): bigint {
-  if (a === 0n) return b;
-  if (b === 0n) return a;
-  if (a === b) return a;
-
-  // remove power 10 divisors
-  let sa = 0n;
-  while (!(a % 10n)) {
-    sa++;
-    a /= 10n;
-  }
-  let sb = 0n;
-  while (!(b % 10n)) {
-    sb++
-    b /= 10n
-  };
-
-  const p = sa < sb ? sa : sb;
-  return 10n ** p;
-}; */
-
-function gcd(a: bigint, b: bigint): bigint {
-  return b ? gcd(b, a % b) : (a > 0n ? a : -a);
-}
-
-function zeroPad(s: string, digits: number) {
-  return (s + '0'.repeat(digits)).slice(0, digits);
 }

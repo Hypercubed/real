@@ -1,7 +1,7 @@
 import { guard, conversion } from '@hypercubed/dynamo';
 
 import Real from './real';
-import { parseValue } from './util';
+import { parseValue, zeroPadRight, zeroPadLeft } from './util';
 import Rational from './rational';
 
 type InputValue = bigint | number | string | Irrational;
@@ -57,14 +57,19 @@ export default class Irrational extends Real {
     return new Irrational(x);
   }
 
-  constructor(value: InputValue) {
+  constructor(value: InputValue, e?: number) {
     super();
 
     if (value instanceof Irrational) {
       return value.clone();
     }
 
-    [this.s, this.e] = parseValue(value);
+    if (typeof e !== 'undefined') {
+      [this.s] = arguments;
+      this.e = e;
+    } else {
+      [this.s, this.e] = parseValue(value);
+    }
   }
 
   clone() {
@@ -364,6 +369,28 @@ export default class Irrational extends Real {
     return Number(this.toString());
   }
 
+  toFixed(digits: number): string {
+    let ip = this.trunc().toString();
+    if (digits < 1) {
+      return ip.toString();
+    }
+    if (ip === '0' && this.isNegitive()) {
+      ip = '-0';
+    }
+    const fp = this.fp();
+    const fps = zeroPadLeft(fp.s.toString(), fp.e);
+    return `${ip}.${zeroPadRight(fps, digits)}`;
+  }
+
+  toExponential(fractionDigits: number) {
+    const n = this.isNegitive() ? 2 : 1;
+    const s = this.s.toString();
+    const ip = s.slice(0, n);
+    const fp = s.slice(n);
+    const e = fp.length + this.e;
+    return `${ip}.${zeroPadRight(fp, fractionDigits)}e${e >= 0 ? ('+' + e) : e}`;
+  }
+
   protected sigfigs() {
     const n = this.isNegitive() ? 1 : 0;
     return this.s.toString().length - n;
@@ -413,5 +440,3 @@ export default class Irrational extends Real {
     return x;
   }
 }
-
-

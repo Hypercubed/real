@@ -67,6 +67,12 @@ test('Irrationals from strings', t => {
   t.is(new Irrational('9007199254740993333e11').toString(), '9.0071992547409933330e+29');
 });
 
+test('Irrationals from pairs', t => {
+  t.is(new Irrational(1, 0).valueOf(), 1);
+  t.is(new Irrational(1, 1).valueOf(), 10);
+  t.is(new Irrational(1, -3).valueOf(), 0.001);
+});
+
 test('clone', t => {
   const x = new Irrational('1');
   const y = x.clone();
@@ -95,4 +101,16 @@ test('constants', t => {
 
 });
 
+test('toFixed', t=> {
+  t.is(new Irrational(77.1234).toFixed(2), '77.12');
+  t.is(new Irrational(77.1234e3).toFixed(2), '77123.40');
+  t.is(new Irrational(-77.1234e-3).toFixed(2), '-0.07');
+  t.is(new Irrational(-77.1234e-10).toFixed(10), '-0.0000000077');
+});
+
+test('toExponential', t=> {
+  t.is(new Irrational(77.1234).toExponential(2), '7.71e+1');
+  t.is(new Irrational(77.1234e3).toExponential(2), '7.71e+4');
+  t.is(new Irrational(-77.1234e-3).toExponential(2), '-7.71e-2');
+});
 

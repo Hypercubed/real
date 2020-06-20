@@ -19,3 +19,21 @@ export function parseValue(value: bigint | number | string | null | undefined): 
   const e = parseInt(se || '0', 10) + (k < 0 ? 0 : k - ss.length);
   return [n, e];
 }
+
+export function absDiff(a: bigint, b: bigint): bigint {
+  return a > b ? a - b : b - a;
+}
+
+export function zeroPadRight(s: string, digits: number) {
+  const n = Math.max(0, digits - s.length);
+  return (s + '0'.repeat(n)).slice(0, digits);
+}
+
+export function zeroPadLeft(s: string, digits: number) {
+  const n = Math.max(0, -digits - s.length);
+  return ('0'.repeat(n) + s).slice(digits);
+}
+
+export function gcd(a: bigint, b: bigint): bigint {
+  return b ? gcd(b, a % b) : (a > 0n ? a : -a);
+}

@@ -9,7 +9,7 @@ const dynamo = new Dynamo();
 class Defn {
   @guard(BigInt)
   static isBigInt(x: any): boolean {
-    // tslint:disable-next-line:valid-typeof
+    // tslint:disable-next-line
     return typeof x === 'bigint';
   }
 }
