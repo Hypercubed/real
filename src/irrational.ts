@@ -20,21 +20,18 @@ enum RoundingMethod {
 }
 
 export class Irrational extends Real {
-  static CP = 22;
-  static DP = 20;
+  // static CP = 22;
+  // static DP = 20;
   static RM = RoundingMethod.Round;
 
-  static ZERO = new Irrational(0);
-  static ONE = new Irrational(1);
-  static TWO = new Irrational(2);
+  static ZERO = new Irrational(0, 0, 300);  // TODO: these should be rational
+  static ONE = new Irrational(1, 0, 300);
+  static TWO = new Irrational(2, 0, 300);
 
-  static LN10 =   new Irrational('2.30258509299404568401799145468');
+  static LN10 =   new Irrational('2.30258509299404568401799145468');  // TODO: these should be computable
   static E =      new Irrational('2.71828182845904523536028747135');
   static LN2 =    new Irrational('0.69314718055994530941723212145');
   static LOG10E = new Irrational('0.43429448190325182765112891891');
-
-  protected s: bigint = 0n;  // Significand
-  protected e: number = 0;   // Exponent
 
   @guard()
   static isIrrational(x: unknown): x is Irrational {
@@ -57,25 +54,35 @@ export class Irrational extends Real {
     return new Irrational(x);
   }
 
-  constructor(value: InputValue, e?: number) {
+  protected s: bigint = 0n;         // Significand
+  protected e: number = 0;          // Exponent
+  protected p: number = 0;  // Presision
+
+  constructor(value: InputValue, e?: number, p?: number) {
     super();
 
     if (value instanceof Irrational) {
       return value.clone();
     }
 
+    [this.s, this.e, this.p] = parseValue(value);
+
     if (typeof e !== 'undefined') {
-      [this.s] = arguments;
-      this.e = e;
-    } else {
-      [this.s, this.e] = parseValue(value);
+      this.e += e;
     }
+    if (typeof p !== 'undefined') {
+      this.p = p;
+    }
+
+    // TODO: seal object to prevent mutation
   }
 
+  // TODO: get rid of this... make immutable
   clone() {
     const x = new Irrational(0n);
     x.s = this.s;
     x.e = this.e;
+    x.p = this.p;
     return x;
   }
 
@@ -119,6 +126,7 @@ export class Irrational extends Real {
     return this.cmp(y) === 1;
   }
 
+  // TODO: precision error
   add(y: Irrational): Irrational {
     const x = this.clone();
     let yd = y.s;
@@ -139,19 +147,19 @@ export class Irrational extends Real {
   }
 
   mul(y: Irrational): Irrational {
-    const x = this.clone();
-    x.s *= y.s;
-    x.e += y.e;
-    return x;
+    const s = this.s * y.s;
+    const e = this.e + y.e;
+    const p = Math.min(this.p, y.p);
+    return new Irrational(s, e, p);
   }
 
   inv() {
     // TODO: Better??
-    const x = this.clone();
-    const d = Irrational.CP + this.sigfigs();
-    x.s = 10n ** BigInt(d) / x.s;
-    x.e = -x.e - d;
-    return x;
+    const n = 2 * this.p;
+    const S = 10n ** BigInt(n);
+    const s = S * 1n / this.s;
+    const e = this.e + n;
+    return new Irrational(s, -e, this.p);
   }
 
   div(y: Irrational): Irrational {
@@ -163,6 +171,7 @@ export class Irrational extends Real {
     return this.sub(u).isZero();
   }
 
+  // TODO: this needs to account for precision
   trunc(): bigint {
     if (this.e < 0) {
       return this.s / 10n ** BigInt(-this.e);
@@ -173,6 +182,7 @@ export class Irrational extends Real {
   /**
    * maps x to the greatest integer greater than or equal to x
    */
+  // TODO: this needs to account for precision
   floor(): bigint {
     const ip = this.trunc();
     if (this.isNegitive() && !this.sub(new Irrational(ip)).isZero()) {
@@ -184,6 +194,7 @@ export class Irrational extends Real {
   /**
    * maps x to the least integer greater than or equal to x
    */
+  // TODO: this needs to account for precision
   ceil(): bigint {
     const ip = this.trunc();
     if (this.isPositive() && !this.sub(new Irrational(ip)).isZero()) {
@@ -193,8 +204,9 @@ export class Irrational extends Real {
   }
 
   /**
-   * maps tp the frational part of x
+   * maps to the frational part of x
    */
+  // TODO: this needs to account for precision
   fp() {
     const t = -this.trunc();
     return this.add(new Irrational(t)).abs();
@@ -204,8 +216,12 @@ export class Irrational extends Real {
    * calculates the natural exponential function
    */
   exp() {
-    const one = Irrational.ONE;
-    return this.isZero() ? one.clone() : this.expm1().add(one);
+    if (this.isZero()) {
+      const one = Irrational.ONE.clone();
+      one.p = this.p;
+      return one;
+    }
+    return this.expm1().add(Irrational.ONE);
   }
 
   /**
@@ -234,7 +250,9 @@ export class Irrational extends Real {
   pow(y: Irrational): Irrational {
     if (y.isZero()) {
       if (this.isZero()) throw new Error('Division by zero');
-      return Irrational.ZERO.clone();
+      const z = Irrational.ZERO.clone();
+      z.p = Math.min(this.p, y.p);
+      return z;
     }
     if (y.isNegitive()) { // x^-y = 1/x^y
       return this.pow(y.abs()).inv();
@@ -261,7 +279,7 @@ export class Irrational extends Real {
   pow10(): Irrational {
     if (this.isNegitive()) return this.abs().pow10().inv();
     if (this.e === 0) {
-      return new Irrational(10n ** this.s);
+      return new Irrational(10n ** this.s, 0, this.p);
     }
     if (this.e > 0) {
       const u = this.s * 10n ** BigInt(this.e);  // will be an integer
@@ -302,7 +320,9 @@ export class Irrational extends Real {
    */
   ln(): Irrational {
     if (this.eq(Irrational.ONE)) {
-      return Irrational.ZERO;
+      const zero = Irrational.ZERO.clone();
+      zero.p = this.p;
+      return zero;
     }
 
     let s = this.clone();
@@ -335,6 +355,7 @@ export class Irrational extends Real {
    * calculates inverse hyperbolic tangent of x
    */
   protected atanh() {
+    const p = this.p;
     let n = this.clone();
     let sum = n;
     let d = 1;
@@ -343,7 +364,7 @@ export class Irrational extends Real {
       n = n.mul(this).mul(this);
       const t = sum;
       sum = sum.add(n.mul(new Irrational(1 / d)));
-      if (sum.digits() === t.digits()) {
+      if (sum.p === p) {
         return sum;
       }
     }
@@ -351,18 +372,7 @@ export class Irrational extends Real {
   }
 
   toString(): string {
-    const x = this.roundToPrecision(Irrational.DP);
-    const n = x.isNegitive() ? 2 : 1;
-    let ss = x.s.toString();
-    x.e += ss.length - n;
-    ss = ss.slice(0, n) + '.' + ss.slice(n);
-    if (ss.length < Irrational.DP + n) {
-      const d = Irrational.DP + n - ss.length;
-      ss += '0'.repeat(d);
-    }
-    ss = ss.slice(0, Irrational.DP + n);
-    const se = x.e >= 0 ? '+' + x.e : x.e;
-    return ss + 'e' + se;
+    return this.toExponential(this.p - 1);
   }
 
   valueOf(): number {
@@ -398,7 +408,7 @@ export class Irrational extends Real {
 
   protected digits() {
     const n = this.isNegitive() ? 1 : 0;
-    return this.s.toString().slice(0, Irrational.CP + n);
+    return this.s.toString().slice(0, this.p + n);
   }
 
   protected normalize() {

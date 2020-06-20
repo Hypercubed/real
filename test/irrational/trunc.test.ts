@@ -1,7 +1,7 @@
 import test from 'ava';
 import { Irrational } from '../../src/irrational';
 
-test('trunc', t => {
+test.skip('trunc', t => {
   const trunc = (x: any) => new Irrational(x).trunc();
 
   t.is(trunc(1),   1n);

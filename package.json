@@ -23,8 +23,8 @@
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
     "test": "ava",
-    "test:watch": "ava --watch --verbose",
-    "test:prod": "npm run lint && npm run test -- --no-cache",
+    "test:watch": "ava --watch --verbose --only",
+    "test:prod": "npm run lint && ava --no-cache",
     "report-coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "lint-staged": {
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@types/node": "^10.11.0",
-    "ava": "^2.2.0",
+    "ava": "^2.4.0",
     "coveralls": "^3.0.2",
     "lodash.camelcase": "^4.3.0",
     "prettier": "^1.14.3",
