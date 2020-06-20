@@ -1,5 +1,5 @@
 import test from 'ava';
-import Rational from '../../src/rational';
+import { Rational } from '../../src/rational';
 
 test('mul', t => {
   const mul = (x: any, y: any) => new Rational(x).mul(new Rational(y)).toString();

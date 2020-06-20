@@ -1,5 +1,5 @@
 import test from 'ava';
-import Irrational from '../../src/irrational';
+import { Irrational } from '../../src/irrational';
 
 test('log', t => {
   const log = (v: any) => new Irrational(v).log10().toString();

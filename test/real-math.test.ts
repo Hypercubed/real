@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import Rational from '../src/rational';
-import Irrational from '../src/irrational';
+import { Rational } from '../src/rational';
+import { Irrational } from '../src/irrational';
 import * as Math from '../src/real-math';
 
 test('abs', t => {

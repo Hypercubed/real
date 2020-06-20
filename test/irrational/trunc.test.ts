@@ -1,8 +1,8 @@
 import test from 'ava';
-import Real from '../../src/irrational';
+import { Irrational } from '../../src/irrational';
 
 test('trunc', t => {
-  const trunc = (x: any) => new Real(x).trunc();
+  const trunc = (x: any) => new Irrational(x).trunc();
 
   t.is(trunc(1),   1n);
   t.is(trunc(-1), -1n);

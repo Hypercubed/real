@@ -1,6 +1,6 @@
 import { guard } from '@hypercubed/dynamo';
 
-import Irrational from './irrational';
+import { Irrational } from './irrational';
 import { absDiff } from './util';
 
 // Babylonian method
@@ -20,7 +20,7 @@ function calcSQRT(N: number) {
   return new Irrational(x, -n);
 }
 
-export default class SQRT2 /* extends Real */ {
+export class SQRT2 /* extends Real */ {
   @guard()
   static isSQRT2(x: unknown): x is SQRT2 {
     return x instanceof SQRT2;

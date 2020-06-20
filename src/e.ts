@@ -1,6 +1,6 @@
 import { guard } from '@hypercubed/dynamo';
 
-import Irrational from './irrational';
+import { Irrational } from './irrational';
 
 function calcE(N: number) {
   const n = N + 20;
@@ -16,7 +16,7 @@ function calcE(N: number) {
   return new Irrational(e, -n);
 }
 
-export default class E /* extends Real */ {
+export class E /* extends Real */ {
   @guard()
   static isE(x: unknown): x is E {
     return x instanceof E;

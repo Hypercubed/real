@@ -1,6 +1,6 @@
 import { guard } from '@hypercubed/dynamo';
 
-import Irrational from './irrational';
+import { Irrational } from './irrational';
 
 // from http://ajennings.net/blog/a-million-digits-of-pi-in-9-lines-of-javascript.html
 // series expansion of the arcsine function
@@ -20,13 +20,13 @@ function calcPi(N: number) {
   return new Irrational(pi, -e);
 }
 
-export default class Pi /* extends Real */ {
+export class PI /* extends Real */ {
   @guard()
-  static isPi(x: unknown): x is Pi {
-    return x instanceof Pi;
+  static isPI(x: unknown): x is PI {
+    return x instanceof PI;
   }
 
-  clone(): Pi {
+  clone(): PI {
     return this;
   }
 

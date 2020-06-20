@@ -3,7 +3,7 @@ import { parseValue, zeroPadRight, gcd } from './util';
 
 import { guard, conversion } from '@hypercubed/dynamo';
 
-export default class Rational extends Real {
+export class Rational extends Real {
   protected n: bigint = 0n;
   protected d: bigint = 1n;
 

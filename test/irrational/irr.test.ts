@@ -1,5 +1,5 @@
 import test from 'ava';
-import Irrational from '../../src/irrational';
+import { Irrational } from '../../src/irrational';
 
 test('Irrational is instantiable', t => {
   t.true(new Irrational(1n) instanceof Irrational);

@@ -1,26 +1,26 @@
 import test from 'ava';
-import Pi from '../../src/pi';
+import { PI } from  '../../src/pi';
 
 test('Pi is instantiable', t => {
-  t.true(new Pi() instanceof Pi);
+  t.true(new PI() instanceof PI);
 });
 
 test('Pi', t => {      // 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-  t.is(new Pi().isPositive(), true);
-  t.is(new Pi().isNegitive(), false);
-  t.is(new Pi().trunc(), 3n);
-  t.is(new Pi().floor(), 3n);
-  t.is(new Pi().ceil(), 4n);
+  t.is(new PI().isPositive(), true);
+  t.is(new PI().isNegitive(), false);
+  t.is(new PI().trunc(), 3n);
+  t.is(new PI().floor(), 3n);
+  t.is(new PI().ceil(), 4n);
 });
 
 test('Pi#toFixed', t => {      // 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-  t.is(new Pi().toFixed(10), '3.1415926535');
-  t.is(new Pi().toFixed(50), '3.14159265358979323846264338327950288419716939937510');
-  t.is(new Pi().toFixed(80), '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899');
+  t.is(new PI().toFixed(10), '3.1415926535');
+  t.is(new PI().toFixed(50), '3.14159265358979323846264338327950288419716939937510');
+  t.is(new PI().toFixed(80), '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899');
 });
 
 test('Pi#toExponential', t => {      // 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-  t.is(new Pi().toExponential(10), '3.1415926535e+0');
-  t.is(new Pi().toExponential(50), '3.14159265358979323846264338327950288419716939937510e+0');
-  t.is(new Pi().toExponential(80), '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899e+0');
+  t.is(new PI().toExponential(10), '3.1415926535e+0');
+  t.is(new PI().toExponential(50), '3.14159265358979323846264338327950288419716939937510e+0');
+  t.is(new PI().toExponential(80), '3.14159265358979323846264338327950288419716939937510582097494459230781640628620899e+0');
 });

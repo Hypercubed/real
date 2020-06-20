@@ -1,5 +1,5 @@
-import Rational from './rational';
-import Irrational from './irrational';
+import { Rational } from './rational';
+import { Irrational } from './irrational';
 import Real from './real';
 
 import { Dynamo, guard, signature } from '@hypercubed/dynamo';

@@ -1,5 +1,5 @@
 import test from 'ava';
-import E from '../../src/e';
+import { E } from '../../src/e';
 
 test('E is instantiable', t => {
   t.true(new E() instanceof E);

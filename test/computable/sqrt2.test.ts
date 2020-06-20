@@ -1,5 +1,5 @@
 import test from 'ava';
-import SQRT2 from '../../src/sqrt2';
+import { SQRT2 } from '../../src/sqrt2';
 
 test('SQRT2 is instantiable', t => {
   t.true(new SQRT2() instanceof SQRT2);

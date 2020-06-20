@@ -2,7 +2,7 @@ import { guard, conversion } from '@hypercubed/dynamo';
 
 import Real from './real';
 import { parseValue, zeroPadRight, zeroPadLeft } from './util';
-import Rational from './rational';
+import { Rational } from './rational';
 
 type InputValue = bigint | number | string | Irrational;
 
@@ -19,7 +19,7 @@ enum RoundingMethod {
   Ciel = 'ceil'
 }
 
-export default class Irrational extends Real {
+export class Irrational extends Real {
   static CP = 22;
   static DP = 20;
   static RM = RoundingMethod.Round;
