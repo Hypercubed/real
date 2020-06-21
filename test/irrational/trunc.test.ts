@@ -1,31 +1,30 @@
-import test from 'ava';
 import { Irrational } from '../../src/irrational';
 
-test.skip('trunc', t => {
+test.skip('trunc', () => {
   const trunc = (x: any) => new Irrational(x).trunc();
 
-  t.is(trunc(1),   1n);
-  t.is(trunc(-1), -1n);
-  t.is(trunc(2),   2n);
-  t.is(trunc(-2), -2n);
+  expect(trunc(1)).toBe(1n);
+  expect(trunc(-1)).toBe(-1n);
+  expect(trunc(2)).toBe(2n);
+  expect(trunc(-2)).toBe(-2n);
 
-  t.is(trunc(0.1), 0n);
-  t.is(trunc(2.5), 2n);
-  t.is(trunc(10),  10n);
+  expect(trunc(0.1)).toBe(0n);
+  expect(trunc(2.5)).toBe(2n);
+  expect(trunc(10)).toBe(10n);
 
-  t.is(trunc(-0.1),  0n);
-  t.is(trunc(-2.5), -2n);
-  t.is(trunc(-10),  -10n);
+  expect(trunc(-0.1)).toBe(0n);
+  expect(trunc(-2.5)).toBe(-2n);
+  expect(trunc(-10)).toBe(-10n);
 
-  t.is(trunc(9007199254740992n),       9007199254740992n);
-  t.is(trunc(9007199254740994n),       9007199254740994n);
-  t.is(trunc(10_000_000_000_000_000n), 10_000_000_000_000_000n);
+  expect(trunc(9007199254740992n)).toBe(9007199254740992n);
+  expect(trunc(9007199254740994n)).toBe(9007199254740994n);
+  expect(trunc(10_000_000_000_000_000n)).toBe(10_000_000_000_000_000n);
 
-  t.is(trunc('900719.9254740992'), 900719n);
-  t.is(trunc('90071992.54740994'), 90071992n);
-  t.is(trunc(10_000_000.00000),    10_000_000n);
+  expect(trunc('900719.9254740992')).toBe(900719n);
+  expect(trunc('90071992.54740994')).toBe(90071992n);
+  expect(trunc(10_000_000.00000)).toBe(10_000_000n);
 
-  t.is(trunc('-900719.9254740992'), -900719n);
-  t.is(trunc('-90071992.54740994'), -90071992n);
-  t.is(trunc(-10_000_000.00000),    -10_000_000n);
+  expect(trunc('-900719.9254740992')).toBe(-900719n);
+  expect(trunc('-90071992.54740994')).toBe(-90071992n);
+  expect(trunc(-10_000_000.00000)).toBe(-10_000_000n);
 });

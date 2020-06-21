@@ -1,17 +1,16 @@
-import test from 'ava';
 import { Irrational } from '../../src/irrational';
 
-test('pow10', t => {
+test('pow10', () => {
   const pow10 = (x: any) => new Irrational(x).pow10();
 
-  t.is(pow10(1).toString(), '1.e+1');
-  t.is(pow10(2).toString(), '1.e+2');
+  expect(pow10(1).toString()).toBe('1.e+1');
+  expect(pow10(2).toString()).toBe('1.e+2');
 
-  t.is(pow10(10).toString(), '1.0e+10');
-  t.is(pow10(200).toString(), '1.00e+200');
+  expect(pow10(10).toString()).toBe('1.0e+10');
+  expect(pow10(200).toString()).toBe('1.00e+200');
 
-  t.is(pow10(-1).toString(), '1.e-1');
-  t.is(pow10(-2).toString(), '1.e-2');
+  expect(pow10(-1).toString()).toBe('1.e-1');
+  expect(pow10(-2).toString()).toBe('1.e-2');
 
                                    // 1.023292992280754130966275174819877827341164057237981308599
   // t.is(pow10( 0.01     ).toString(), '1.e+0');

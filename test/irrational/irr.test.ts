@@ -1,100 +1,99 @@
-import test from 'ava';
 import { Irrational } from '../../src/irrational';
 
-test('Irrational is instantiable', t => {
-  t.true(new Irrational(1n) instanceof Irrational);
+test('Irrational is instantiable', () => {
+  expect(new Irrational(1n) instanceof Irrational).toBe(true);
 });
 
-test('Irrationals from bigints', t => {
+test('Irrationals from bigints', () => {
   // Bigints
-  t.is(new Irrational(1n).toString(), '1.e+0');
-  t.is(new Irrational(-1n).toString(), '-1.e+0');
-  t.is(new Irrational(2n).toString(), '2.e+0');
-  t.is(new Irrational(-2n).toString(), '-2.e+0');
+  expect(new Irrational(1n).toString()).toBe('1.e+0');
+  expect(new Irrational(-1n).toString()).toBe('-1.e+0');
+  expect(new Irrational(2n).toString()).toBe('2.e+0');
+  expect(new Irrational(-2n).toString()).toBe('-2.e+0');
 
-  t.is(new Irrational(10n).toString(), '1.0e+1');
-  t.is(new Irrational(-100n).toString(), '-1.00e+2');
-  t.is(new Irrational(2000n).toString(), '2.000e+3');
-  t.is(new Irrational(-20000n).toString(), '-2.0000e+4');
+  expect(new Irrational(10n).toString()).toBe('1.0e+1');
+  expect(new Irrational(-100n).toString()).toBe('-1.00e+2');
+  expect(new Irrational(2000n).toString()).toBe('2.000e+3');
+  expect(new Irrational(-20000n).toString()).toBe('-2.0000e+4');
 
-  t.is(new Irrational(9007199254740993n).toString(), '9.007199254740993e+15');
-  t.is(new Irrational(9007199254740993333n).toString(), '9.007199254740993333e+18');
+  expect(new Irrational(9007199254740993n).toString()).toBe('9.007199254740993e+15');
+  expect(new Irrational(9007199254740993333n).toString()).toBe('9.007199254740993333e+18');
 });
 
-test('Irrationals from numbers', t => {
+test('Irrationals from numbers', () => {
   // numbers (integers)
-  t.is(new Irrational(1).toString(), '1.e+0');
-  t.is(new Irrational(-1).toString(), '-1.e+0');
-  t.is(new Irrational(2).toString(), '2.e+0');
-  t.is(new Irrational(-2).toString(), '-2.e+0');
+  expect(new Irrational(1).toString()).toBe('1.e+0');
+  expect(new Irrational(-1).toString()).toBe('-1.e+0');
+  expect(new Irrational(2).toString()).toBe('2.e+0');
+  expect(new Irrational(-2).toString()).toBe('-2.e+0');
 
   // numbers (floats)
-  t.is(new Irrational(1.5).toString(), '1.5e+0');
-  t.is(new Irrational(-1.5).toString(), '-1.5e+0');
-  t.is(new Irrational(2.5).toString(), '2.5e+0');
-  t.is(new Irrational(-2.5).toString(), '-2.5e+0');
+  expect(new Irrational(1.5).toString()).toBe('1.5e+0');
+  expect(new Irrational(-1.5).toString()).toBe('-1.5e+0');
+  expect(new Irrational(2.5).toString()).toBe('2.5e+0');
+  expect(new Irrational(-2.5).toString()).toBe('-2.5e+0');
 
-  t.is(new Irrational(3.14159).toString(), '3.14159e+0');
-  t.is(new Irrational(-2.71828).toString(), '-2.71828e+0');
-  t.is(new Irrational(314.159).toString(), '3.14159e+2');
-  t.is(new Irrational(-27182.8).toString(), '-2.71828e+4');
+  expect(new Irrational(3.14159).toString()).toBe('3.14159e+0');
+  expect(new Irrational(-2.71828).toString()).toBe('-2.71828e+0');
+  expect(new Irrational(314.159).toString()).toBe('3.14159e+2');
+  expect(new Irrational(-27182.8).toString()).toBe('-2.71828e+4');
 });
 
-test.only('Irrationals from strings', t => {
+test.only('Irrationals from strings', () => {
   // strings (integers)
-  t.is(new Irrational('1').toString(), '1.e+0');
-  t.is(new Irrational('-1').toString(), '-1.e+0');
-  t.is(new Irrational('2').toString(), '2.e+0');
-  t.is(new Irrational('-2').toString(), '-2.e+0');
+  expect(new Irrational('1').toString()).toBe('1.e+0');
+  expect(new Irrational('-1').toString()).toBe('-1.e+0');
+  expect(new Irrational('2').toString()).toBe('2.e+0');
+  expect(new Irrational('-2').toString()).toBe('-2.e+0');
 
-  t.is(new Irrational('9007199254740993').toString(),    '9.007199254740993e+15');
-  t.is(new Irrational('9007199254740993333').toString(), '9.007199254740993333e+18');
-  t.is(new Irrational('9_007_199_254_740_993_333').toString(), '9.007199254740993333e+18');
+  expect(new Irrational('9007199254740993').toString()).toBe('9.007199254740993e+15');
+  expect(new Irrational('9007199254740993333').toString()).toBe('9.007199254740993333e+18');
+  expect(new Irrational('9_007_199_254_740_993_333').toString()).toBe('9.007199254740993333e+18');
 
   // strings (floats)
-  t.is(new Irrational('0.0').toString(), '0.0e+0');
-  t.is(new Irrational('0.0000').toString(), '0.0000e+0');
+  expect(new Irrational('0.0').toString()).toBe('0.0e+0');
+  expect(new Irrational('0.0000').toString()).toBe('0.0000e+0');
 
-  t.is(new Irrational('-0.0').toString(), '0.0e+0');
-  t.is(new Irrational('-0.0000').toString(), '0.0000e+0');
+  expect(new Irrational('-0.0').toString()).toBe('0.0e+0');
+  expect(new Irrational('-0.0000').toString()).toBe('0.0000e+0');
 
-  t.is(new Irrational('0.1').toString(), '1.e-1');
-  t.is(new Irrational('-0.20').toString(), '-2.0e-1');
-  t.is(new Irrational('10.0').toString(), '1.00e+1');
-  t.is(new Irrational('-20.00').toString(), '-2.000e+1');
+  expect(new Irrational('0.1').toString()).toBe('1.e-1');
+  expect(new Irrational('-0.20').toString()).toBe('-2.0e-1');
+  expect(new Irrational('10.0').toString()).toBe('1.00e+1');
+  expect(new Irrational('-20.00').toString()).toBe('-2.000e+1');
 
-  t.is(new Irrational('1.0').toString(), '1.0e+0');
-  t.is(new Irrational('-1.00').toString(), '-1.00e+0');
-  t.is(new Irrational('2.000').toString(), '2.000e+0');
-  t.is(new Irrational('-2.0000').toString(), '-2.0000e+0');
+  expect(new Irrational('1.0').toString()).toBe('1.0e+0');
+  expect(new Irrational('-1.00').toString()).toBe('-1.00e+0');
+  expect(new Irrational('2.000').toString()).toBe('2.000e+0');
+  expect(new Irrational('-2.0000').toString()).toBe('-2.0000e+0');
 
-  t.is(new Irrational('1.5').toString(), '1.5e+0');
-  t.is(new Irrational('-1.5').toString(), '-1.5e+0');
-  t.is(new Irrational('2.5').toString(), '2.5e+0');
-  t.is(new Irrational('-2.5').toString(), '-2.5e+0');
+  expect(new Irrational('1.5').toString()).toBe('1.5e+0');
+  expect(new Irrational('-1.5').toString()).toBe('-1.5e+0');
+  expect(new Irrational('2.5').toString()).toBe('2.5e+0');
+  expect(new Irrational('-2.5').toString()).toBe('-2.5e+0');
 
-  t.is(new Irrational('3.14159').toString(), '3.14159e+0');
-  t.is(new Irrational('-2.71828').toString(), '-2.71828e+0');
-  t.is(new Irrational('314.159').toString(), '3.14159e+2');
-  t.is(new Irrational('-27182.8').toString(), '-2.71828e+4');
+  expect(new Irrational('3.14159').toString()).toBe('3.14159e+0');
+  expect(new Irrational('-2.71828').toString()).toBe('-2.71828e+0');
+  expect(new Irrational('314.159').toString()).toBe('3.14159e+2');
+  expect(new Irrational('-27182.8').toString()).toBe('-2.71828e+4');
 
-  t.is(new Irrational('0.000314159').toString(), '3.14159e-4');
-  t.is(new Irrational('-0.0271828').toString(), '-2.71828e-2');
+  expect(new Irrational('0.000314159').toString()).toBe('3.14159e-4');
+  expect(new Irrational('-0.0271828').toString()).toBe('-2.71828e-2');
 
-  t.is(new Irrational('90071992.54740993').toString(),    '9.007199254740993e+7');
-  t.is(new Irrational('90071992.54740993333').toString(), '9.007199254740993333e+7');
+  expect(new Irrational('90071992.54740993').toString()).toBe('9.007199254740993e+7');
+  expect(new Irrational('90071992.54740993333').toString()).toBe('9.007199254740993333e+7');
 
   // strings (exp)
-  t.is(new Irrational('9007199254740993e-8').toString(),    '9.007199254740993e+7');
-  t.is(new Irrational('9007199254740993333e11').toString(), '9.007199254740993333e+29');
+  expect(new Irrational('9007199254740993e-8').toString()).toBe('9.007199254740993e+7');
+  expect(new Irrational('9007199254740993333e11').toString()).toBe('9.007199254740993333e+29');
 
-  t.is(new Irrational('0.00_000_000_000_000_01').toString(), '1.e-16');
+  expect(new Irrational('0.00_000_000_000_000_01').toString()).toBe('1.e-16');
 });
 
-test('Irrationals from pairs', t => {
-  t.is(new Irrational(1, 0).toString(), '1.e+0');
-  t.is(new Irrational(1, 1).toString(), '1.e+1');
-  t.is(new Irrational(1, -3).toString(), '1.e-3');
+test('Irrationals from pairs', () => {
+  expect(new Irrational(1, 0).toString()).toBe('1.e+0');
+  expect(new Irrational(1, 1).toString()).toBe('1.e+1');
+  expect(new Irrational(1, -3).toString()).toBe('1.e-3');
 });
 
 // test('constants', t => {
@@ -114,16 +113,16 @@ test('Irrationals from pairs', t => {
 
 // });
 
-test('toFixed', t=> {
-  t.is(new Irrational(77.1234).toFixed(2), '77.12');
-  t.is(new Irrational(77.1234e3).toFixed(2), '77123.40');
-  t.is(new Irrational(-77.1234e-3).toFixed(2), '-0.07');
-  t.is(new Irrational(-77.1234e-10).toFixed(10), '-0.0000000077');
+test('toFixed', () => {
+  expect(new Irrational(77.1234).toFixed(2)).toBe('77.12');
+  expect(new Irrational(77.1234e3).toFixed(2)).toBe('77123.40');
+  expect(new Irrational(-77.1234e-3).toFixed(2)).toBe('-0.07');
+  expect(new Irrational(-77.1234e-10).toFixed(10)).toBe('-0.0000000077');
 });
 
-test('toExponential', t=> {
-  t.is(new Irrational(77.1234).toExponential(2), '7.71e+1');
-  t.is(new Irrational(77.1234e3).toExponential(2), '7.71e+4');
-  t.is(new Irrational(-77.1234e-3).toExponential(2), '-7.71e-2');
+test('toExponential', () => {
+  expect(new Irrational(77.1234).toExponential(2)).toBe('7.71e+1');
+  expect(new Irrational(77.1234e3).toExponential(2)).toBe('7.71e+4');
+  expect(new Irrational(-77.1234e-3).toExponential(2)).toBe('-7.71e-2');
 });
 
