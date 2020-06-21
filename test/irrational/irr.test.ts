@@ -97,17 +97,6 @@ test('Irrationals from pairs', t => {
   t.is(new Irrational(1, -3).toString(), '1.e-3');
 });
 
-test('clone', t => {
-  const x = new Irrational('1');
-  const y = x.clone();
-
-  // @ts-ignore
-  y.s = 2n;
-
-  t.is(x.valueOf(), 1);
-  t.is(y.valueOf(), 2);
-});
-
 // test('constants', t => {
 //   t.is(Irrational.ZERO.toString(), '0.e+0');
 //   t.is(Irrational.ONE.toString(), '1.e+0');
