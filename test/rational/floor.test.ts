@@ -1,30 +1,30 @@
 import { Rational } from '../../src/';
 
+const floor = (x: any) => new Rational(x).floor();
+
 test('floor', () => {
-  const floor = (x: any) => new Rational(x).floor();
+  expect(floor(1).toString()).toBe('1');
+  expect(floor(-1).toString()).toBe('-1');
+  expect(floor(2).toString()).toBe('2');
+  expect(floor(-2).toString()).toBe('-2');
 
-  expect(floor(1)).toBe(1n);
-  expect(floor(-1)).toBe(-1n);
-  expect(floor(2)).toBe(2n);
-  expect(floor(-2)).toBe(-2n);
+  expect(floor(0.1).toString()).toBe('0');
+  expect(floor(2.5).toString()).toBe('2');
+  expect(floor(10).toString()).toBe('10');
 
-  expect(floor(0.1)).toBe(0n);
-  expect(floor(2.5)).toBe(2n);
-  expect(floor(10)).toBe(10n);
+  expect(floor(-0.1).toString()).toBe('-1');
+  expect(floor(-2.5).toString()).toBe('-3');
+  expect(floor(-10).toString()).toBe('-10');
 
-  expect(floor(-0.1)).toBe(-1n);
-  expect(floor(-2.5)).toBe(-3n);
-  expect(floor(-10)).toBe(-10n);
-
-  expect(floor(9007199254740992n)).toBe(9007199254740992n);
-  expect(floor(9007199254740994n)).toBe(9007199254740994n);
-  expect(floor(10_000_000_000_000_000n)).toBe(10000000000000000n);
+  expect(floor(9007199254740992n).toString()).toBe('9007199254740992');
+  expect(floor(9007199254740994n).toString()).toBe('9007199254740994');
+  expect(floor(10_000_000_000_000_000n).toString()).toBe('10000000000000000');
  
-  expect(floor('900719.9254740992')).toBe(900719n);
-  expect(floor('90071992.54740994')).toBe(90071992n);
-  expect(floor(10_000_000.00000)).toBe(10000000n);
+  expect(floor('900719.9254740992').toString()).toBe('900719');
+  expect(floor('90071992.54740994').toString()).toBe('90071992');
+  expect(floor(10_000_000.00000).toString()).toBe('10000000');
 
-  expect(floor('-900719.9254740992')).toBe(-900720n);
-  expect(floor('-90071992.54740994')).toBe(-90071993n);
-  expect(floor(-10_000_000.00000)).toBe(-10000000n);
+  expect(floor('-900719.9254740992').toString()).toBe('-900720');
+  expect(floor('-90071992.54740994').toString()).toBe('-90071993');
+  expect(floor(-10_000_000.00000).toString()).toBe('-10000000');
 });

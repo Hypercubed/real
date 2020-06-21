@@ -56,7 +56,7 @@ class Trunc {
   }
 
   @signature()
-  rational(a: Real): bigint {
+  rational(a: Real): Real {
     return a.trunc();
   }
 }
@@ -78,7 +78,7 @@ class Ceil {
   }
 
   @signature()
-  irrational(a: Real): bigint {
+  irrational(a: Real): Real {
     return a.ceil();
   }
 }
@@ -100,7 +100,7 @@ class Floor {
   }
 
   @signature()
-  irrational(a: Real): bigint {
+  irrational(a: Real): Real {
     return a.floor();
   }
 }

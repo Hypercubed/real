@@ -1,8 +1,8 @@
 import { Irrational } from '../../src/irrational';
 
-test('mul', () => {
-  const mul = (x: any, y: any) => new Irrational(x).mul(new Irrational(y));
+const mul = (x: any, y: any) => new Irrational(x).mul(new Irrational(y));
 
+test('mul', () => {
   expect(mul(0, 0).toString()).toBe('0.e+0');
   expect(mul(-0, 0).toString()).toBe('0.e+0');
   expect(mul(1, 1).toString()).toBe('1.e+0');

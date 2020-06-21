@@ -39,7 +39,7 @@ test('Irrationals from numbers', () => {
   expect(new Irrational(-27182.8).toString()).toBe('-2.71828e+4');
 });
 
-test.only('Irrationals from strings', () => {
+test('Irrationals from strings', () => {
   // strings (integers)
   expect(new Irrational('1').toString()).toBe('1.e+0');
   expect(new Irrational('-1').toString()).toBe('-1.e+0');
@@ -83,6 +83,8 @@ test.only('Irrationals from strings', () => {
   expect(new Irrational('90071992.54740993').toString()).toBe('9.007199254740993e+7');
   expect(new Irrational('90071992.54740993333').toString()).toBe('9.007199254740993333e+7');
 
+  expect(new Irrational('-10_000_000.00000').toString()).toBe('-1.000000000000e+7');
+
   // strings (exp)
   expect(new Irrational('9007199254740993e-8').toString()).toBe('9.007199254740993e+7');
   expect(new Irrational('9007199254740993333e11').toString()).toBe('9.007199254740993333e+29');
@@ -94,6 +96,12 @@ test('Irrationals from pairs', () => {
   expect(new Irrational(1, 0).toString()).toBe('1.e+0');
   expect(new Irrational(1, 1).toString()).toBe('1.e+1');
   expect(new Irrational(1, -3).toString()).toBe('1.e-3');
+});
+
+test('Irrationals with precision', () => {
+  expect(new Irrational(1, 0, 10).toString()).toBe('1.000000000e+0');
+  expect(new Irrational(1, 1, 5).toString()).toBe('1.0000e+1');
+  expect(new Irrational(1, -3, 20).toString()).toBe('1.0000000000000000000e-3');
 });
 
 // test('constants', t => {

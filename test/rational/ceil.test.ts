@@ -1,24 +1,24 @@
 import { Rational } from '../../src/';
 
+const ceil = (x: any) => new Rational(x).ceil();
+
 test('ceil', () => {
-  const ceil = (x: any) => new Rational(x).ceil();
+  expect(ceil( 1).toString()).toBe('1');
+  expect(ceil(-1).toString()).toBe('-1');
+  expect(ceil( 2).toString()).toBe('2');
 
-  expect(ceil( 1)).toBe(1n);
-  expect(ceil(-1)).toBe(-1n);
-  expect(ceil( 2)).toBe(2n);
+  expect(ceil(0.1).toString()).toBe('1');
+  expect(ceil(10).toString()).toBe('10');
 
-  expect(ceil(0.1)).toBe(1n);
-  expect(ceil(10)).toBe(10n);
+  expect(ceil(9007199254740992n).toString()).toBe('9007199254740992');
+  expect(ceil(9007199254740994n).toString()).toBe('9007199254740994');
+  expect(ceil(10_000_000_000_000_000n).toString()).toBe('10000000000000000');
 
-  expect(ceil(9007199254740992n)).toBe(9007199254740992n);
-  expect(ceil(9007199254740994n)).toBe(9007199254740994n);
-  expect(ceil(10_000_000_000_000_000n)).toBe(10000000000000000n);
-
-  expect(ceil('900719.9254740992')).toBe(900720n);
-  expect(ceil('90071992.54740994')).toBe(90071993n);
-  expect(ceil(10_000_000.00000)).toBe(10000000n);
+  expect(ceil('900719.9254740992').toString()).toBe('900720');
+  expect(ceil('90071992.54740994').toString()).toBe('90071993');
+  expect(ceil(10_000_000.00000).toString()).toBe('10000000');
  
-  expect(ceil('-900719.9254740992')).toBe(-900719n);
-  expect(ceil('-90071992.54740994')).toBe(-90071992n);
-  expect(ceil(-10_000_000.00000)).toBe(-10000000n);
+  expect(ceil('-900719.9254740992').toString()).toBe('-900719');
+  expect(ceil('-90071992.54740994').toString()).toBe('-90071992');
+  expect(ceil(-10_000_000.00000).toString()).toBe('-10000000');
 });

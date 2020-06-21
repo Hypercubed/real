@@ -52,8 +52,8 @@ export class Irrational extends Real {
     return new Irrational(x);
   }
 
-  protected s: bigint = 0n;         // Significand
-  protected e: number = 0;          // Exponent
+  protected s: bigint = 0n; // Significand
+  protected e: number = 0;  // Exponent
   protected p: number = 0;  // Presision
 
   constructor(value: InputValue, e?: number, p?: number) {
@@ -112,7 +112,7 @@ export class Irrational extends Real {
     return this.cmp(y) === 1;
   }
 
-  // TODO: precision error
+  // TODO: precision error!!
   add(y: Irrational): Irrational {
     let s = this.s;
     let e = this.e;
@@ -157,8 +157,39 @@ export class Irrational extends Real {
     return this.sub(u).isZero();
   }
 
-  // TODO: this needs to account for precision
-  trunc(): bigint {
+  trunc() {
+    let s = this.s;
+    let e = this.e;
+    if (this.e < 0) {
+      s = s / 10n ** BigInt(-e);
+      e = 0;
+    }
+    return new Irrational(s, e, this.p);
+  }
+
+  /**
+   * maps x to the greatest integer greater than or equal to x
+   */
+  floor() {
+    const t = this.trunc();
+    if (this.isNegitive() && !this.fp().isZero()) {
+      return t.sub(Irrational.ONE);
+    }
+    return t;
+  }
+
+  /**
+   * maps x to the least integer greater than or equal to x
+   */
+  ceil() {
+    const t = this.trunc();
+    if (this.isPositive() && !this.fp().isZero()) {
+      return t.add(Irrational.ONE);
+    }
+    return t;
+  }
+
+  ip(): bigint {
     if (this.e < 0) {
       return this.s / 10n ** BigInt(-this.e);
     }
@@ -166,36 +197,10 @@ export class Irrational extends Real {
   }
 
   /**
-   * maps x to the greatest integer greater than or equal to x
-   */
-  // TODO: this needs to account for precision
-  floor(): bigint {
-    const ip = this.trunc();
-    if (this.isNegitive() && !this.sub(new Irrational(ip)).isZero()) {
-      return ip - 1n;
-    }
-    return ip;
-  }
-
-  /**
-   * maps x to the least integer greater than or equal to x
-   */
-  // TODO: this needs to account for precision
-  ceil(): bigint {
-    const ip = this.trunc();
-    if (this.isPositive() && !this.sub(new Irrational(ip)).isZero()) {
-      return ip + 1n;
-    }
-    return ip;
-  }
-
-  /**
    * maps to the frational part of x
    */
-  // TODO: this needs to account for precision
   fp() {
-    const t = -this.trunc();
-    return this.add(new Irrational(t)).abs();
+    return this.sub(this.trunc()).abs();
   }
 
   /**
@@ -246,7 +251,7 @@ export class Irrational extends Real {
     if (y.eq(Irrational.TWO)) {  // convert this to Exponentiation by squaring
       return this.mul(this);
     }
-    const u = y.trunc();
+    const u = y.ip();
     const v = y.valueOf();
     if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
       return new Irrational(this.s**u, this.e*v, this.p);
@@ -355,7 +360,7 @@ export class Irrational extends Real {
   }
 
   toFixed(digits: number): string {
-    let ip = this.trunc().toString();
+    let ip = this.ip().toString();
     if (digits < 1) {
       return ip.toString();
     }

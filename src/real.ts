@@ -23,9 +23,9 @@ export default abstract class Real {
 
   abstract fp(): Real;
 
-  abstract trunc(): bigint;
-  abstract floor(): bigint;
-  abstract ceil(): bigint;
+  abstract trunc(): Real;
+  abstract floor(): Real;
+  abstract ceil(): Real;
 
   abstract toString(): string;
   abstract valueOf(): number;

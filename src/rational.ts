@@ -4,6 +4,8 @@ import { parseValue, zeroPadRight, gcd } from './util';
 import { guard, conversion } from '@hypercubed/dynamo';
 
 export class Rational extends Real {
+  static ONE = new Rational(1n, 1n);
+
   protected n: bigint = 0n;
   protected d: bigint = 1n;
 
@@ -100,7 +102,11 @@ export class Rational extends Real {
     return this.mul(y.inv());
   }
 
-  trunc(): bigint {
+  trunc(): Rational {
+    return new Rational(this.n / this.d, 1n);
+  }
+
+  ip(): bigint {
     const t = this.n / this.d;
     if (t === 0n && this.isNegitive()) {
       return -0n;
@@ -108,26 +114,26 @@ export class Rational extends Real {
     return this.n / this.d;
   }
 
-  floor(): bigint {
-    const ip = this.trunc();
+  floor() {
+    const trunc = this.trunc();
     const rm = this.n % this.d;
     if (this.isNegitive() && rm !== 0n) {
-      return ip - 1n;
+      return trunc.sub(Rational.ONE);
     }
-    return ip;
+    return trunc;
   }
 
-  ceil(): bigint {
-    const ip = this.trunc();
+  ceil() {
+    const trunc = this.trunc();
     const rm = this.n % this.d;
     if (this.isPositive() && rm !== 0n) {
-      return ip + 1n;
+      return trunc.add(Rational.ONE);
     }
-    return ip;
+    return trunc;
   }
 
   fp() {
-    const n = this.n - this.trunc() * this.d;
+    const n = this.n - this.ip() * this.d;
     const d = this.d;
 
     return new Rational(n, d).abs();

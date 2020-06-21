@@ -8,8 +8,9 @@ export function parseValue(value: bigint | number | string | null | undefined): 
     value = value.toString();
   }
 
-  
-  const [ss, se] = value.replace(/[._]/g, '').split(/[eE]/);
+  value = value.replace(/_/g, '')
+
+  const [ss, se] = value.replace(/[.]/g, '').split(/[eE]/);
   const k = value.indexOf('.');
 
   const n = BigInt(ss);

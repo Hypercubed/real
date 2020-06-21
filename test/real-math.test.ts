@@ -11,45 +11,45 @@ test('abs', () => {
 });
 
 test('trunc', () => {
-  expect(Math.trunc(1.234)).toBe(1);
-  expect(Math.trunc(3n)).toBe(3n);
+  expect(Math.trunc(1.234).toString()).toBe('1');
+  expect(Math.trunc(3n).toString()).toBe('3');
 
-  expect(Math.trunc(new Rational(1.234))).toBe(1n);
-  expect(Math.trunc(new Irrational(3.456))).toBe(3n);
+  expect(Math.trunc(new Rational(1.234)).toString()).toBe('1');
+  expect(Math.trunc(new Irrational(3.456)).toString()).toBe('3.000e+0');
 
-  expect(Math.trunc(-1.234)).toBe(-1);
-  expect(Math.trunc(-3n)).toBe(-3n);
+  expect(Math.trunc(-1.234).toString()).toBe('-1');
+  expect(Math.trunc(-3n).toString()).toBe('-3');
 
-  expect(Math.trunc(new Rational(-1.234))).toBe(-1n);
-  expect(Math.trunc(new Irrational(-3.456))).toBe(-3n);
+  expect(Math.trunc(new Rational(-1.234)).toString()).toBe('-1');
+  expect(Math.trunc(new Irrational(-3.456)).toString()).toBe('-3.000e+0');
 });
 
 test('ceil', () => {
-  expect(Math.ceil(1.234)).toBe(2);
-  expect(Math.ceil(3n)).toBe(3n);
+  expect(Math.ceil(1.234).toString()).toBe('2');
+  expect(Math.ceil(3n).toString()).toBe('3');
 
-  expect(Math.ceil(new Rational(1.234))).toBe(2n);
-  expect(Math.ceil(new Irrational(3.456))).toBe(4n);
+  expect(Math.ceil(new Rational(1.234)).toString()).toBe('2');
+  expect(Math.ceil(new Irrational(3.456)).toString()).toBe('4.000e+0');
 
-  expect(Math.ceil(-1.234)).toBe(-1);
-  expect(Math.ceil(-3n)).toBe(-3n);
+  expect(Math.ceil(-1.234).toString()).toBe('-1');
+  expect(Math.ceil(-3n).toString()).toBe('-3');
 
-  expect(Math.ceil(new Rational(-1.234))).toBe(-1n);
-  expect(Math.ceil(new Irrational(-3.456))).toBe(-3n);
+  expect(Math.ceil(new Rational(-1.234)).toString()).toBe('-1');
+  expect(Math.ceil(new Irrational(-3.456)).toString()).toBe('-3.000e+0');
 });
 
 test('floor', () => {
-  expect(Math.floor(1.234)).toBe(1);
-  expect(Math.floor(3n)).toBe(3n);
+  expect(Math.floor(1.234).toString()).toBe('1');
+  expect(Math.floor(3n).toString()).toBe('3');
 
-  expect(Math.floor(new Rational(1.234))).toBe(1n);
-  expect(Math.floor(new Irrational(3.456))).toBe(3n);
+  expect(Math.floor(new Rational(1.234)).toString()).toBe('1');
+  expect(Math.floor(new Irrational(3.456)).toString()).toBe('3.000e+0');
 
-  expect(Math.floor(-1.234)).toBe(-2);
-  expect(Math.floor(-3n)).toBe(-3n);
+  expect(Math.floor(-1.234).toString()).toBe('-2');
+  expect(Math.floor(-3n).toString()).toBe('-3');
 
-  expect(Math.floor(new Rational(-1.234))).toBe(-2n);
-  expect(Math.floor(new Irrational(-3.456))).toBe(-4n);
+  expect(Math.floor(new Rational(-1.234)).toString()).toBe('-2');
+  expect(Math.floor(new Irrational(-3.456)).toString()).toBe('-4.000e+0');
 });
 
 test('add', () => {

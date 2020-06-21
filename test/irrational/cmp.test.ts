@@ -1,8 +1,8 @@
 import { Irrational } from '../../src/irrational';
 
-test('cmp', () => {
-  const cmp = (x: any, y: any) => new Irrational(x).cmp(new Irrational(y));
+const cmp = (x: any, y: any) => new Irrational(x).cmp(new Irrational(y));
 
+test('cmp', () => {
   expect(cmp(0, 0)).toBe(0);
   expect(cmp(1, 0)).toBe(1);
   expect(cmp(0, 1)).toBe(-1);
