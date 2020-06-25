@@ -18,7 +18,7 @@ test('mul', () => {
 
   expect(mul('10', '0.20').toString()).toBe('2.0e+0');
 
-  expect(mul(9007199254740992n, 2).toString()).toBe('1.e+16');
+  expect(mul(9007199254740992n, 2).toString()).toBe('2.e+16');  // 1.8014399e+16
   expect(mul(9007199254740992n, '2.00000000000000000').toString()).toBe('1.801439850948198e+16');
 
   expect(mul(10_000_000_000_000_000n, 0.00_000_000_000_000_01).toString()).toBe('1.e+0');

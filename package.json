@@ -22,7 +22,7 @@
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
-    "test": "jest",
+    "test": "jest --verbose",
     "watch": "jest --watch"
   },
   "lint-staged": {

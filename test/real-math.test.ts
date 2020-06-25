@@ -81,17 +81,17 @@ test('sub', () => {
 });
 
 test('mul', () => {
-  expect(Math.mul(1.234, 3.456).toString()).toBe('4.264e+0');
+  expect(Math.mul(1.234, 3.456).toString()).toBe('4.265e+0');  // 4.264704
   expect(Math.mul(2n, 3n)).toBe(6n);
 
   expect(Math.mul(new Rational(1.234), new Rational(3.456)).toString()).toBe('66636/15625');
-  expect(Math.mul(new Irrational(1.234), new Irrational(3.456)).toString()).toBe('4.264e+0');
+  expect(Math.mul(new Irrational(1.234), new Irrational(3.456)).toString()).toBe('4.265e+0');  // 4.264704
 
-  expect(Math.mul(1.234, new Rational(3.456)).toString()).toBe('4.264e+0');
-  expect(Math.mul(2n, new Irrational(3.456)).toString()).toBe('6.e+0');
+  expect(Math.mul(1.234, new Rational(3.456)).toString()).toBe('4.265e+0');  // 4.264704
+  expect(Math.mul(2n, new Irrational(3.456)).toString()).toBe('7.e+0');  // 6.912
 
-  expect(Math.mul(new Rational(1.234), new Irrational(3.456)).toString()).toBe('4.264e+0');
-  expect(Math.mul(new Irrational(1.234), new Rational(3.456)).toString()).toBe('4.264e+0');
+  expect(Math.mul(new Rational(1.234), new Irrational(3.456)).toString()).toBe('4.265e+0'); // 4.264704
+  expect(Math.mul(new Irrational(1.234), new Rational(3.456)).toString()).toBe('4.265e+0'); // 4.264704
 });
 
 test('div', () => {
@@ -100,37 +100,37 @@ test('div', () => {
 
   expect(Math.div(1n, 3).toString()).toBe('3.e-1');
 
-  expect(Math.div(1.234, 3.456).toString()).toBe('3.570e-1');
-  // t.is(Math.div(1.234, new Rational(3.456)).toString(),                   '3.570e-1');         
-  expect(Math.div(new Irrational(1.234), new Irrational(3.456)).toString()).toBe('3.570e-1');
-  // t.is(Math.div(new Rational(1.234), new Irrational(3.456)).toString(),   '3.570e-1');
-  // t.is(Math.div(new Irrational(1.234), new Rational(3.456)).toString(),   '3.570e-1');
-                                                                      // 0.3_57060185185185185195185185185185185185185185185185185185...
+  expect(Math.div(1.234, 3.456).toString()).toBe(                                '3.571e-1');
+  // t.is(Math.div(1.234, new Rational(3.456)).toString(),                       '3.571e-1');         
+  expect(Math.div(new Irrational(1.234), new Irrational(3.456)).toString()).toBe('3.571e-1');
+  // t.is(Math.div(new Rational(1.234), new Irrational(3.456)).toString(),       '3.571e-1');
+  // t.is(Math.div(new Irrational(1.234), new Rational(3.456)).toString(),       '3.571e-1');
+                                                                            // 0.3_57060185185185185195185185185185185185185185185185185185...
 
-  expect(Math.div(2n, new Irrational(3.456)).toString()).toBe('5.e-1');
-                                                    // 0.5_78703703703703703703703703703703703703703703703703703703...
+  expect(Math.div(2n, new Irrational(3.456)).toString()).toBe('6.e-1');
+                                                          // 0.5_78703703703703703703703703703703703703703703703703703703...
 });
 
 test('inv', () => {
   expect(Math.inv(3n).toString()).toBe('1/3');
   expect(Math.inv(new Rational(3.456)).toString()).toBe('125/432');
 
-  expect(Math.inv(3.456).toString()).toBe('2.893e-1');
-                                               // 0.2_89351851851851851851851851851851851851851851851851851851...
-  expect(Math.inv(new Irrational(3.456)).toString()).toBe('2.893e-1');
-                                                // 1.240111850941809188052386196921720467667668148103716205948...
+  expect(Math.inv(3.456).toString()).toBe(                '2.894e-1');
+  expect(Math.inv(new Irrational(3.456)).toString()).toBe('2.894e-1');
+                                                      // 0.2_89351851851851851851851851851851851851851851851851851851...
 });
 
 test('ln', () => {
-  expect(Math.ln(2n).toString()).toBe('6.e-1');
-                                    // 0.6_93147180559945309417232121458176568075500134360255254120...
+  expect(Math.ln(2n).toString()).toBe('7.e-1');
+                                //   0.6_93147180559945309417232121458176568075500134360255254120...
 
-  expect(Math.ln(3.456).toString()).toBe('1.242e+0');  // precision
-                                // 1.240111850941809188052386196921720467667668148103716205948...
+  expect(Math.ln(3.456).toString()).toBe('1.243e+0');  // TODO: precision bug
+                                       // 1.240111850941809188052386196921720467667668148103716205948...
 
-  expect(Math.ln(new Rational(1.234)).toString()).toBe('2.135e-1'); // precision
-                                            // 0.2_102609254831960713608294360152747699866305851127995
+  expect(Math.ln(new Rational(1.234)).toString()).toBe('2.136e-1'); // TODO: precision bug
+                                                   // 0.2_102609254831960713608294360152747699866305851127995
 
-  expect(Math.ln(new Irrational(3.456)).toString()).toBe('1.242e+0'); // precision
-                                                // 1.240111850941809188052386196921720467667668148103716205948...
+  expect(Math.ln(new Irrational(3.456)).toString()).toBe('1.243e+0'); // TODO: precision bug
+                                                       // 1.240111850941809188052386196921720467667668148103716205948...
+
 });

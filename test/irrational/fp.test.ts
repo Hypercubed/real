@@ -2,7 +2,7 @@ import { Irrational } from '../../src/irrational';
 
 const fp = (x: any) => new Irrational(x).fp();
 
-test('fp', () => {  // TODO: precision bugs
+test('fp', () => {
   expect(fp(1).toString()).toBe('0.e+0');
   expect(fp(-1).toString()).toBe('0.e+0');
   expect(fp(2).toString()).toBe('0.e+0');

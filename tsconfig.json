@@ -14,7 +14,7 @@
     "listFiles": false,
     "traceResolution": false,
     "pretty": true,
-    "types": ["jest"],
+    "types": ["node", "jest"],
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true

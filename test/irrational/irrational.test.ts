@@ -104,6 +104,13 @@ test('Irrationals with precision', () => {
   expect(new Irrational(1, -3, 20).toString()).toBe('1.0000000000000000000e-3');
 });
 
+test('Irrationals with infinite precision', () => {
+  expect(new Irrational(1, 0, Infinity).toString()).toBe('1e+0');
+  expect(new Irrational(10, 1, Infinity).toString()).toBe('1e+2');
+  expect(new Irrational(10, -3, Infinity).toString()).toBe('1e-2');
+  expect(new Irrational(3.14159, 0, Infinity).toString()).toBe('3.14159e+0');
+});
+
 // test('constants', t => {
 //   t.is(Irrational.ZERO.toString(), '0.e+0');
 //   t.is(Irrational.ONE.toString(), '1.e+0');

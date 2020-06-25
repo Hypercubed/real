@@ -13,3 +13,7 @@ test('inv', () => {
   expect(inv(9007199254740992n).toString()).toBe('1/9007199254740992');
   expect(inv(10_000_000_000_000_000n).toString()).toBe('1/10000000000000000');
 });
+
+test('division by zero', () => {
+  expect(() => inv(0).toString()).toThrow('DivisionByZero');
+});
