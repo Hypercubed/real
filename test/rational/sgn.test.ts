@@ -4,7 +4,6 @@ const sgn = (n: any, d?: any) => new Rational(n, d).sgn();
 
 test('abs', () => {
   expect(sgn(0)).toBe(1);
-  // t.is(sgn(-0), -1);
   expect(sgn(1)).toBe(1);
   expect(sgn(-1)).toBe(-1);
   expect(sgn(0.5)).toBe(1);

@@ -2,7 +2,7 @@ import { Irrational } from '../../src/irrational';
 
 const trunc = (x: any) => new Irrational(x).trunc();
 
-test.only('trunc', () => {
+test('trunc', () => {
   expect(trunc(1).toString()).toBe('1.e+0');
   expect(trunc(-1).toString()).toBe('-1.e+0');
   expect(trunc(2).toString()).toBe('2.e+0');

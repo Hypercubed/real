@@ -111,22 +111,21 @@ test('Irrationals with infinite precision', () => {
   expect(new Irrational(3.14159, 0, Infinity).toString()).toBe('3.14159e+0');
 });
 
-// test('constants', t => {
-//   t.is(Irrational.ZERO.toString(), '0.e+0');
-//   t.is(Irrational.ONE.toString(), '1.e+0');
-//   t.is(Irrational.TWO.toString(), '2.e+0');
+test('constants', () => {
+  expect(Irrational.ZERO.toString()).toBe('0e+0');
+  expect(Irrational.ONE.toString()).toBe('1e+0');
+  expect(Irrational.TWO.toString()).toBe('2e+0');
 
-//   t.is(Irrational.E.toString(), '2.71828182845904523536028747135e+0');
-//                               // 2.718281828459045235360287471352662497757247093699959574966...
+  expect(Irrational.E.toString()).toBe('2.71828182845904523536028747135e+0');
+                                     // 2.718281828459045235360287471352662497757247093699959574966...
 
-//   t.is(Irrational.LN2.toString(), '6.9314718055994530941723212145e-1');
-//                               // 0.6_93147180559945309417232121458176568075500134360255254120...
-//   t.is(Irrational.LN10.toString(), '2.30258509299404568401799145468e+0');
-//                                  // 2.302585092994045684017991454684364207601101488628772976033...
-//   t.is(Irrational.LOG10E.toString(), '4.3429448190325182765112891891e-1');
-//                                  // 0.4_34294481903251827651128918916605082294397005803666566114...
-
-// });
+  expect(Irrational.LN2.toString()).toBe('6.9314718055994530941723212145e-1');
+                                     // 0.6_93147180559945309417232121458176568075500134360255254120...
+  expect(Irrational.LN10.toString()).toBe('2.30258509299404568401799145468e+0');
+                                        // 2.302585092994045684017991454684364207601101488628772976033...
+  expect(Irrational.LOG10E.toString()).toBe('4.3429448190325182765112891891e-1');
+                                        // 0.4_34294481903251827651128918916605082294397005803666566114...
+});
 
 test('toFixed', () => {
   expect(new Irrational(77.1234).toFixed(2)).toBe('77.12');

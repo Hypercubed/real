@@ -22,9 +22,9 @@ test('fp', () => {
 
   expect(fp('900719.9254740992').toString()).toBe('9.254740992000000e-1');
   expect(fp('90071992.54740994').toString()).toBe('5.474099400000000e-1');
-  expect(fp('10_000_000.00000').toString()).toBe('0.000000000000e-5');  // TODO: normaliztion bug
+  expect(fp('10_000_000.00000').toString()).toBe('0.000000000000e-5');
 
   expect(fp('-900719.9254740992').toString()).toBe('9.254740992000000e-1');
   expect(fp('-90071992.54740994').toString()).toBe('5.474099400000000e-1');
-  expect(fp('-10_000_000.00000').toString()).toBe('0.000000000000e-5');;  // TODO: normaliztion bug
+  expect(fp('-10_000_000.00000').toString()).toBe('0.000000000000e-5');
 });
