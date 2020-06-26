@@ -29,6 +29,6 @@ test('pow', () => {
                                                    // 1.1102230246251565404236316680908203125
   expect(pow(9007199254740992n, -1).toString()).toBe('1.110223024625157e-16');
 
-  expect(pow('4', '0.5').toString()).toBe('2.e+0');
+  expect(pow('4', '0.5').toString()).toBe(       '2.e+0');
   expect(pow('4.000', '0.5000').toString()).toBe('2.001e+0');  // TODO: rounding error
 });

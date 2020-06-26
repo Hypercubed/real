@@ -19,4 +19,7 @@ test('exp', () => {
   expect(exp( -1      ).toString()).toBe('4.e-1');
   expect(exp('-1.0'   ).toString()).toBe('3.7e-1');
   expect(exp('-1.0000').toString()).toBe('3.6788e-1');
+
+                                        // 23.1406775083
+  expect(exp('3.141592').toString()).toBe('2.314068e+1');
 });

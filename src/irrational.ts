@@ -7,7 +7,7 @@ import { Rational } from './rational';
 type InputValue = bigint | number | string | Irrational;
 
 /**
- * TODO: sqrt, modulo
+ * sqr, sqrt, modulo
  * sin, cos, tan
  * asin, acos, atan
  */
@@ -220,19 +220,16 @@ export class Irrational extends Real {
   /**
    * calculates e^x - 1 using Taylor series
    */
-  // TODO: improve this
   protected expm1() {
-    let n: Irrational = this;
-    let d = 1;
-    let s = n;
-    for (let i = 2; i < 300; i++) {
-      n = n.mul(this);
-      d *= i;
-      const t = s;
-      s = s.add(n.mul(new Irrational(1/d)));
-      if (i > 10 && s.digits() === t.digits()) {
-        return s;
-      }
+    const S = 10n ** BigInt(this.p + 2);
+
+    let n: Irrational = this;  // term
+    let s = n;  // summation
+    let i = 1;  // index
+    while (S > s.s / n.s) {
+      i++;
+      n = n.mul(this).div(new Irrational(i, 0, this.p));
+      s = s.add(n);
     }
     return s;
   }
@@ -354,7 +351,7 @@ export class Irrational extends Real {
   }
 
   toString(): string {
-    return this.canonicalize().toExponential(this.p - 1);
+    return this.roundToPrecision().toExponential();
   }
 
   valueOf(): number {
@@ -374,7 +371,7 @@ export class Irrational extends Real {
     return `${ip}.${zeroPadRight(fps, digits)}`;
   }
 
-  toExponential(fractionDigits: number) { // TODO: implement rounding method
+  toExponential(fractionDigits: number = (this.p - 1)) { // TODO: implement rounding method
     const n = this.isNegitive() ? 2 : 1;
     const s = this.s.toString();
     const ip = s.slice(0, n);
@@ -390,35 +387,35 @@ export class Irrational extends Real {
     return `${ip}.${zeroPadRight(fp, fractionDigits)}e${ee}`;
   }
 
-  // TODO: get rid of this
-  protected digits() {
-    const n = this.isNegitive() ? 1 : 0;
-    return this.s.toString().slice(0, this.p + n);
+  protected simplify() {
+    const sgn = this.s < 0n ? -1n : 1n;
+    let s = this.s * sgn;
+    let e = this.e;
+
+    while (s % 10n === 0n && s > 1n) { 
+      s /= 10n;
+      e += 1;
+    }
+    return new Irrational(s * sgn, e, this.p);
   }
 
-  protected canonicalize() {
+  protected roundToPrecision(p: number = this.p) {
     const sgn = this.s < 0n ? -1n : 1n;
 
     let s = this.s * sgn;
     let e = this.e;
 
     const ss = s.toString();
-    let n = ss.length - this.p;
+    let n = ss.length - p;
 
     if (n > 0) {
       const S = 10n ** BigInt(n);
-      const r = s % S * 1000n / S;
+      const r = s % S * 10n / S;
       s /= S;
       e += n;
-
-      s += BigInt(Math.round(Number(r)/1000));
+      s += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
     }
 
-    while (s % 10n === 0n && s > 1n) { 
-      s /= 10n;
-      e += 1;
-    }
-
-    return new Irrational(s * sgn, e, this.p);
+    return new Irrational(s * sgn, e, this.p).simplify();
   }
 }
