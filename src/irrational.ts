@@ -365,24 +365,36 @@ export class Irrational extends Real {
   }
 
   toString(): string {
-    return this.roundToPrecision().toExponential();
+    if (Number.isFinite(this.p)) {
+      return this.roundToPrecision().toExponential();
+    }
+    return this.toFixed();
   }
 
   valueOf(): number {
     return Number(this.toString());
   }
 
-  toFixed(digits: number): string {
+  toFixed(digits?: number): string {
     let ip = this.ip().toString();
-    if (digits < 1) {
+    if (digits === 0) {
       return ip.toString();
     }
     if (ip === '0' && this.isNegitive()) {
       ip = '-0';
     }
     const fp = this.fp();
-    const fps = zeroPadLeft(fp.s.toString(), fp.e);
-    return `${ip}.${zeroPadRight(fps, digits)}`;
+    if (fp.isZero()) {
+      return `${ip}`;
+    }
+    let fps = fp.s.toString();
+    fps = zeroPadLeft(fps, fp.e);
+    if (typeof digits !== 'undefined') {
+      fps = zeroPadRight(fps, digits);
+    } else {
+      fps = fps.replace(/0*$/g, '');
+    }
+    return `${ip}.${fps}`;
   }
 
   toExponential(fractionDigits: number = (this.p - 1)) { // TODO: implement rounding method

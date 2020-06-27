@@ -7,18 +7,18 @@ test('Irrational is instantiable', () => {
 
 
 test('Irrationals from bigints', () => {
-  expect(new Irrational(1n).toString()).toBe('1e+0');
-  expect(new Irrational(-1n).toString()).toBe('-1e+0');
-  expect(new Irrational(2n).toString()).toBe('2e+0');
-  expect(new Irrational(-2n).toString()).toBe('-2e+0');
+  expect(new Irrational(1n).toString()).toBe('1');
+  expect(new Irrational(-1n).toString()).toBe('-1');
+  expect(new Irrational(2n).toString()).toBe('2');
+  expect(new Irrational(-2n).toString()).toBe('-2');
 
-  expect(new Irrational(10n).toString()).toBe('1e+1');
-  expect(new Irrational(-100n).toString()).toBe('-1e+2');
-  expect(new Irrational(2000n).toString()).toBe('2e+3');
-  expect(new Irrational(-20000n).toString()).toBe('-2e+4');
+  expect(new Irrational(10n).toString()).toBe('10');
+  expect(new Irrational(-100n).toString()).toBe('-100');
+  expect(new Irrational(2000n).toString()).toBe('2000');
+  expect(new Irrational(-20000n).toString()).toBe('-20000');
 
-  expect(new Irrational(9007199254740993n).toString()).toBe('9.007199254740993e+15');
-  expect(new Irrational(9007199254740993333n).toString()).toBe('9.007199254740993333e+18');
+  expect(new Irrational(9007199254740993n).toString()).toBe('9007199254740993');
+  expect(new Irrational(9007199254740993333n).toString()).toBe('9007199254740993333');
 });
 
 describe('Irrationals from numbers', () => {
@@ -46,14 +46,14 @@ describe('Irrationals from numbers', () => {
 describe('Irrationals from strings', () => {
   test('integers', () => {
     // strings (integers)
-    expect(new Irrational('1').toString()).toBe('1e+0');
-    expect(new Irrational('-1').toString()).toBe('-1e+0');
-    expect(new Irrational('2').toString()).toBe('2e+0');
-    expect(new Irrational('-2').toString()).toBe('-2e+0');
+    expect(new Irrational('1').toString()).toBe('1');
+    expect(new Irrational('-1').toString()).toBe('-1');
+    expect(new Irrational('2').toString()).toBe('2');
+    expect(new Irrational('-2').toString()).toBe('-2');
   
-    expect(new Irrational('9007199254740993').toString()).toBe('9.007199254740993e+15');
-    expect(new Irrational('9007199254740993333').toString()).toBe('9.007199254740993333e+18');
-    expect(new Irrational('9_007_199_254_740_993_333').toString()).toBe('9.007199254740993333e+18');
+    expect(new Irrational('9007199254740993').toString()).toBe('9007199254740993');
+    expect(new Irrational('9007199254740993333').toString()).toBe('9007199254740993333');
+    expect(new Irrational('9_007_199_254_740_993_333').toString()).toBe('9007199254740993333');
   });
 
   test('floats', () => {
@@ -161,9 +161,9 @@ test('Irrationals from pairs', () => {
   expect(new Irrational(1, 1).toString()).toBe('1.00000000000000e+1');
   expect(new Irrational(1, -3).toString()).toBe('1.00000000000000e-3');
 
-  expect(new Irrational('1', 0).toString()).toBe('1e+0');
-  expect(new Irrational('1', 1).toString()).toBe('1e+1');
-  expect(new Irrational('1', -3).toString()).toBe('1e-3');
+  expect(new Irrational('1', 0).toString()).toBe('1');
+  expect(new Irrational('1', 1).toString()).toBe('10');
+  expect(new Irrational('1', -3).toString()).toBe('0.001');
 
   expect(new Irrational('1.', 0).toString()).toBe('1.e+0');
   expect(new Irrational('1.', 1).toString()).toBe('1.e+1');
@@ -177,10 +177,10 @@ test('Irrationals with precision', () => {
 });
 
 test('Irrationals with infinite precision', () => {
-  expect(new Irrational(1, 0, Infinity).toString()).toBe('1e+0');
-  expect(new Irrational(10, 1, Infinity).toString()).toBe('1e+2');
-  expect(new Irrational(10, -3, Infinity).toString()).toBe('1e-2');
-  expect(new Irrational(3.14159, 0, Infinity).toString()).toBe('3.14159e+0');
+  expect(new Irrational(1, 0, Infinity).toString()).toBe('1');
+  expect(new Irrational(10, 1, Infinity).toString()).toBe('100');
+  expect(new Irrational(10, -3, Infinity).toString()).toBe('0.01');
+  expect(new Irrational(3.14159, 0, Infinity).toString()).toBe('3.14159');
 });
 
 test('Irrationals from rationals', () => {
@@ -190,12 +190,12 @@ test('Irrationals from rationals', () => {
 });
 
 test('constants', () => {
-  expect(Irrational.ZERO.toString()).toBe('0e+0');
-  expect(Irrational.ONE.toString()).toBe('1e+0');
-  expect(Irrational.TWO.toString()).toBe('2e+0');
+  expect(Irrational.ZERO.toString()).toBe('0');
+  expect(Irrational.ONE.toString()).toBe('1');
+  expect(Irrational.TWO.toString()).toBe('2');
 
   expect(Irrational.E.toExponential(9)).toBe('2.718281828e+0');
-                                          // 2.718281828459045235360287471352662497757247093699959574966...
+                                           // 2.718281828459045235360287471352662497757247093699959574966...
 
   expect(Irrational.LN2.toExponential(9)).toBe('6.931471805e-1');
                                              // 6.93147180559945309417232121458176568075500134360255254120...
