@@ -1,29 +1,42 @@
 export function parseValue(value: bigint | number | string | null | undefined): [bigint, number, number] {
   if (value === null || value === undefined) {
-    return [0n, 0, 1];
+    return [0n, 0, Infinity];
+  }
+
+  if (typeof value === 'number') {
+    value = value.toString();
+    const [s, e, p] = parseValue(value);
+    const isInteger = value.indexOf('.') < 0 && value.search(/[eE]/) < 0;
+    // Integers are accurate up to 15 digits.
+    // The maximum number of decimals is 17
+    return [s, e, isInteger ? 15 : 17];
   }
 
   // tslint:disable-next-line
-  if (typeof value === 'number' || typeof value === 'bigint') {
+  if (typeof value === 'bigint') {
     value = value.toString();
   }
 
-  value = value.replace(/_/g, '')
+  value = value.replace(/[_\s]/g, '');  // replace "whitespace"
 
-  const [ss, se] = value.replace(/[.]/g, '').split(/[eE]/);
-  const k = value.indexOf('.');
+  const [coefficient, exponent = '0'] = value.split(/[eE]/);
+  let [ip = '0', fp = ''] = coefficient.split('.');
+  const significand = ip + fp;
+  const k = ip.length;
 
-  const n = BigInt(ss);
-  const s = ss.startsWith('-') ? 1 : 0;
+  const s = BigInt(significand);
+  const sign = significand.startsWith('-') ? 1 : 0;
+  const e = parseInt(exponent, 10);
 
-  if (n === 0n) {
-    return [n, 0, ss.length - s];
+  if (s === 0n) {
+    return [s, e, significand.length - sign];
   }
 
-  const p = n.toString().length - s;
-  const e = parseInt(se || '0', 10) + (k < 0 ? 0 : k - ss.length);
+  // Integers (without a period or exponent notation) have infinite precision
+  const isInteger = coefficient.indexOf('.') < 0 && value.search(/[eE]/) < 0;
+  const p = isInteger ? Infinity : s.toString().length - sign;
 
-  return [n, e, p];
+  return [s, e + (k < 0 ? 0 : k - significand.length), p];
 }
 
 export function absDiff(a: bigint, b: bigint): bigint {

@@ -30,6 +30,7 @@ export class Irrational extends Real {
   static E =      new Irrational('2.71828182845904523536028747135');
   static LN2 =    new Irrational('0.69314718055994530941723212145');
   static LOG10E = new Irrational('0.43429448190325182765112891891');
+  static INVE =   new Irrational('0.367879441171442321595523770161460867445811131031767834507');
 
   @guard()
   static isIrrational(x: unknown): x is Irrational {
@@ -38,8 +39,8 @@ export class Irrational extends Real {
 
   @conversion()
   static fromRational(x: Rational): Irrational {
-    const [n, d] = x.toArray();
-    return new Irrational(n).div(new Irrational(d));
+    const [n, d] = x.toArray().map(n => new Irrational(n, 0, Infinity));
+    return n.div(d);
   }
 
   @conversion()
@@ -143,16 +144,21 @@ export class Irrational extends Real {
   }
 
   inv() {
-    let x: Irrational = this;
-    if (!Number.isFinite(this.p)) {
-      x = new Irrational(x.s, x.e, 300); // TODO: can this be better?
-    }
-    const n = 2 * x.p;
+    let { s, e, p } = this;
+    p = Number.isFinite(p) ? p : 300;
+    const n = Number.isFinite(p) ? 2 * p : 300;
     const S = 10n ** BigInt(n);
-    return new Irrational(S * 1n / x.s, -x.e - n, x.p);
+
+    s = S / s;
+    e = -e-n;
+
+    return new Irrational(s, e, p);
   }
 
   div(y: Irrational): Irrational {
+    if (this.isZero()) {
+      return this;
+    }
     return this.mul(y.inv());
   }
 
@@ -221,7 +227,7 @@ export class Irrational extends Real {
    * calculates e^x - 1 using Taylor series
    */
   protected expm1() {
-    const S = 10n ** BigInt(this.p + 2);
+    const S = 10n ** BigInt(this.p + 4);
 
     let n: Irrational = this;  // term
     let s = n;  // summation
@@ -309,7 +315,7 @@ export class Irrational extends Real {
 
     // reduce value to 0 < x < 1
     while (s.gt(Irrational.ONE)) {
-      s = s.div(Irrational.E);
+      s = s.mul(Irrational.INVE);
       n += 1;
     }
 
