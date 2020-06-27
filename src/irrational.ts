@@ -389,11 +389,9 @@ export class Irrational extends Real {
     }
     let fps = fp.s.toString();
     fps = zeroPadLeft(fps, fp.e);
-    if (typeof digits !== 'undefined') {
-      fps = zeroPadRight(fps, digits);
-    } else {
-      fps = fps.replace(/0*$/g, '');
-    }
+    fps = (typeof digits === 'undefined') ?
+      fps.replace(/0*$/g, '') :
+      zeroPadRight(fps, digits);
     return `${ip}.${fps}`;
   }
 
