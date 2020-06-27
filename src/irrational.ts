@@ -26,10 +26,10 @@ export class Irrational extends Real {
   static ONE = new Irrational(1, 0, Infinity);
   static TWO = new Irrational(2, 0, Infinity);
 
-  static LN10 =   new Irrational('2.30258509299404568401799145468');  // TODO: these should be computable
-  static E =      new Irrational('2.71828182845904523536028747135');
-  static LN2 =    new Irrational('0.69314718055994530941723212145');
-  static LOG10E = new Irrational('0.43429448190325182765112891891');
+  static LN10 =   new Irrational('2.302585092994045684017991454684364207601101488628772976033');  // TODO: these should be computable
+  static E =      new Irrational('2.718281828459045235360287471352662497757247093699959574966');
+  static LN2 =    new Irrational('0.693147180559945309417232121458176568075500134360255254120');
+  static LOG10E = new Irrational('0.434294481903251827651128918916605082294397005803666566114');
   static INVE =   new Irrational('0.367879441171442321595523770161460867445811131031767834507');
 
   @guard()
@@ -149,8 +149,11 @@ export class Irrational extends Real {
     const n = Number.isFinite(p) ? 2 * p : 300;
     const S = 10n ** BigInt(n);
 
+    const r = S % s * 10n / s;
     s = S / s;
     e = -e-n;
+
+    s += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
 
     return new Irrational(s, e, p);
   }
@@ -255,13 +258,13 @@ export class Irrational extends Real {
     if (y.eq(Irrational.ONE)) {
       return this;
     }
-    if (y.eq(Irrational.TWO)) {  // convert this to Exponentiation by squaring
+    if (y.eq(Irrational.TWO)) {  // TODO: convert this to Exponentiation by squaring
       return this.mul(this);
     }
     const u = y.ip();
     const v = y.valueOf();
     if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
-      return new Irrational(this.s**u, this.e*v, this.p);
+      return new Irrational(this.s**u, this.e*v, Math.min(this.p, y.p));
     }
 
     // x^y = exp(y*ln(x))
@@ -339,19 +342,24 @@ export class Irrational extends Real {
   /**
    * calculates inverse hyperbolic tangent of x
    */
-  protected atanh() {
-    const p = this.p;
-    let n = new Irrational(this.s, this.e, this.p);
-    let sum = n;
+  atanh() {
+    if (this.isZero()) {
+      return this;
+    }
+
+    const p = Math.min(this.p, 300);
+    const S = 10n**BigInt(this.p);
+
     let d = 1;
-    for (let i = 2; i < 300; i++) {
+    let n: Irrational = this;
+    let x = n;
+    let sum = x;
+    
+    while (S > sum.s / x.s) {
       d += 2;
       n = n.mul(this).mul(this);
-      const t = sum;
-      sum = sum.add(n.mul(new Irrational(1 / d)));
-      if (sum.p === p) {
-        return sum;
-      }
+      x = n.div(new Irrational(d, 0, p));
+      sum = sum.add(x);
     }
     return sum;
   }
