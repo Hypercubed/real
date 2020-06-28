@@ -28,12 +28,15 @@ export function parseValue(value: bigint | number | string | null | undefined): 
   const sign = significand.startsWith('-') ? 1 : 0;
   const e = parseInt(exponent, 10);
 
-  if (s === 0n) {
-    return [s, e, significand.length - sign];
-  }
-
   // Integers (without a period or exponent notation) have infinite precision
   const isInteger = coefficient.indexOf('.') < 0 && value.search(/[eE]/) < 0;
+
+  // zero
+  if (s === 0n) {
+    const p = isInteger ? Infinity : significand.length - sign;
+    return [s, e, p];
+  }
+
   const p = isInteger ? Infinity : s.toString().length - sign;
 
   return [s, e + (k < 0 ? 0 : k - significand.length), p];

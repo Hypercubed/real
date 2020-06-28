@@ -2,23 +2,50 @@ import { Irrational } from '../../src/irrational';
 
 const ln = (v: any) => new Irrational(v).ln();
 
+test('error', () => {
+  expect(() => {
+    ln(0);
+  }).toThrow('Logarithm of zero')
+});
+
+test('basics', () => {
+  // expect(	ln	(	0	).toString()).toBe(	?	);
+  // expect(	ln	(	'1.000000000e-9'	).toString()).toBe(	'-2.07232658369e+1'	);
+  // expect(	ln	(	'0.000700000'	).toString()).toBe(	'-7.2644302229e+0'	);
+  expect(	ln	(	'0.100000000'	).toString()).toBe(	'-2.30258509e+0'	);
+
+                                                // -3.56674943938732378912638711241184477964016759046911
+  expect(	ln	(	'0.700000000'	).toString()).toBe(	'-3.56674944e-1'	);
+  expect(	ln	(	'1'	).toString()).toBe(	'0'	);
+  expect(	ln	(	'1.'	).toString()).toBe(	'0.e+0'	);
+  expect(	ln	(	'1.500000000'	).toString()).toBe(	'4.054651081e-1'	);
+
+                                                // 6.93147180559945309417232121458176568075500134360255254120e-1
+  expect(	ln	(	'2.'	        ).toString()).toBe(	'7.e-1'	);
+  expect( ln  ( '2.0'         ).toString()).toBe( '6.9e-1');
+  expect(	ln	(	'2.000000000'	).toString()).toBe(	'6.931471806e-1'	);
+
+  expect( ln  ( '2.718'             ).toString()).toBe( '9.999e-1'              );
+  expect(	ln	(	'2.718281828459045'	).toString()).toBe(	'9.999999999999999e-1'	);
+  expect(	ln	(	'2.718281828459046'	).toString()).toBe(	'1.000000000000000e+0'	);
+  expect(	ln	(	'2.718281828459047'	).toString()).toBe(	'1.000000000000001e+0'	);
+
+                                                // 2.3025850929940456840179914546843642076011014886287729
+  expect( ln  ( '10.'         ).toString()).toBe( '2.3e+0');
+  expect(	ln	(	'10.00000000'	).toString()).toBe(	'2.302585093e+0'	);
+
+  expect(	ln	(	'10.50000000'	).toString()).toBe(	'2.351375257e+0'	);
+  expect(	ln	(	'9999.000000'	).toString()).toBe(	'9.210240367e+0'	);
+  // expect(	ln	(	'1.00000000E6'	).toString()).toBe(	'1.3815510558e+1'	);  // TODO: precision bug
+  // expect(	ln	(	'1.00000000e+9'	).toString()).toBe(	'2.07232658369e+1'	);  // TODO: precision bug
+});
+
 test('ln', () => {
-  expect(ln('1.').toString()).toBe('0.e+0');
-
-  expect(ln('2.').toString()).toBe( '7.e-1');
-  expect(ln('2.0').toString()).toBe('6.9e-1');
-                                  // 6.93147180559945309417232121458176568075500134360255254120e-1
-
-  expect(ln('10.').toString()).toBe('2.3e+0');
-                                  // 2.3025850929940456840179914546843642076011014886287729
   expect(ln('1000.').toString()).toBe('6.908e+0');
-                                 // 6.907755278982137052053974364053092622803304465886318928099...
+                                    // 6.907755278982137052053974364053092622803304465886318928099...
 
   expect(ln('2718.').toString()).toBe('7.908e+0');
                                     // 7.907651594711089021003958894787704267628217642585544032872...
-
-  expect(ln('2.718').toString()).toBe('9.999e-1');
-                                    // 9.99896315728951968949984530734611644824913176699225104772e-1
 
   expect(ln(Irrational.E).toExponential(5)).toBe('9.99999e-1');  // TODO: improve  (1.0)
 

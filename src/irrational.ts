@@ -318,13 +318,14 @@ export class Irrational extends Real {
     
     const n = x.e;
     const s = new Irrational(x.s, 0, p);
+    const e = new Irrational(n, 0, p);
 
     if (x.s === 1n) {
-      return new Irrational(n, 0, p);
+      return e;
     }
     
     const a = s.ln().mul(Irrational.LOG10E);  // TODO: calc log10 without ln
-    return (n === 0) ? a : a.add(new Irrational(n, 0, Infinity));
+    return (n === 0) ? a : a.add(e);
   }
 
   /**
@@ -335,6 +336,10 @@ export class Irrational extends Real {
    *           = lnp1(s - 1) + e
    */
   ln(): Irrational {
+    if (this.isZero()) {
+      throw 'Logarithm of zero';
+    }
+
     if (this.eq(Irrational.ONE)) {
       return new Irrational(0n, 0, this.p);
     }

@@ -2,6 +2,12 @@ import { Irrational } from '../../src/irrational';
 
 const inv = (x: any) => new Irrational(x).inv();
 
+test.only('error', () => {
+  expect(() => {
+    inv(0);
+  }).toThrow('Division by zero')
+});
+
 test('inv', () => {
   expect(inv('1.').toString()).toBe('1.e+0');
   expect(inv('-1.').toString()).toBe('-1.e+0');

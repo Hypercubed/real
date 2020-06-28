@@ -123,7 +123,9 @@ describe('Irrationals from strings', () => {
   });
 
   test('zeros', () => {
-    expect(new Irrational('0'        ).toString()).toBe('0.e+0');
+    expect(new Irrational('0'        ).toString()).toBe('0');
+    expect(new Irrational('0.'       ).toString()).toBe('0.e+0');
+    expect(new Irrational('0.0'      ).toString()).toBe('0.0e+0');
     expect(new Irrational('0.0000'   ).toString()).toBe('0.0000e+0');
     expect(new Irrational('0.0000e-3').toString()).toBe('0.0000e-3');
     expect(new Irrational('0.0000e-1').toString()).toBe('0.0000e-1');
