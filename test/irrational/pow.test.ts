@@ -24,7 +24,7 @@ test('pow', () => {
   expect(pow('4.', '-3.').toString()).toBe('2.e-2');
 
   expect(pow('2.0000', '-2.0000').toString()).toBe('2.5000e-1');
-  // expect(pow('4.0000', '-2.0000').toString()).toBe('6.2500e-2');  // TODO: precision bug??
+  expect(pow('4.0000', '-2.0000').toString()).toBe('6.2500e-2');  // TODO: precision bug??
 
   // expect(pow('2.0000', '-3.0000').toString()).toBe('1.25e+0');   // TODO: precision bug??
   // expect(pow('4.0000', '-3.0000').toString()).toBe('1.5625e+2');

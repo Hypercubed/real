@@ -293,7 +293,7 @@ export class Irrational extends Real {
     }
     if (this.e > 0) {
       const u = this.s * 10n ** BigInt(this.e);  // will be an integer
-      return new Irrational(10n ** u);
+      return new Irrational(10n ** u, 0, this.p);
     }
 
     // 10^x = exp(x*ln(10))
@@ -308,11 +308,20 @@ export class Irrational extends Real {
    *        = ln(s)/ln(10) + n*log(10)
    *        = ln(s)*log10(e) + n
    */
-  
   log10() {
+    const { p } = this;
+
     const x = this.simplify();
+    if (x.eq(Irrational.ONE)) {
+      return new Irrational(0n, 0, p);
+    }
+    
     const n = x.e;
-    const s = new Irrational(x.s, 0, x.p);
+    const s = new Irrational(x.s, 0, p);
+
+    if (x.s === 1n) {
+      return new Irrational(n, 0, p);
+    }
     
     const a = s.ln().mul(Irrational.LOG10E);  // TODO: calc log10 without ln
     return (n === 0) ? a : a.add(new Irrational(n, 0, Infinity));
@@ -323,7 +332,7 @@ export class Irrational extends Real {
    * 
    * ln(x)     = ln(s*e^n)
    *           = ln(s) + n*ln(e);
-   *           = log1p(s - 1) + e
+   *           = lnp1(s - 1) + e
    */
   ln(): Irrational {
     if (this.eq(Irrational.ONE)) {
@@ -339,7 +348,7 @@ export class Irrational extends Real {
       n += 1;
     }
 
-    let a = s.sub(Irrational.ONE).log1p();
+    let a = s.sub(Irrational.ONE).lnp1();
     if (n !== 0) {
       a = a.add(new Irrational(n, 0, Infinity));
     }
@@ -352,21 +361,22 @@ export class Irrational extends Real {
    * high precision value for small values of x
    */
   // TODO: replace with bigint version
-  protected log1p() {
-    const t = Irrational.TWO.add(this);
-    const a = this.div(new Irrational(t.s, t.e)).atanh();
-    return Irrational.TWO.mul(a);
+  protected lnp1() {
+    const t = this.add(Irrational.TWO);
+    const x = this.div(new Irrational(t.s, t.e));
+    return x.atanh().mul(Irrational.TWO);
   }
 
   /**
    * calculates inverse hyperbolic tangent of x
    */
+  // TODO: replace with bigint version
   atanh() {
     if (this.isZero()) {
       return this;
     }
 
-    const p = Math.min(this.p, 300);
+    const p = Math.max(this.p, 100);
     const S = 10n**BigInt(this.p);
 
     let d = 1;

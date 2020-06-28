@@ -52,6 +52,7 @@ test('zeros', () => {
 test.skip('slow', () => {
   expect(exp(' 5.4241E+2                ').toString()).toBe('3.6785e+235');
                                                           // 3.67849E235
+                                                          
   expect(exp('-5.4241E+2                ').toString()).toBe('2.717658486884572e-236');
   expect(exp('-5.42410311287441459172E+2').toString()).toBe('2.717658486884572e-236');
 });

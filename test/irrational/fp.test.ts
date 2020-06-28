@@ -9,7 +9,7 @@ test('fp', () => {
   expect(fp('-2.').toString()).toBe('0.e+0');
 
   expect(fp('0.1').toString()).toBe('1.e-1');
-  expect(fp('2.5').toString()).toBe('5.e-1'); // precision
+  expect(fp('2.5').toString()).toBe('5.e-1');
   expect(fp('10.').toString()).toBe('0.e+0');
 
   expect(fp('-0.1').toString()).toBe('1.e-1');

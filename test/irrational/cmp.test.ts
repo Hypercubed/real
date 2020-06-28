@@ -12,10 +12,11 @@ test('cmp', () => {
 
   expect(cmp('9007199254740992.', '9007199254740994.')).toBe(-1);
   expect(cmp('9007199254740996.', '9007199254740994.')).toBe(1);
+});
 
-  // tests values with diffreent exponents
+test('tests values with different exponents', () => {
   const a = new Irrational('10000');
   const b = new Irrational('0.0000001');
 
   expect(a.cmp(a.add(b))).toBe(-1);
-});
+})
