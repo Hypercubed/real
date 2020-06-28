@@ -61,7 +61,7 @@ export class Irrational extends Real {
     super();
 
     if (value instanceof Irrational) {
-      return this;
+      return value;
     }
 
     [this.s, this.e, this.p] = parseValue(value);
@@ -115,20 +115,30 @@ export class Irrational extends Real {
 
   // TODO: precision error!!
   add(y: Irrational): Irrational {
-    let s = this.s;
-    let e = this.e;
-    const p = this.p; // TODO: presision should be detemined by larger number
-    
-    let yd = y.s;
-    let xd = s;
-    const d = y.e - e;
-    if (d > 0) {
-      yd = yd * 10n ** BigInt(d);
-    } else if (d < 0) {
-      xd = xd * 10n ** BigInt(-d);
-      e = y.e;
-    }
-    s = xd + yd;
+    const [high, low]: Irrational[] = (this.e > y.e) ? [this, y] : [y, this];
+
+    const d = high.e - low.e;
+    const S = 10n ** BigInt(high.e - low.e);
+
+    const hs = high.s * S;
+    const ls = low.s;
+
+    const s = hs + ls;
+    const e = low.e;
+
+    const sl = digits(s);
+    const ph = (hs === 0n ? (1-high.e) : digits(hs)) - high.p;
+    const pl = (ls === 0n ? (1-low.e) : digits(ls)) - low.p;
+
+    const m = Math.max(ph, pl);
+    const p = sl - m;
+
+    // const p = this.p;
+
+    // console.log({ high, low });
+    // console.log({ ph, pl, p });
+    // console.log(this, y, new Irrational(s, e, p));
+
     return new Irrational(s, e, p);
   }
 
@@ -145,8 +155,8 @@ export class Irrational extends Real {
 
   inv() {
     let { s, e, p } = this;
-    p = Number.isFinite(p) ? p : 300;
-    const n = Number.isFinite(p) ? 2 * p : 300;
+    p = Number.isFinite(p) ? p : 200;  // TODO: configurable
+    const n = 3 * p;
     const S = 10n ** BigInt(n);
 
     const r = S % s * 10n / s;
@@ -223,12 +233,14 @@ export class Irrational extends Real {
     if (this.isZero()) {
       return new Irrational(1n, 0, this.p);
     }
-    return this.expm1().add(Irrational.ONE);
+    const a = this.expm1().add(Irrational.ONE);
+    return new Irrational(a.s, a.e, this.p);
   }
 
   /**
    * calculates e^x - 1 using Taylor series
    */
+  // TODO: replace with bigint version
   protected expm1() {
     const S = 10n ** BigInt(this.p + 4);
 
@@ -237,10 +249,10 @@ export class Irrational extends Real {
     let i = 1;  // index
     while (S > s.s / n.s) {
       i++;
-      n = n.mul(this).div(new Irrational(i, 0, this.p));
+      n = n.mul(this).div(new Irrational(i, 0, Infinity));
       s = s.add(n);
     }
-    return s;
+    return new Irrational(s.s, s.e, this.p);
   }
 
   /**
@@ -263,14 +275,17 @@ export class Irrational extends Real {
     }
     const u = y.ip();
     const v = y.valueOf();
+    const p = Math.min(this.p, y.p);
     if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
-      return new Irrational(this.s**u, this.e*v, Math.min(this.p, y.p));
+      return new Irrational(this.s**u, this.e*v, p);
     }
 
     // x^y = exp(y*ln(x))
-    return y.mul(this.ln()).exp();
+    const a = y.mul(this.ln()).exp();
+    return new Irrational(a.s, a.e, p);
   }
 
+  // TODO: replace with bigint versionm avoid using LN10
   pow10(): Irrational {
     if (this.isNegitive()) return this.abs().pow10().inv();
     if (this.e === 0) {
@@ -293,12 +308,14 @@ export class Irrational extends Real {
    *        = ln(s)/ln(10) + n*log(10)
    *        = ln(s)*log10(e) + n
    */
+  
   log10() {
-    const n = this.e;
-    const s = new Irrational(this.s, 0, this.p);
+    const x = this.simplify();
+    const n = x.e;
+    const s = new Irrational(x.s, 0, x.p);
     
-    let a = s.ln().mul(Irrational.LOG10E);
-    return (n === 0) ? a : a.add(new Irrational(n));
+    const a = s.ln().mul(Irrational.LOG10E);  // TODO: calc log10 without ln
+    return (n === 0) ? a : a.add(new Irrational(n, 0, Infinity));
   }
 
   /**
@@ -322,11 +339,11 @@ export class Irrational extends Real {
       n += 1;
     }
 
-    const a = s.sub(Irrational.ONE).log1p();
-    if (n === 0) {
-      return a;
+    let a = s.sub(Irrational.ONE).log1p();
+    if (n !== 0) {
+      a = a.add(new Irrational(n, 0, Infinity));
     }
-    return a.add(new Irrational(n));
+    return new Irrational(a.s, a.e, this.p);
   }
 
   /**
@@ -334,8 +351,10 @@ export class Irrational extends Real {
    * identity in terms of the inverse hyperbolic tangent
    * high precision value for small values of x
    */
+  // TODO: replace with bigint version
   protected log1p() {
-    const a = this.div(Irrational.TWO.add(this)).atanh();
+    const t = Irrational.TWO.add(this);
+    const a = this.div(new Irrational(t.s, t.e)).atanh();
     return Irrational.TWO.mul(a);
   }
 
@@ -442,4 +461,9 @@ export class Irrational extends Real {
 
     return new Irrational(s * sgn, e, this.p).simplify();
   }
+}
+
+function digits(n: bigint): number {
+  const s = n.toString().length;
+  return n < 0n ? s - 1 : s;
 }

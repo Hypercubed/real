@@ -4,10 +4,10 @@ const log = (v: any) => new Irrational(v).log10();
 
 test('log', () => {
   expect(log('1.').toString()).toBe('0.e-57');    // TODO: precision bug??
-  expect(log('10.').toString()).toBe('1.0e+0');
+  expect(log('10.').toString()).toBe('1.0e+0');   // bug!!
   expect(log('100.').toString()).toBe('2.00e+0');
  
-  // expect(log('100000.').toString()).toBe('5.00000e+0');  // TODO: precision bug (5)
+  expect(log('100000.').toString()).toBe('5.00000e+0');
 
   expect(log('2.').toString()).toBe('3.e-1');
                                   // 3.01029995663981195213738894724493026768189881462108541310
