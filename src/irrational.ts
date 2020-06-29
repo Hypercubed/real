@@ -3,6 +3,7 @@ import { guard, conversion } from '@hypercubed/dynamo';
 import Real from './real';
 import { parseValue, zeroPadRight, zeroPadLeft } from './util';
 import { Rational } from './rational';
+import { Memoize } from './decorators';
 
 type InputValue = bigint | number | string | Irrational;
 
@@ -211,6 +212,7 @@ export class Irrational extends Real {
     return this.mul(y.inv());
   }
 
+  @Memoize()
   isInteger() {
     const u = new Irrational(this.trunc());
     return this.sub(u).isZero();
@@ -248,6 +250,7 @@ export class Irrational extends Real {
     return t;
   }
 
+  @Memoize()
   ip(): bigint {
     if (this.e < 0) {
       return this.s / 10n ** BigInt(-this.e);
@@ -396,7 +399,7 @@ export class Irrational extends Real {
       return new Irrational(0n, 0, this.p);
     }
 
-    let s = new Irrational(this.s, this.e, this.p);
+    let s: Irrational = this;
     let n = 0;
 
     // reduce value to 0 < x < 1
@@ -440,16 +443,19 @@ export class Irrational extends Real {
     let n: Irrational = this;
     let x = n;
     let sum = x;
+
+    const sqrd = this.sqr();
     
     while (S > sum.s / x.s) {
       d += 2;
-      n = n.mul(this).mul(this);
+      n = n.mul(sqrd);
       x = n.div(new Irrational(d, 0, p));
       sum = sum.add(x);
     }
     return sum;
   }
 
+  @Memoize()
   toString(): string {
     if (Number.isFinite(this.p)) {
       return this.roundToPrecision().toExponential();
@@ -457,6 +463,7 @@ export class Irrational extends Real {
     return this.toFixed();
   }
 
+  @Memoize()
   valueOf(): number {
     return Number(this.toString());
   }
@@ -501,6 +508,7 @@ export class Irrational extends Real {
     return new Irrational(this.s, this.e, p)
   }
 
+  // better to do this on creation?
   protected simplify() {
     const sgn = this.s < 0n ? -1n : 1n;
     let s = this.s * sgn;
