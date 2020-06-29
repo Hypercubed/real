@@ -3,13 +3,6 @@ import { Irrational } from '../../src/irrational';
 const exp = (v: any) => new Irrational(v).exp();
 
 test('exp', () => {
-  expect(exp('0.').toString()).toBe('1.e+0');
-
-                                    // 2.71828182845904523536028747135266249775724709369995
-  expect(exp('1.'  ).toString()).toBe('3.e+0');
-  expect(exp('1.0' ).toString()).toBe('2.7e+0');
-  expect(exp('1.00').toString()).toBe('2.72e+0');
-
                                       // 7.389056098930650227230427460575007813180315570551847324087
   expect(exp('2.'    ).toString()).toBe('7.e+0');
   expect(exp('2.0'   ).toString()).toBe('7.4e+0');
@@ -24,13 +17,25 @@ test('exp', () => {
   expect(exp('3.141592').toString()).toBe('2.314068e+1');
 });
 
+test('exp(0)', () => {
+  expect(exp('0.'         ).toString()).toBe('1.e+0');
+  expect(exp('0.00000000' ).toString()).toBe('1.00000000e+0');
+});
+
+test('exp(1)', () => {
+                                           // 2.71828182845904523536028747135266249775724709369995
+  expect(exp('1.'         ).toString()).toBe('3.e+0');
+  expect(exp('1.0'        ).toString()).toBe('2.7e+0');
+  expect(exp('1.00'       ).toString()).toBe('2.72e+0');
+  expect(exp('1.00000000' ).toString()).toBe('2.71828183e+0');
+});
+
 test('basics', () => {
   expect(exp('-10.0000000').toString()).toBe('4.53999298e-5');
-                                     // 0.00004_5399929762484851535591515560550610237918088866564969
+                                           // 4.5399929762484851535591515560550610237918088866564969
 
   expect(exp('-1.00000000' ).toString()).toBe('3.67879441e-1');
   expect(exp(' 0.00000000' ).toString()).toBe('1.00000000e+0');
-  expect(exp(' 1.00000000' ).toString()).toBe('2.71828183e+0');
   expect(exp(' 0.693147181').toString()).toBe('2.00000000e+0');
   expect(exp(' 10.0000000' ).toString()).toBe('2.20264658e+4');
 });
@@ -51,10 +56,14 @@ test('zeros', () => {
 
 test.skip('slow', () => {
   expect(exp(' 5.4241E+2                ').toString()).toBe('3.6785e+235');
-                                                          // 3.67849E235
+                                                          // 3.6784929593911466559750883907965508435360418174 × 10^235
+
+  expect(exp(' 5.42410311287441459172E+2').toString()).toBe('3.67963820629414238376e+235');
+                                                          // 3.6796382062941423837597439253790366776529140019 × 10^235
                                                           
-  expect(exp('-5.4241E+2                ').toString()).toBe('2.717658486884572e-236');
-  expect(exp('-5.42410311287441459172E+2').toString()).toBe('2.717658486884572e-236');
+                                                          // 2.718504591525756409575277038480783953355544138 × 10^-236
+  // expect(exp('-5.4241E+2                ').toString()).toBe('2.717658486884572e-236');  // TODO: numeric bug
+  // expect(exp('-5.42410311287441459172E+2').toString()).toBe('2.717658486884572e-236');  // TODO: numeric bug
 });
 
 test('expx21X', () => {
