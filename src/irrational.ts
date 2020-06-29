@@ -7,7 +7,7 @@ import { Rational } from './rational';
 type InputValue = bigint | number | string | Irrational;
 
 /**
- * sqr, sqrt, modulo
+ * sqrt, modulo
  * sin, cos, tan
  * asin, acos, atan
  */
@@ -74,6 +74,10 @@ export class Irrational extends Real {
     if (typeof p !== 'undefined') {
       this.p = p;
     }
+
+    // console.assert(Math.trunc(this.e) === this.e);
+    // console.assert(this.p >= 0);
+
     Object.freeze(this);
   }
 
@@ -138,19 +142,15 @@ export class Irrational extends Real {
   }
 
   protected inc() {
-    const { s, e, p } = this;
-    const one = 10n ** BigInt(-e);
-    return new Irrational(s + one, e, p);
+    return this.add(Irrational.ONE);
   }
 
   sub(y: Irrational): Irrational {
     return this.add(y.neg());
   }
-
+  
   protected dec() {
-    const { s, e, p } = this;
-    const one = 10n ** BigInt(-e);
-    return new Irrational(s - one, e, p);
+    return this.add(Irrational.ONE.neg());
   }
 
   mul(y: Irrational): Irrational {
@@ -325,11 +325,11 @@ export class Irrational extends Real {
     if (y.eq(Irrational.TWO)) {  // TODO: convert this to Exponentiation by squaring
       return this.mul(this);
     }
-    const u = y.ip();
-    const v = y.valueOf();
+
+    const ip = y.ip();
     const p = Math.min(this.p, y.p);
-    if (y.sub(new Irrational(u)).isZero() && BigInt(v) === u) {  // checks that y is a small integer?? 
-      return new Irrational(this.s**u, this.e*v, p);
+    if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
+      return this.pown(ip).setPrecision(p);
     }
 
     // x^y = exp(y*ln(x))
