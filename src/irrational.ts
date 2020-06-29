@@ -464,7 +464,7 @@ export class Irrational extends Real {
   toFixed(digits?: number): string {
     let ip = this.ip().toString();
     if (digits === 0) {
-      return ip.toString();
+      return ip;
     }
     if (ip === '0' && this.isNegitive()) {
       ip = '-0';
