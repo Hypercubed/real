@@ -8,7 +8,7 @@ import { Memoize } from './decorators';
 type InputValue = bigint | number | string | Irrational;
 
 /**
- * sqrt, modulo
+ * modulo
  * sin, cos, tan
  * asin, acos, atan
  */
@@ -285,8 +285,8 @@ export class Irrational extends Real {
     const S = 10n**BigInt(p);
 
     // TODO: improve initial guess
-    // s = BigInt(Math.round(Math.sqrt(Number(s))));
-    // e = e > 2 ? e / 2 : e;
+    s = BigInt(Math.round(Math.sqrt(Number(s))));
+    e = e > 2 ? e / 2 : e;
 
     let x: Irrational = new Irrational(s, e, p); // initial guess for sqrt(this)
     let d = x;
@@ -497,7 +497,7 @@ export class Irrational extends Real {
   @Memoize()
   toString(): string {
     if (Number.isFinite(this.p)) {
-      return this.roundToPrecision().toExponential();
+      return this.toExponential();
     }
     return this.toFixed();
   }
@@ -507,15 +507,16 @@ export class Irrational extends Real {
     return Number(this.toString());
   }
 
-  toFixed(digits?: number): string { // TODO: implement rounding method
-    let ip = this.ip().toString();
+  toFixed(digits?: number): string {
+    const x = this.trimDigits(typeof digits === 'number' ? -this.e - digits : 0);
+    let ip = x.ip().toString();
     if (digits === 0) {
       return ip;
     }
-    if (ip === '0' && this.isNegitive()) {
+    if (ip === '0' && x.isNegitive()) {
       ip = '-0';
     }
-    const fp = this.fp();
+    const fp = x.fp();
     if (fp.isZero() && !digits) {
       return ip;
     }
@@ -528,12 +529,13 @@ export class Irrational extends Real {
     return `${ip}.${fps}`;
   }
 
-  toExponential(fractionDigits: number = (this.p - 1)) { // TODO: implement rounding method
-    const n = this.isNegitive() ? 2 : 1;
-    const s = this.s.toString();
+  toExponential(fractionDigits: number = (this.p - 1)) {
+    const x = this.trimDigits(this.digits() - 1 - fractionDigits);
+    const n = x.isNegitive() ? 2 : 1;
+    const s = x.s.toString();
     const ip = s.slice(0, n);
     const fp = s.slice(n);
-    const e = fp.length + this.e;
+    const e = fp.length + x.e;
     const ee = e >= 0 ? ('+' + e) : e;
     if (!Number.isFinite(fractionDigits)) {
       if (!fp || parseInt(fp, 10) === 0) {
@@ -549,30 +551,46 @@ export class Irrational extends Real {
   }
 
   protected roundToPrecision(p: number = this.p) {
+    return this.trimDigits(this.digits() - p).simplify();
+  }
+
+  protected roundToDigits(n: number) {
+    return this.trimDigits(-this.e - n).simplify();
+  }
+
+  /**
+   * Removes n digits from right
+   * 
+   * @param n number of digits to trim
+   */
+  protected trimDigits(n: number) {
+    if (n <= 0) return this;
+
+    let {s, e, p } = this;
+
+    const S = 10n ** BigInt(n);
+    const r = s % S * 10n / S;
+    s /= S;
+    e += n;
+    s += BigInt(Math.round(Number(r)/10));  // TODO: use signed rounding method
+
+    return new Irrational(s, e, p);
+  }
+
+  protected simplify() {
     const sgn = this.s < 0n ? -1n : 1n;
-
-    let s = this.s * sgn;
-    let e = this.e;
-
-    const ss = s.toString();
-    let n = ss.length - p;
-
-    // rounding
-    if (n > 0) {
-      const S = 10n ** BigInt(n);
-      const r = s % S * 10n / S;
-      s /= S;
-      e += n;
-      s += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
-    }
-
-    // simplify
+    let {s, e} = this.abs();
     while (s % 10n === 0n && s > 1n) { 
       s /= 10n;
       e += 1;
     }
-
     return new Irrational(s * sgn, e, this.p);
+  }
+
+  @Memoize()
+  protected digits() {
+    const s = this.s.toString().length;
+    return this.s < 0n ? s - 1 : s;
   }
 }
 
@@ -580,3 +598,5 @@ function digits(n: bigint): number {
   const s = n.toString().length;
   return n < 0n ? s - 1 : s;
 }
+
+

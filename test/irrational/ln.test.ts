@@ -47,7 +47,7 @@ test('ln', () => {
   expect(ln('2718.').toString()).toBe('7.908e+0');
                                     // 7.907651594711089021003958894787704267628217642585544032872...
 
-  expect(ln(Irrational.E).toExponential(5)).toBe('9.99999e-1');  // TODO: improve  (1.0)
+  expect(ln(Irrational.E).toExponential(5)).toBe('1.00000e+0');
 
   // expect(ln('9007199254740992.').toString()).toBe('3.673680056967710e+1');  // TODO: precision bug!!
   //                                              //  3.673680056967710139911330243728335810800150712109352846839e+1
