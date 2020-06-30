@@ -5,7 +5,6 @@ test('Irrational is instantiable', () => {
   expect(new Irrational(1n) instanceof Irrational).toBe(true);
 });
 
-
 test('Irrationals from bigints', () => {
   expect(new Irrational(1n).toString()).toBe('1');
   expect(new Irrational(-1n).toString()).toBe('-1');
@@ -208,6 +207,15 @@ test('constants', () => {
 });
 
 test('toFixed', () => {
+  expect(new Irrational(1).toFixed()).toBe('1');
+  expect(new Irrational(1).toFixed(2)).toBe('1.00');
+  expect(new Irrational('1.00').toFixed()).toBe('1');
+
+  expect(new Irrational(2).toFixed()).toBe('2');
+  expect(new Irrational(2).toFixed(2)).toBe('2.00');
+  expect(new Irrational('2.00').toFixed()).toBe('2');
+  expect(new Irrational('2.00').toFixed(2)).toBe('2.00');
+
   expect(new Irrational(77.1234).toFixed(2)).toBe('77.12');
   expect(new Irrational(77.1234e3).toFixed(2)).toBe('77123.40');
   expect(new Irrational(-77.1234e-3).toFixed(2)).toBe('-0.07');
