@@ -207,6 +207,8 @@ export class Irrational extends Real {
     return new Irrational(s, e, p);
   }
 
+  // TODO: rewrite to not use inv
+  // TODO: should return exact values when possible (e.g. 9/3)
   div(y: Irrational): Irrational {
     if (this.isZero()) {
       return this;
