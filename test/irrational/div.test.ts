@@ -14,6 +14,15 @@ test('precision tests', () => {
   expect(div('3000e-3', '2000e-3').toString()).toBe('1.500e+0');
 });
 
+test('exact values', () => {
+  expect(div('1',   '1'  ).toString()).toBe('1');
+  expect(div('1.0', '1'  ).toString()).toBe('1.0e+0');
+  expect(div('1',   '1.0').toString()).toBe('1.0e+0');
+
+  expect(div('3',   '2'   ).toString()).toBe('1.5');
+  expect(div('9',   '3'   ).toString()).toBe('3');  // bug?
+});
+
 test('sanity checks', () => {
   expect(div('1.000000000', '1.000000000').toString()).toBe('1.000000000e+0');
   expect(div('2.000000000', '1.000000000').toString()).toBe('2.000000000e+0');

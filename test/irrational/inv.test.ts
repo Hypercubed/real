@@ -2,7 +2,7 @@ import { Irrational } from '../../src/irrational';
 
 const inv = (x: any) => new Irrational(x).inv();
 
-test.only('error', () => {
+test('error', () => {
   expect(() => {
     inv(0);
   }).toThrow('Division by zero')
@@ -28,16 +28,19 @@ test('inv', () => {
   expect(inv('10_000_000_000_000_000.').toString()).toBe('1.0000000000000000e-16');
 });
 
-test('inv exact values', () => {
-  expect(inv( '1').toExponential(9)).toBe(  '1.000000000e+0');
-  expect(inv('-1').toExponential(9)).toBe( '-1.000000000e+0');
-  expect(inv( '2').toExponential(9)).toBe(  '5.000000000e-1');
-  expect(inv( '3').toExponential(9)).toBe(  '3.333333333e-1');
+test('inv exact values, exact results', () => {
+  expect(inv( '1').toString()).toBe(  '1');
+  expect(inv('-1').toString()).toBe( '-1');
+  expect(inv( '2').toString()).toBe(  '0.5');
 
-  expect(inv('1000').toExponential(9)).toBe('1.000000000e-3');
+  expect(inv('1000').toString()).toBe('0.001');
+});
+
+test('inv exact values, inexact results', () => {
+  expect(inv( '3').toString()).toBe(  '3.3333333333333333e-1');
 
                                                       // 1.1102230246251565404236316680908203125 × 10^-16
-  expect(inv('9007199254740992').toExponential(9)).toBe('1.110223024e-16');
+  expect(inv('9007199254740992').toExponential(9)).toBe('1.110223025e-16');
 
   expect(inv('10_000_000_000_000_000').toExponential(9)).toBe('1.000000000e-16');
 });
