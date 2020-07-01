@@ -193,25 +193,9 @@ export class Irrational extends Real {
   }
 
   inv() {
-    let { s, e, p } = this;
-    let isExact = this.isExact();
-    p = isExact ? Irrational.DEFAULT_MAX_PRECISION : p;
-    const n = 2 * Math.max(p, this.digits());
-    const S = 10n ** BigInt(n);
-
-    const r = S % s * 10n / s;
-    s = S / s;
-    e = -e-n;
-
-    if (r !== 0n) {
-      s += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
-      isExact = false;
-    }
-
-    return new Irrational(s, e, isExact ? Infinity : p);
+    return Irrational.ONE.div(this);
   }
 
-  // TODO: improve to avoid unnecessary precision
   div(y: Irrational): Irrational {
     if (this.isZero()) {
       return this;
@@ -219,19 +203,43 @@ export class Irrational extends Real {
 
     let isExact = this.isExact() && y.isExact();
     const p = isExact ? Irrational.DEFAULT_MAX_PRECISION : Math.min(this.p, y.p);
+    const n = p + 1;
 
-    const n = 2 * Math.max(p, y.digits());
-    const S = this.s * 10n ** BigInt(n);
+    const sgnDividend = this.s < 0n ? -1n : 1n;
+    const sgnDivisor = y.s < 0n ? -1n : 1n;
 
-    const r = S % y.s * 10n / y.s;
-    let s = S / y.s;
+    let dividend = this.s * sgnDividend;
+    let divisor = y.s * sgnDivisor;
 
-    if (r !== 0n) {
-      s += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
+    let adj = 0;
+    let result = 0n;
+
+    // TODO: test faster methods (log10(n) ~ digits(n))
+    while (dividend < divisor) {
+      dividend *= 10n;
+      adj++;
+    }
+
+    for (;;) {
+      result += dividend / divisor;
+      dividend %= divisor;
+
+      if (dividend === 0n && adj >= 0 || digits(result) > n) {
+        break;
+      }
+
+      result *= 10n;
+      dividend *= 10n;
+      adj++;
+    }
+
+    if (dividend > 0n) {
+      const r = dividend.toString()[0];
+      result += BigInt(Math.round(Number(r)/10));  // TODO: rounding method
       isExact = false;
     }
     
-    return new Irrational(s, this.e-y.e-n, isExact ? Infinity : p);
+    return new Irrational(result * sgnDividend * sgnDivisor, this.e-y.e-adj, isExact ? Infinity : p);
   }
 
   @Memoize()
