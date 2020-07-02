@@ -169,13 +169,13 @@ export class Irrational extends Real {
   }
 
   // TODO: test
-  protected pown(n: bigint): Irrational {
+  protected ipow(n: bigint): Irrational {
     if (n === 0n) {
       return Irrational.ONE;
     }
 
     if (n < 0n) {
-      return this.abs().pown(-n).inv();
+      return this.abs().ipow(-n).inv();
     }
 
     if (n < MAX_SAFE_INTEGER) {
@@ -352,15 +352,18 @@ export class Irrational extends Real {
    *        = exp(ip)*exp(fp)
    *        = E^ip*exp(fp)
    */
-  exp() {
+  exp(): Irrational {
     if (this.isZero()) {
       return new Irrational(1n, 0, this.p);
+    }
+    if (this.isNegitive()) {
+      return this.neg().exp().inv();
     }
 
     const ip = this.ip();
     const fp = this.fp();
 
-    const x = Irrational.E.pown(ip);
+    const x = Irrational.E.ipow(ip);
 
     const f = fp.expm1().inc();
     const a = f.mul(x);
@@ -411,7 +414,7 @@ export class Irrational extends Real {
     const ip = y.ip();
     const p = Math.min(this.p, y.p);
     if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
-      return this.pown(ip).setPrecision(p);
+      return this.ipow(ip).setPrecision(p);
     }
 
     // x^y = exp(y*ln(x))
