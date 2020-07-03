@@ -440,10 +440,12 @@ export class Irrational extends Real {
    * 
    */
   pow(y: Irrational): Irrational {
+    const p = Math.min(this.p, y.p);
+
     if (y.isZero()) {
-      if (this.isZero()) throw new Error('Division by zero');
-      return new Irrational(0n, 0, Math.min(this.p, y.p));
+      return new Irrational(1n, 0, p);
     }
+
     if (y.isNegitive()) { // x^-y = 1/x^y
       return this.pow(y.abs()).inv();
     }
@@ -455,7 +457,7 @@ export class Irrational extends Real {
     }
 
     const ip = y.ip();
-    const p = Math.min(this.p, y.p);
+    
     if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
       return this.ipow(ip).setPrecision(p);
     }
