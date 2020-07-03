@@ -227,3 +227,11 @@ test('toExponential', () => {
   expect(new Irrational(77.1234e3).toExponential(2)).toBe('7.71e+4');
   expect(new Irrational(-77.1234e-3).toExponential(2)).toBe('-7.71e-2');
 });
+
+test('isqrt', () => {
+  expect(new Irrational('4.0').isqrt().toString()).toBe('5.0e-1');
+  expect(new Irrational('25.0').isqrt().toString()).toBe('2.00e-1');
+  expect(new Irrational('100.0').isqrt().toString()).toBe('1.000e-1');
+
+  expect(new Irrational('64.0').isqrt().toString()).toBe('1.25e-1');
+});

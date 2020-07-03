@@ -28,6 +28,7 @@ export class Irrational extends Real {
   static readonly ZERO = new Irrational(0, 0, Infinity);
   static readonly ONE = new Irrational(1, 0, Infinity);
   static readonly TWO = new Irrational(2, 0, Infinity);
+  static readonly HALF = Irrational.TWO.inv();
 
   static readonly LN10 =   new Irrational('2.302585092994045684017991454684364207601101488628772976033');  // TODO: these should be computable
   static readonly E =      new Irrational('2.718281828459045235360287471352662497757247093699959574966');
@@ -306,7 +307,6 @@ export class Irrational extends Real {
   // TODO: implement invsqrt2 (S*1/SQRT(S) = SQRT(S))
   // TODO: improve initial guess??
   // TODO: sqrt(s*10^e) = sqrt(s)*sqrt(10^e) = sqrt(s)*10^(e/2)???
-  // TODO: check for perfect square
   // TODO: rounding
   sqrt() {
     if (this.isNegitive()) {
@@ -323,25 +323,65 @@ export class Irrational extends Real {
     p = isExact ? Irrational.DEFAULT_MAX_PRECISION : p;
     const S = 10n**BigInt(p);
 
-    // TODO: improve initial guess??
-    s = BigInt(Math.round(Math.sqrt(Number(s))));
-    e = Math.floor(e > 2 ? e / 2 : e);
-
-    let x: Irrational = new Irrational(s, e, p); // initial guess for sqrt(this)
+    const s0 = Math.sqrt(this.valueOf());
+    let x: Irrational = new Irrational(s0); // initial guess for sqrt(this)
     let d = x;
 
     let i = 0;
-    while (i++ < 1000 && (d.s !== 0n && S > x.s / d.s)) {
+    while (i++ < 1000 && !d.isZero() && S > x.s / d.s) {
       const e = this.div(x);
-      x = x.add(e).div(Irrational.TWO);
+      x = x.add(e).mul(Irrational.HALF);
       d = x.sub(e).abs();
     }
 
-    if (isExact && d.s === 0n) {
+    d = x.sqr().sub(this);
+
+    // TODO: verify this
+    if (isExact && d.isZero()) {
       p = Infinity;
     }
 
     return x.setPrecision(p);
+  }
+
+  isqrt() {
+    if (this.isNegitive()) {
+      throw new Error('Square root of negitive number')
+    }
+
+    if (this.isZero()) {
+      return this;
+    }
+
+    const x: Irrational = this;
+    let { p } = x;
+
+    const isExact = this.isExact();
+    p = isExact ? Irrational.DEFAULT_MAX_PRECISION : p;
+    const S = 10n**BigInt(p);
+
+    const THREE_HALF = new Irrational(3, 0, Infinity).mul(Irrational.HALF);
+    const x_HALF = x.mul(Irrational.HALF);
+
+    let y: Irrational = new Irrational(Math.sqrt(x.valueOf())).inv(); // initial guess for sqrt(this);
+    let d: Irrational = y;
+
+    let i = 0;
+    while (i++ < 10 && !d.isZero() && S > y.s / d.s) {
+      const yp = y;
+      const e = y.sqr().mul(x_HALF);
+      y = y.mul(THREE_HALF.sub(e));
+      d = y.sub(yp).abs();
+    }
+
+    d = y.sqr().sub(this.inv());
+
+    // TODO: verify this
+    if (isExact && d.isZero()) {
+      p = Infinity;
+    }
+
+    return y.setPrecision(p);
   }
 
   /**
@@ -582,6 +622,7 @@ export class Irrational extends Real {
     const fp = s.slice(n);
     const e = fp.length + x.e;
     const ee = e >= 0 ? ('+' + e) : e;
+ 
     if (!Number.isFinite(fractionDigits)) {
       if (!fp || parseInt(fp, 10) === 0) {
         return `${ip}e${ee}`;

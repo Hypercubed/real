@@ -1,3 +1,5 @@
+
+// TODO: implement prefix #e - exact, #i - inexact??
 export function parseValue(value: bigint | number | string | null | undefined): [bigint, number, number] {
   if (value === null || value === undefined) {
     return [0n, 0, Infinity];
