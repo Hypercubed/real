@@ -452,9 +452,9 @@ export class Irrational extends Real {
     if (y.eq(Irrational.ONE)) {
       return this;
     }
-    if (y.eq(Irrational.TWO)) {
-      return this.sqr();
-    }
+    // if (y.eq(Irrational.TWO)) {
+    //   return this.sqr();
+    // }
 
     const ip = y.ip();
     
