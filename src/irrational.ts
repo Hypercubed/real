@@ -419,7 +419,10 @@ export class Irrational extends Real {
     if (this.isZero()) {
       return new Irrational(0n, 0, this.p);
     }
-    const S = 10n ** BigInt(this.p + 4);
+
+    const isExact = this.isExact();
+    const p = isExact ? Irrational.DEFAULT_MAX_PRECISION : this.p;
+    const S = 10n ** BigInt(p + 4);
 
     let n: Irrational = this;  // term
     let s = n;  // summation
@@ -429,7 +432,7 @@ export class Irrational extends Real {
       n = n.mul(this).div(new Irrational(i, 0, Infinity));
       s = s.add(n);
     }
-    return s.setPrecision(this.p);
+    return s.setPrecision(p);
   }
 
   /**

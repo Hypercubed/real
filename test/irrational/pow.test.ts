@@ -2,6 +2,8 @@ import { Irrational } from '../../src/irrational';
 
 const pow = (x: any, y: any) => new Irrational(x).pow(new Irrational(y));
 
+const HALF = new Irrational(0.5, 0, Infinity);
+
 test('pow', () => {
   expect(pow('1.', '1.').toString()).toBe('1.e+0');
   expect(pow('1.', '-1.').toString()).toBe('1.e+0');
@@ -38,3 +40,15 @@ test('pow', () => {
   expect(pow('4.', '0.5').toString()).toBe(      '2.e+0');
   expect(pow('4.000', '0.5000').toString()).toBe('2.000e+0');
 });
+
+test('pow exact', () => {
+  expect(pow('1', '1').toString()).toBe('1');
+  expect(pow('4', '2').toString()).toBe('16');
+
+  // expect(pow('4', HALF).toString()).toBe('16'); // TODO: slow
+});
+
+test('fractional powers', () => {
+  expect(pow('4', '0.5').toString()).toBe('2.e+0');
+  expect(pow('25', '0.5').toString()).toBe('5.e+0');
+})
