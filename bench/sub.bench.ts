@@ -7,7 +7,7 @@ import { Irrational } from '../src/irrational';
 const FIVE = new Irrational(5);
 const N_FIVE = new Irrational(-5);
 
-suite('sqrt', (s: any) => {
+suite('sub', (s: any) => {
   const value = 25;
   const irr = new Irrational(value);
   const answer = 20;

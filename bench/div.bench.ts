@@ -6,7 +6,7 @@ import { Irrational } from '../src/irrational';
 
 const FIVE = new Irrational(5);
 
-suite('div/inv', (s: any) => {
+suite('div', (s: any) => {
   const value = 25;
   const irr = new Irrational(value);
   const answer = 0.2;

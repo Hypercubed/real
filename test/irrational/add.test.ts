@@ -57,7 +57,7 @@ test('examples from decarith', () => {
   expect(	add	(	'1.3'	,    '-1.07').toString()).toBe(	 '2.e-1'	);
   expect(	add	(	'1.30'	,  '-1.07').toString()).toBe(	 '2.3e-1'	);
   expect(	add	(	'1.3'	,	   '-1.30').toString()).toBe(	 '0.e-1'	); // ??
-  expect(	add	(	'1.30'	,	 '-1.30').toString()).toBe(	 '0.e-2'	); // ??
+  expect(	add	(	'1.30'	,	 '-1.30').toString()).toBe(	 '0.0e-1'	); // ??
   expect(	add	(	'1.3'	,	   '-2.07').toString()).toBe(	'-8.e-1'	);
   expect(	add	(	'1.30'	,	 '-2.07').toString()).toBe(	'-7.7e-1'	);
   expect(	add	(	'1E+2'	,	 '1E+4'	).toString()).toBe(	 '1.e+4');

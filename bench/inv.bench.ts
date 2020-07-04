@@ -6,7 +6,7 @@ import { Irrational } from '../src/irrational';
 
 const N_ONE = Irrational.ONE.neg();
 
-suite('div/inv', (s: any) => {
+suite('inv', (s: any) => {
   const value = 25;
   const irr = new Irrational(value);
   const answer = 0.04;
@@ -18,7 +18,7 @@ suite('div/inv', (s: any) => {
     result = 0;
   });
 
-  s.burn('JS', () => {
+  s.burn('number', () => {
     result = 1/value;
   });
 

@@ -10,21 +10,21 @@ test('fp', () => {
 
   expect(fp('0.1').toString()).toBe('1.e-1');
   expect(fp('2.5').toString()).toBe('5.e-1');
-  expect(fp('10.').toString()).toBe('0.e+0');
+  expect(fp('10.').toString()).toBe('0.0e+1'); // ??
 
   expect(fp('-0.1').toString()).toBe('1.e-1');
   expect(fp('-2.5').toString()).toBe('5.e-1');
-  expect(fp('-10.').toString()).toBe('0.e+0');
+  expect(fp('-10.').toString()).toBe('0.0e+1');
 
   expect(fp('9007199254740992.').toString()).toBe('0.e+0');
   expect(fp('9007199254740994.').toString()).toBe('0.e+0');
-  expect(fp('10_000_000_000_000_000.').toString()).toBe('0.e+0');
+  expect(fp('10_000_000_000_000_000.').toString()).toBe('0.0000000000000000e+16'); // ??
 
   expect(fp('900719.9254740992').toString()).toBe('9.254740992e-1');
   expect(fp('90071992.54740994').toString()).toBe('5.4740994e-1');
-  expect(fp('10_000_000.00000').toString()).toBe('0.e-5');  // bug??
+  expect(fp('10_000_000.00000').toString()).toBe('0.000000000000e+7');  // ??
 
   expect(fp('-900719.9254740992').toString()).toBe('9.254740992e-1');
   expect(fp('-90071992.54740994').toString()).toBe('5.4740994e-1');
-  expect(fp('-10_000_000.00000').toString()).toBe('0.e-5');
+  expect(fp('-10_000_000.00000').toString()).toBe('0.000000000000e+7'); // ??
 });

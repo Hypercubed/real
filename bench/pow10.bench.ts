@@ -6,7 +6,7 @@ import { Irrational } from '../src/irrational';
 
 const TEN = new Irrational(10);
 
-suite('sqrt', (s: any) => {
+suite('pow10', (s: any) => {
   const value = 5;
   const irr = new Irrational(value);
   const answer = 1e+5;
@@ -23,7 +23,7 @@ suite('sqrt', (s: any) => {
   });
 
   s.bench('pow10', () => {
-    result = irr.pow10()
+    result = irr.pow10();
   });
 
   s.bench('ten.pow', () => {

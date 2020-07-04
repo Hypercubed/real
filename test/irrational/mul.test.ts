@@ -16,11 +16,11 @@ test('basics floats', () => {
   expect(mul('5.', '2.').toString()).toBe('1.e+1');
 
   expect(mul('1.20', '-2').toString()).toBe('-2.40e+0');
-  expect(mul('1.20',  '0').toString()).toBe( '0.00e-2');  // ??
+  expect(mul('1.20',  '0').toString()).toBe( '0.00e-1');  // ??
   expect(mul('1.20',  '2').toString()).toBe( '2.40e+0');
 
   expect(mul('-1.20', '-2').toString()).toBe( '2.40e+0');
-  expect(mul('-1.20',  '0').toString()).toBe( '0.00e-2');  // ??
+  expect(mul('-1.20',  '0').toString()).toBe( '0.00e-1');  // ??
   expect(mul('-1.20',  '2').toString()).toBe('-2.40e+0');
 
   expect(mul('2.50',  '4').toString()).toBe('1.00e+1');
