@@ -463,18 +463,10 @@ export class Irrational extends Real {
     const isExact = this.isExact() && y.isExact();
     p = isExact ? Irrational.DEFAULT_MAX_PRECISION : p;
 
-    const xp = new Irrational(this.s, 0, p);
-    const ep = new Irrational(this.e, 0, p)
-    const yp = new Irrational(y.s, y.e, p);
+    const xp = this.setPrecision(p);
+    const yp = y.setPrecision(p);
 
-    // x^y = exp(y*ln(x))
-    const a = yp.mul(xp.ln()).exp();
-    
-    // 10^(e*y)
-    const b = ep.mul(y).pow10();
-
-    // (s*10^e)^y = (s^y)*(10^(e*y))
-    return a.mul(b).setPrecision(p);
+    return yp.mul(xp.ln()).exp();
   }
 
   // TODO: replace with bigint version avoid using LN10
