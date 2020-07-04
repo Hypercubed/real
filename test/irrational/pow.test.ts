@@ -157,15 +157,22 @@ test('pow', () => {
 
                                                      // 1.1102230246251565404236316680908203125
   expect(pow('9007199254740992.', -1).toString()).toBe('1.110223024625157e-16');
-
-  expect(pow('4.000', '0.5000').toString()).toBe('2.000e+0');
 });
-
-// test('pow exact', () => {
-//   // expect(pow('4', HALF).toString()).toBe('16'); // TODO: slow
-// });
 
 test('fractional powers', () => {
   expect(pow('4', '0.5').toString()).toBe('2.e+0');
+  expect(pow('4.000', '0.5000').toString()).toBe('2.000e+0');
+
   expect(pow('25', '0.5').toString()).toBe('5.e+0');
+
+  expect(pow('2.000000', '2.100000').toString()).toBe('4.287094e+0');
+  expect(pow('2.000000', '2.010000').toString()).toBe('4.027822e+0');
+  expect(pow('2.000000', '2.001000').toString()).toBe('4.002774e+0');
+  expect(pow('2.000000', '2.000100').toString()).toBe('4.000277e+0');
+  expect(pow('2.000000', '2.000010').toString()).toBe('4.000028e+0');
+  expect(pow('2.000000', '2.000001').toString()).toBe('4.000003e+0');
+});
+
+test('fractional powers exact', () => {
+  expect(pow('4', HALF).toString()).toBe('2.0000000000000000e+0'); // TODO: excess precision
 });

@@ -440,7 +440,7 @@ export class Irrational extends Real {
    * 
    */
   pow(y: Irrational): Irrational {
-    const p = Math.min(this.p, y.p);
+    let p = Math.min(this.p, y.p);
 
     if (y.isZero()) {
       return new Irrational(1n, 0, p);
@@ -452,19 +452,29 @@ export class Irrational extends Real {
     if (y.eq(Irrational.ONE)) {
       return this;
     }
-    // if (y.eq(Irrational.TWO)) {
-    //   return this.sqr();
-    // }
 
     const ip = y.ip();
     
+    // If y is a small integer use the 'exponentiation by squaring' algorithm.
     if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
       return this.ipow(ip).setPrecision(p);
     }
 
+    const isExact = this.isExact() && y.isExact();
+    p = isExact ? Irrational.DEFAULT_MAX_PRECISION : p;
+
+    const xp = new Irrational(this.s, 0, p);
+    const ep = new Irrational(this.e, 0, p)
+    const yp = new Irrational(y.s, y.e, p);
+
     // x^y = exp(y*ln(x))
-    const a = y.mul(this.ln()).exp();
-    return a.setPrecision(p);
+    const a = yp.mul(xp.ln()).exp();
+    
+    // 10^(e*y)
+    const b = ep.mul(y).pow10();
+
+    // (s*10^e)^y = (s^y)*(10^(e*y))
+    return a.mul(b).setPrecision(p);
   }
 
   // TODO: replace with bigint version avoid using LN10
@@ -615,7 +625,7 @@ export class Irrational extends Real {
     fps = zeroPadLeft(fps, fp.e);
     fps = digits ?
       zeroPadRight(fps, digits) :
-      fps.replace(/0*$/g, '');
+      fps.replace(/0*$/g, '').slice(0, Irrational.DEFAULT_MAX_PRECISION);
     return `${ip}.${fps}`;
   }
 
