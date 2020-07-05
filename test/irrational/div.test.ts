@@ -20,7 +20,7 @@ test('exact values', () => {
   expect(div('1',   '1.0').toString()).toBe('1.0e+0');
 
   expect(div('3',   '2'   ).toString()).toBe('1.5');
-  expect(div('9',   '3'   ).toString()).toBe('3');  // bug?
+  expect(div('9',   '3'   ).toString()).toBe('3');
 });
 
 test('sanity checks', () => {

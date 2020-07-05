@@ -199,7 +199,7 @@ export class Irrational extends Real {
   }
 
   // TODO: test
-  protected ipow(n: bigint): Irrational {
+  ipow(n: bigint): Irrational {
     if (n === 0n) {
       return Irrational.ONE;
     }
@@ -663,6 +663,27 @@ export class Irrational extends Real {
       zeroPadRight(fps, digits) :
       fps.replace(/0*$/g, '').slice(0, Irrational.DEFAULT_MAX_PRECISION);
     return `${ip}.${fps}`;
+  }
+
+  print() {
+    const digits = this.p - 1;
+    const x = this.trimDigits(this.digits() - 1 - digits);
+    const n = x.isNegitive() ? 2 : 1;
+    const s = x.s.toString();
+    const ip = s.slice(0, n);
+    const fp = s.slice(n);
+    const e = fp.length + x.e;
+    const ee = e >= 0 ? ('+' + e) : e;
+ 
+    if (!Number.isFinite(digits)) {
+      if (!fp || parseInt(fp, 10) === 0) {
+        return `${ip}e${ee}`;
+      }
+      return `${ip}.${fp}e${ee}`;
+    }
+    // TODO: better to sring conversion
+    const err = '0.' + '0'.repeat(digits - 1) + '1';
+    return `(${ip}.${fp.slice(0, digits)}±${err})e${ee}`;
   }
 
   toExponential(fractionDigits: number = (this.p - 1)) {

@@ -228,10 +228,42 @@ test('toExponential', () => {
   expect(new Irrational(-77.1234e-3).toExponential(2)).toBe('-7.71e-2');
 });
 
+test('print', () => {
+  expect(new Irrational('77.1234').print()).toBe('(7.71234±0.00001)e+1');
+  expect(new Irrational('77.1234e3').print()).toBe('(7.71234±0.00001)e+4');
+  expect(new Irrational('-77.1234e-3').print()).toBe('(-7.71234±0.00001)e-2');
+});
+
 test('isqrt', () => {
   expect(new Irrational('4.0').isqrt().toString()).toBe('5.0e-1');
   expect(new Irrational('25.0').isqrt().toString()).toBe('2.00e-1');
   expect(new Irrational('100.0').isqrt().toString()).toBe('1.000e-1');
 
   expect(new Irrational('64.0').isqrt().toString()).toBe('1.25e-1');
+});
+
+// S. M. Rump. Algorithms for verified inclusions – theory and practice.
+// From Yap, Chee, and Thomas E. “The Exact Computation Paradigm.” Computing in Euclidean Geometry, August 6, 1994. https://doi.org/10.1142/9789812831699_0011.
+test('Rump', () => {
+  const a = new Irrational(77617.0);
+  const b = new Irrational(33096.0);
+
+  const aa = a.ipow(2n);
+  const b2 = b.ipow(2n);
+  const b4 = b2.ipow(2n);
+  const b6 = b4.mul(b2);
+  const b8 = b4.ipow(2n);
+
+  const f1 = new Irrational(333.75).mul(b6);
+  const f2b1 = new Irrational(11).mul(aa).mul(b2);
+  const f2b3 = new Irrational(121).mul(b4);
+  const f2b = f2b1.sub(b6).sub(f2b3).sub(Irrational.TWO);
+  const f2 = aa.mul(f2b);
+  const f3 = new Irrational(5.5).mul(b8);
+  const f4 = a.div(b.mul(Irrational.TWO));
+
+  const f = f1.add(f2).add(f3).add(f4);
+
+                           // −0.827396059946821368141165095479816291999
+  expect(f.toFixed(15)).toBe('-0.827396059946821');
 });
