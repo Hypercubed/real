@@ -4,8 +4,8 @@ const div = (x: any, y: any) => new Irrational(x).div(new Irrational(y));
 
 test('precision tests', () => {
   expect(div('1.',   '1.'  ).toString()).toBe('1.e+0');
-  expect(div('1.0', '1.'  ).toString()).toBe('1.e+0');
-  expect(div('1.',   '1.0').toString()).toBe('1.e+0');
+  expect(div('1.0', '1.'  ).toString()).toBe('1.e+0');  // ??
+  expect(div('1.',   '1.0').toString()).toBe('1.e+0');  // ??
   expect(div('1.0', '1.0').toString()).toBe('1.0e+0');
 
   expect(div('3.',   '2.'   ).toString()).toBe('2.e+0');
@@ -28,8 +28,8 @@ test('sanity checks', () => {
   expect(div('2.000000000', '1.000000000').toString()).toBe('2.000000000e+0');
   expect(div('1.000000000', '2.000000000').toString()).toBe('5.000000000e-1');
   expect(div('2.000000000', '2.000000000').toString()).toBe('1.000000000e+0');
-  expect(div('0.000000000', '1.000000000').toString()).toBe('0.000000000e+0');
-  expect(div('0.000000000', '2.000000000').toString()).toBe('0.000000000e+0');
+  expect(div('0.000000000', '1.000000000').toString()).toBe('0.e-9');
+  expect(div('0.000000000', '2.000000000').toString()).toBe('0.e-9');
   expect(div('1.000000000', '3.000000000').toString()).toBe('3.333333333e-1');
   expect(div('2.000000000', '3.000000000').toString()).toBe('6.666666667e-1');
   expect(div('3.000000000', '3.000000000').toString()).toBe('1.000000000e+0');
@@ -57,15 +57,17 @@ test('imprecise results', () => {
 });
 
 test('Divide into zero', () => {
-  expect(div( '0.000000',  '7.000000'    ).toString()).toBe( '0.000000e+0');
-  expect(div( '0.000000',  '7.000000e-5' ).toString()).toBe( '0.000000e+0');
-  expect(div( '0.000000',  '7.000000e+5' ).toString()).toBe( '0.000000e+0');
-  expect(div( '0.000000',  '700.0000e+99').toString()).toBe( '0.000000e+0');
+  expect(div( '0.000000',  '7.000000'    ).toString()).toBe( '0.e-6');
+  expect(div( '0.000000',  '7.000000e-5' ).toString()).toBe( '0.e-6');
+  expect(div( '0.000000',  '7.000000e+5' ).toString()).toBe( '0.e-6');
+  expect(div( '0.000000',  '700.0000e+99').toString()).toBe( '0.e-6');
 
-  expect(div( '0.000000e-3',  '7.000000'    ).toString()).toBe( '0.000000e-3');
-  expect(div( '0.000000e-1',  '7.000000e-5' ).toString()).toBe( '0.000000e-1');
-  expect(div( '0.000000e+1',  '7.000000e+5' ).toString()).toBe( '0.000000e+1');
-  expect(div( '0.000000e+3',  '700.0000e+99').toString()).toBe( '0.000000e+3');
+  expect(div( '0.000000e-3',  '7.000000'    ).toString()).toBe( '0.e-9');
+  expect(div( '0.000000e-1',  '7.000000e-5' ).toString()).toBe( '0.e-7');
+  expect(div( '0.000000e+1',  '7.000000e+5' ).toString()).toBe( '0.e-5');
+  expect(div( '0.000000e+3',  '700.0000e+99').toString()).toBe( '0.e-3');
+  expect(div( '0.000000e+6',  '700.0000e+99').toString()).toBe( '0.e+0');
+  expect(div( '0.000000e+9',  '700.0000e+99').toString()).toBe( '0.e+3');
 });
 
 test('big', () => {
@@ -79,4 +81,8 @@ test('ECMAScript bad examples', () => {
   expect(div(5, 9).toString()).toBe('5.55555555555556e-1');
   expect(div('5.000000', '9.000000').toString()).toBe('5.555556e-1');
   expect(div('5.000000', '11.00000').toString()).toBe('4.545455e-1');
+});
+
+test('inv', () => {
+  expect(div(1n, '-3.0000').toString()).toBe('-3.3333e-1');
 });

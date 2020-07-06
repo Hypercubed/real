@@ -60,12 +60,6 @@ describe('Irrationals from strings', () => {
     expect(new Irrational('-1.').toString()).toBe('-1.e+0');
     expect(new Irrational('2.').toString()).toBe('2.e+0');
     expect(new Irrational('-2.').toString()).toBe('-2.e+0');
-
-    expect(new Irrational('0.0').toString()).toBe('0.0e+0');
-    expect(new Irrational('0.0000').toString()).toBe('0.0000e+0');
-  
-    expect(new Irrational('-0.0').toString()).toBe('0.0e+0');
-    expect(new Irrational('-0.0000').toString()).toBe('0.0000e+0');
   
     expect(new Irrational('0.1').toString()).toBe('1.e-1');
     expect(new Irrational('-0.20').toString()).toBe('-2.0e-1');
@@ -96,6 +90,15 @@ describe('Irrationals from strings', () => {
     expect(new Irrational('-10_000_000.00000').toString()).toBe('-1.000000000000e+7');
   });
 
+  test('zeros', () => {
+    expect(new Irrational('0.').toString()).toBe('0.e+0');
+    expect(new Irrational('0.0').toString()).toBe('0.e-1');
+    expect(new Irrational('0.0000').toString()).toBe('0.e-4');
+  
+    expect(new Irrational('-0.0').toString()).toBe('0.e-1');
+    expect(new Irrational('-0.0000').toString()).toBe('0.e-4');
+  });
+
   test('exp', () => {
     // strings (exp)
     expect(new Irrational('9007199254740993e-8').toString()).toBe('9.007199254740993e+7');
@@ -124,12 +127,12 @@ describe('Irrationals from strings', () => {
   test('zeros', () => {
     expect(new Irrational('0'        ).toString()).toBe('0');
     expect(new Irrational('0.'       ).toString()).toBe('0.e+0');
-    expect(new Irrational('0.0'      ).toString()).toBe('0.0e+0');
-    expect(new Irrational('0.0000'   ).toString()).toBe('0.0000e+0');
-    expect(new Irrational('0.0000e-3').toString()).toBe('0.0000e-3');
-    expect(new Irrational('0.0000e-1').toString()).toBe('0.0000e-1');
-    expect(new Irrational('0.0000e+1').toString()).toBe('0.0000e+1');
-    expect(new Irrational('0.0000e+3').toString()).toBe('0.0000e+3');
+    expect(new Irrational('0.0'      ).toString()).toBe('0.e-1');
+    expect(new Irrational('0.0000'   ).toString()).toBe('0.e-4');
+    expect(new Irrational('0.0000e-3').toString()).toBe('0.e-7');
+    expect(new Irrational('0.0000e-1').toString()).toBe('0.e-5');
+    expect(new Irrational('0.0000e+1').toString()).toBe('0.e-3');
+    expect(new Irrational('0.0000e+3').toString()).toBe('0.e-1');
   });
 
   test('special', () => {
@@ -141,16 +144,16 @@ describe('Irrationals from strings', () => {
   });
 
   test('preceding zeros are not significant', () => {
-    // expect(new Irrational('0000').toString()).toBe('0e+0');   // TODO: bugs
-    // expect(new Irrational('0000.').toString()).toBe('0.e+0');
-    // expect(new Irrational('00.00').toString()).toBe('0.00e+0');
+    expect(new Irrational('0000').toString()).toBe('0');   
+    // expect(new Irrational('0000.').toString()).toBe('0.e+0');  // TODO: bug
+    // expect(new Irrational('00.00').toString()).toBe('0.e-2');  // TODO: bug
 
     expect(new Irrational('0100.').toString()).toBe('1.00e+2');
     expect(new Irrational('01.00').toString()).toBe('1.00e+0');
 
-    // expect(new Irrational('-0000').toString()).toBe('0e+0');   // TODO: bugs
-    // expect(new Irrational('-0000.').toString()).toBe('0.e+0');
-    // expect(new Irrational('-00.00').toString()).toBe('0.00e+0');
+    expect(new Irrational('-0000').toString()).toBe('0');   
+    // expect(new Irrational('-0000.').toString()).toBe('0.e+0');    // TODO: bug
+    // expect(new Irrational('-00.00').toString()).toBe('0.e-2');    // TODO: bug
 
     expect(new Irrational('-0100.').toString()).toBe('-1.00e+2');
     expect(new Irrational('-01.00').toString()).toBe('-1.00e+0');
@@ -187,7 +190,7 @@ test('Irrationals with infinite precision', () => {
 test('Irrationals from rationals', () => {
   expect(Irrational.fromRational(new Rational('1')).toExponential(9)).toBe('1.000000000e+0');
   expect(Irrational.fromRational(new Rational('1000')).toExponential(9)).toBe('1.000000000e+3');
-  expect(Irrational.fromRational(new Rational('1', '3')).toExponential(9)).toBe('3.333333333e-1');
+  expect(Irrational.fromRational(new Rational('1', '3')).toExponential(9)).toBe('3.333333333e-1');  // TODO
 });
 
 test('constants', () => {
@@ -207,7 +210,7 @@ test('constants', () => {
 });
 
 test('toFixed', () => {
-  // expect(new Irrational(1).toFixed()).toBe('1');
+  expect(new Irrational(1).toFixed()).toBe('1');
   expect(new Irrational(1).toFixed(2)).toBe('1.00');
   expect(new Irrational('1.00').toFixed()).toBe('1');
 
@@ -218,7 +221,7 @@ test('toFixed', () => {
 
   expect(new Irrational(77.1234).toFixed(2)).toBe('77.12');
   expect(new Irrational(77.1234e3).toFixed(2)).toBe('77123.40');
-  expect(new Irrational(-77.1234e-3).toFixed(2)).toBe('-0.08');
+  expect(new Irrational(-77.1234e-3).toFixed(2)).toBe('-0.08'); // TODO
   expect(new Irrational(-77.1234e-10).toFixed(10)).toBe('-0.0000000077');
 });
 
@@ -245,8 +248,10 @@ test('isqrt', () => {
 // S. M. Rump. Algorithms for verified inclusions – theory and practice.
 // From Yap, Chee, and Thomas E. “The Exact Computation Paradigm.” Computing in Euclidean Geometry, August 6, 1994. https://doi.org/10.1142/9789812831699_0011.
 test('Rump', () => {
-  const a = new Irrational(77617.0);
-  const b = new Irrational(33096.0);
+  const p = Infinity;
+
+  const a = new Irrational(77617, 0, p);
+  const b = new Irrational(33096, 0, p);
 
   const aa = a.ipow(2n);
   const b2 = b.ipow(2n);
@@ -254,12 +259,12 @@ test('Rump', () => {
   const b6 = b4.mul(b2);
   const b8 = b4.ipow(2n);
 
-  const f1 = new Irrational(333.75).mul(b6);
-  const f2b1 = new Irrational(11).mul(aa).mul(b2);
-  const f2b3 = new Irrational(121).mul(b4);
+  const f1 = new Irrational(333.75, 0, p).mul(b6);
+  const f2b1 = new Irrational(11, 0, p).mul(aa).mul(b2);
+  const f2b3 = new Irrational(121, 0, p).mul(b4);
   const f2b = f2b1.sub(b6).sub(f2b3).sub(Irrational.TWO);
   const f2 = aa.mul(f2b);
-  const f3 = new Irrational(5.5).mul(b8);
+  const f3 = new Irrational(5.5, 0, p).mul(b8);
   const f4 = a.div(b.mul(Irrational.TWO));
 
   const f = f1.add(f2).add(f3).add(f4);

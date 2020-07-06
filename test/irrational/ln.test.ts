@@ -2,10 +2,17 @@ import { Irrational } from '../../src/irrational';
 
 const ln = (v: any) => new Irrational(v).ln();
 
-test('error', () => {
+test.only('error', () => {
   expect(() => {
     ln(0);
   }).toThrow('Logarithm of zero')
+});
+
+test.only('ones', () => {
+  expect(	ln	(	1n	          ).toString()).toBe(	'0'	);
+  expect(	ln	(	1	            ).toString()).toBe(	'0.e-14'	);
+  expect(	ln	(	'1.'	        ).toString()).toBe(	'0.e+0'	);
+  expect(	ln	(	'1.0000'	    ).toString()).toBe(	'0.e-4'	);
 });
 
 test('basics', () => {
@@ -16,9 +23,7 @@ test('basics', () => {
                                                 // -3.56674943938732378912638711241184477964016759046911
   expect(	ln	(	'0.700000000'	).toString()).toBe(	'-3.56674944e-1'	);
 
-  expect(	ln	(	1n	          ).toString()).toBe(	'0'	);
-  expect(	ln	(	'1.'	        ).toString()).toBe(	'0.e+0'	);
-  expect(	ln	(	'1.0000'	    ).toString()).toBe(	'0.0000e+0'	);
+
   expect(	ln	(	'1.500000000'	).toString()).toBe(	'4.054651081e-1'	);
 
                                                 // 6.93147180559945309417232121458176568075500134360255254120e-1

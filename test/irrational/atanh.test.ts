@@ -3,7 +3,7 @@ import { Irrational } from '../../src/irrational';
 const atanh = (x: any) => new Irrational(x).atanh();
 
 test('atanh', () => {
-  expect(atanh('0.00000000000').toString()).toBe('0.00000000000e+0');
+  expect(atanh('0.00000000000').toString()).toBe('0.e-11');
 
                                                          // 1.00335347731075580635726552060038945263362869145959135874
   // expect(atanh('0.10000000000'          ).toString()).toBe('1.0033534773e-1');
