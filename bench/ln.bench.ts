@@ -14,7 +14,7 @@ suite('ln x < 1', (s: any) => {
   let result: number | Irrational = 0;
 
   s.cycle(() => {
-    assert.equal(result.toFixed(4), answer);
+    assert.strictEqual(result.toFixed(4), answer);
     result = 0;
   });
 
@@ -49,7 +49,7 @@ suite('ln x > 1', (s: any) => {
   let result: number | Irrational = 0;
 
   s.cycle(() => {
-    assert.equal(result.toFixed(4), answer);
+    assert.strictEqual(result.toFixed(4), answer);
     result = 0;
   });
 

@@ -364,9 +364,9 @@ export class Irrational extends Real {
       BigInt(Math.round(Math.sqrt(Number(s)))) :
       s / 2n;
 
-    let xn = s / x;
-    let d = x;
-    let r = 0n;
+    let xn: bigint;
+    let d = 2n;
+    let r: bigint = 0n;
 
     while (d > 1n) {
       r = s % x;
@@ -403,7 +403,7 @@ export class Irrational extends Real {
     const S = 10n**BigInt(p);
 
     const THREE_HALF = new Irrational(3, 0, Infinity).mul(Irrational.HALF);
-    const x_HALF = x.mul(Irrational.HALF);
+    const xo2 = x.mul(Irrational.HALF);
 
     let y: Irrational = new Irrational(Math.sqrt(x.valueOf())).inv(); // initial guess for sqrt(this);
     let d: Irrational = y;
@@ -411,7 +411,7 @@ export class Irrational extends Real {
     let i = 0;
     while (i++ < 10 && !d.isZero() && S > y.s / d.s) {
       const yp = y;
-      const e = y.sqr().mul(x_HALF);
+      const e = y.sqr().mul(xo2);
       y = y.mul(THREE_HALF.sub(e));
       d = y.sub(yp).abs();
     }
@@ -574,31 +574,45 @@ export class Irrational extends Real {
       return new Irrational(0n, 0, this.p);
     }
 
-    // x < 1
-    if (cmp < 0) {
-      return this.inv().ln().neg();
+    let { s, e, p } = this;
+
+    const isExact = this.isExact();
+    p = isExact ? Irrational.DEFAULT_PRECISION : p;
+    const n = p + 5;
+
+    const S = 10n**BigInt(n);  // scale
+
+    let adj = 0;
+    while (s % 10n === 0n && s > 10n) {
+      s /= 10n;
+      adj++;
     }
 
-    let s: Irrational = this;
-    let n = 0;
+    const sm1 = s - 1n;
+    const sp1 = s + 1n;
 
-    // reduce value to 0 < x < 1
-    while (s.gt(Irrational.ONE)) {
-      s = s.div(Irrational.E);
-      n += 1;
+    let i = 1n;
+    const xn0 = S * sm1 / sp1;
+    const u = S * sm1**2n / sp1**2n;
+    let xn = xn0;
+    let sum = xn;
+
+    // basically atanh
+    while (xn > 1n) {
+      i += 2n;
+      xn = xn * u * (i - 2n) / i / S;
+      sum += xn;
     }
 
-    const nn = s.dec();
-    const dd = s.inc();
-
-    let a = nn.div(dd).atanh().mul(Irrational.TWO);
-
-    // let a = s.dec().lnp1();
-
-    if (n !== 0) {
-      a = a.add(new Irrational(n, 0, Infinity));
+    // TODO: improve this
+    if (this.isExact()) {
+      p = Infinity;
     }
-    return a.setPrecision(this.p);
+
+    s = 2n*sum;
+
+    const nn = new Irrational(e+adj, 0, Infinity).mul(Irrational.LN10);
+    return new Irrational(s, -n, p).add(nn).setPrecision(p);
   }
 
   /**
