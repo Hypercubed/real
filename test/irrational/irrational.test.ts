@@ -231,17 +231,14 @@ test('toExponential', () => {
   expect(new Irrational(-77.1234e-3).toExponential(2)).toBe('-7.71e-2');
 });
 
-test('print', () => {
-  expect(new Irrational('77.1234').print()).toBe('(7.71234±0.00001)e+1');
-  expect(new Irrational('77.1234e3').print()).toBe('(7.71234±0.00001)e+4');
-  expect(new Irrational('-77.1234e-3').print()).toBe('(-7.71234±0.00001)e-2');
-});
-
 test('isqrt', () => {
+  // @ts-ignore
   expect(new Irrational('4.0').isqrt().toString()).toBe('5.0e-1');
+  // @ts-ignore
   expect(new Irrational('25.0').isqrt().toString()).toBe('2.00e-1');
+  // @ts-ignore
   expect(new Irrational('100.0').isqrt().toString()).toBe('1.000e-1');
-
+  // @ts-ignore
   expect(new Irrational('64.0').isqrt().toString()).toBe('1.25e-1');
 });
 
@@ -270,5 +267,42 @@ test('Rump', () => {
   const f = f1.add(f2).add(f3).add(f4);
 
                            // −0.827396059946821368141165095479816291999
-  expect(f.toFixed(15)).toBe('-0.827396059946821');
+  expect(f.toFixed(15)).toBe('-0.827396059946821'); // exact?
+});
+
+test('withPrecision', () => {
+  const x = new Irrational(1.234);
+  expect(x).toEqual({ s: 12340000000000000n, e: -16, p: 17, ulp: 1n });
+
+  // @ts-ignore
+  expect(x.withPrecision(4)).toEqual({ s: 1234n, e: -3, p: 4, ulp: 1n });
+
+  // @ts-ignore
+  expect(x.withPrecision(20)).toEqual({ s: 12340000000000000000n, e: -19, p: 20, ulp: 1n });
+
+  // @ts-ignore
+  expect(x.withPrecision(Infinity)).toEqual({ s: 1234n, e: -3, p: Infinity, ulp: 0n });
+});
+
+test('withError', () => {
+  const x = new Irrational(1.234);
+  expect(x).toEqual({ s: 12340000000000000n, e: -16, p: 17, ulp: 1n });
+
+  // @ts-ignore
+  expect(x.withError(10000000000000n)).toEqual({ s: 1234n, e: -3, p: 4, ulp: 1n });
+
+  // @ts-ignore
+  expect(x.withError(200n)).toEqual({ s: 123400000000000n, e: -14, p: 15, ulp: 1n });  // todo: ulp = 2
+
+  // @ts-ignore
+  expect(x.withError(0n)).toEqual({ s: 1234n, e: -3, p: Infinity, ulp: 0n });
+});
+
+test('from', () => {
+  expect(Irrational.from(1n, 0n).toString()).toBe('1');
+  expect(Irrational.from(100n, 1n).toString()).toBe('1.00e+2');
+  expect(Irrational.from(100n, 1n, -2).toString()).toBe('1.00e+0');
+  expect(Irrational.from(100n, 10n, -2).toString()).toBe('1.0e+0');
+
+  expect(Irrational.from(100n, 20n, -2)).toEqual({ s: 10n, e: -1, p: 2, ulp: 1n });  // TODO: after conversion to using ulp
 });

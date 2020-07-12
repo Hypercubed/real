@@ -8,7 +8,7 @@ test('error', () => {
   }).toThrow('Division by zero')
 });
 
-test('inv', () => {
+test.only('inv', () => {
   expect(inv('1.').toString()).toBe('1.e+0');
   expect(inv('-1.').toString()).toBe('-1.e+0');
 
@@ -19,19 +19,19 @@ test('inv', () => {
   expect(inv('-1.0000').toString()).toBe('-1.0000e+0');
   expect(inv( '2.0000').toString()).toBe( '5.0000e-1');
   expect(inv('-3.0000').toString()).toBe('-3.3333e-1');
-  expect(inv(' 4.0000').toString()).toBe( '2.5000e-1');
-  expect(inv('-5.0000').toString()).toBe('-2.0000e-1');
-  expect(inv(' 6.0000').toString()).toBe( '1.6667e-1');
-  expect(inv('-7.0000').toString()).toBe('-1.4286e-1');
-  expect(inv(' 8.0000').toString()).toBe( '1.2500e-1');
-  expect(inv('-9.0000').toString()).toBe('-1.1111e-1');
+  expect(inv(' 4.0000').toString()).toBe( '2.50000e-1');
+  expect(inv('-5.0000').toString()).toBe('-2.00000e-1');
+  expect(inv(' 6.0000').toString()).toBe( '1.66667e-1');
+  expect(inv('-7.0000').toString()).toBe('-1.42857e-1');
+  expect(inv(' 8.0000').toString()).toBe( '1.25000e-1');
+  expect(inv('-9.0000').toString()).toBe('-1.11111e-1');
   expect(inv('10.000' ).toString()).toBe( '1.0000e-1');
 
   expect(inv('0.1').toString()).toBe('1.e+1');
   expect(inv('10.').toString()).toBe('1.0e-1');
 
                                                  // 1.1102230246251565404236316680908203125 × 10^-16
-  expect(inv('9007199254740992.').toString()).toBe('1.110223024625157e-16');
+  expect(inv('9007199254740992.').toString()).toBe('1.1102230246251565e-16');
 
   expect(inv('10_000_000_000_000_000.').toString()).toBe('1.0000000000000000e-16');
 });

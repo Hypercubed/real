@@ -15,11 +15,11 @@ test('basics floats', () => {
   expect(mul('5.', '1.').toString()).toBe('5.e+0');
   expect(mul('5.', '2.').toString()).toBe('1.0e+1');
 
-  expect(mul('1.20', '-2.00').toString()).toBe('-2.400e+0');
+  expect(mul('1.20', '-2.00').toString()).toBe('-2.40e+0');
   expect(mul('1.20',  '2.00').toString()).toBe( '2.40e+0');
 
   expect(mul('-1.20', '-2.00').toString()).toBe( '2.40e+0');
-  expect(mul('-1.20',  '2.00').toString()).toBe('-2.400e+0');  // ??
+  expect(mul('-1.20',  '2.00').toString()).toBe('-2.40e+0');
 
   expect(mul('2.50',  '4.00').toString()).toBe('1.000e+1');
 });
@@ -73,7 +73,7 @@ test('mul', () => {
   expect(mul('1.', '-1.').toString()).toBe('-1.e+0');
 
   expect(mul('1.00', '1.00').toString()).toBe('1.00e+0');
-  expect(mul('1.00', '-1.000').toString()).toBe('-1.000e+0');  // ??
+  expect(mul('1.00', '-1.000').toString()).toBe('-1.00e+0');
 
   expect(mul('0.1', '0.2').toString()).toBe('2.e-2');
   expect(mul('10.', '0.2').toString()).toBe('2.e+0');

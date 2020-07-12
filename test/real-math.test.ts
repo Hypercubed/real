@@ -104,10 +104,10 @@ test('div', () => {
   expect(Math.div(1n, 3).toString()).toBe('3.33333333333333e-1');
 
   expect(Math.div(1.234, 3.456).toString()).toBe(                                    '3.5706018518518519e-1');
-  expect(Math.div(1.234, new Rational('3.456')).toString()).toBe(                 '3.5706018518518519e-1');
+  expect(Math.div(1.234, new Rational('3.456')).toString()).toBe(                    '3.570601851851851e-1');
   expect(Math.div(new Irrational('1.234'), new Irrational('3.456')).toString()).toBe('3.571e-1');
   expect(Math.div(new Rational('1.234'), new Irrational('3.456')).toString()).toBe(  '3.571e-1'); 
-  expect(Math.div(new Irrational('1.234'), new Rational('3.456')).toString()).toBe(  '3.571e-1');
+  expect(Math.div(new Irrational('1.234'), new Rational('3.456')).toString()).toBe(  '3.57e-1');
                                                                                    // 3.57060185185185185195185185185185185185185185185185185185...
 
   expect(Math.div(2n, new Irrational('3.456')).toString()).toBe('5.787e-1');
@@ -118,8 +118,8 @@ test('inv', () => {
   expect(Math.inv(3n).toString()).toBe('1/3');
   expect(Math.inv(new Rational('3.456')).toString()).toBe('125/432');
 
-  expect(Math.inv(3.456).toString()).toBe(                  '2.8935185185185185e-1');
-  expect(Math.inv(new Irrational('3.456')).toString()).toBe('2.894e-1');
+  expect(Math.inv(3.456).toString()).toBe(                  '2.89351851851851851e-1');
+  expect(Math.inv(new Irrational('3.456')).toString()).toBe('2.8935e-1');
                                                           // 2.89351851851851851851851851851851851851851851851851851851...
 });
 
@@ -130,12 +130,12 @@ test('ln', () => {
   expect(Math.ln(new Rational('2'         )).toExponential(5)).toBe('6.93147e-1');
                                                                 //   6.93147180559945309417232121458176568075500134360255254120...
 
-  expect(Math.ln(1.234).toString()).toBe(                      '2.1026092548319600e-1'); // precision
+  expect(Math.ln(1.234).toString()).toBe(                      '2.1026092548319607e-1')
   expect(Math.ln(new Rational('1.234')).toExponential(5)).toBe('2.10261e-1');
-  expect(Math.ln(new Irrational('1.234')).toString()).toBe(    '2.100e-1');  // precision
+  expect(Math.ln(new Irrational('1.234')).toString()).toBe(    '2.103e-1');
                                                              // 2.102609254831960713608294360152747699866305851127995
 
-  expect(Math.ln(3.456).toString()).toBe(                     '1.2401118509418091e+0');
+  expect(Math.ln(3.456).toString()).toBe(                     '1.2401118509418092e+0');
   expect(Math.ln(new Rational(3.456)).toExponential(5)).toBe( '1.24011e+0');
   expect(Math.ln(new Irrational('3.456')).toString()).toBe(   '1.240e+0');
                                                             // 1.240111850941809188052386196921720467667668148103716205948...
