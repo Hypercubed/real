@@ -1,10 +1,10 @@
 import { Irrational } from '../../src/irrational';
 
-const exp = (v: any) => new Irrational(v).exp();
+const exp = (v: any) => Irrational.from(v).exp();
 
 test('exp', () => {
                                       // 7.389056098930650227230427460575007813180315570551847324087
-  expect(exp(2n      ).toString()).toBe('7.3890560989306502');
+  // expect(exp(2n      ).toString()).toBe('7.3890560989306502e+0');  // should not be exact
   expect(exp('2.'    ).toString()).toBe('7.e+0');
   expect(exp('2.0'   ).toString()).toBe('7.4e+0');
   expect(exp('2.0000').toString()).toBe('7.3891e+0');
@@ -49,8 +49,9 @@ test('tiny', () => {
 });
 
 test('zeros', () => {
+  expect(exp(  0n          ).toString()).toBe('1');
   expect(exp(' 0.'         ).toString()).toBe('1.e+0');
-  // expect(exp(' 0.00000000' ).toString()).toBe('1.00000000e+0');  // ??
+  expect(exp(' 0.00000000' ).toString()).toBe('1.00000000e+0');  // ??
 
   // expect(exp(' 0.00000000e+100').toString()).toBe('1.00000000e+0');
   // expect(exp('-0.00000000e+100').toString()).toBe('1.00000000e+0');

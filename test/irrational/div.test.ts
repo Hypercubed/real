@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const div = (x: any, y: any) => new Irrational(x).div(new Irrational(y));
+const div = (x: any, y: any) => Irrational.from(x).div(Irrational.from(y));
 
 test('precision tests', () => {
   expect(div('1.',   '1.'  ).toString()).toBe('1.e+0');
@@ -8,10 +8,10 @@ test('precision tests', () => {
   expect(div('1.',   '1.0').toString()).toBe('1.e+0');  // ??
   expect(div('1.0', '1.0').toString()).toBe('1.0e+0');
 
-  expect(div('3.',   '2.'   ).toString()).toBe('2.e+0');
-  expect(div('3.0',  '2.0' ).toString()).toBe('1.5e+0');
-  expect(div('3.00', '2.00').toString()).toBe('1.50e+0');
-  expect(div('3000e-3', '2000e-3').toString()).toBe('1.500e+0');
+  expect(div('3.',   '2.'   ).toString()).toBe('1.5e+0');
+  expect(div('3.0',  '2.0' ).toString()).toBe('1.50e+0');
+  expect(div('3.00', '2.00').toString()).toBe('1.500e+0');
+  expect(div('3000e-3', '2000e-3').toString()).toBe('1.5000e+0');
 });
 
 test('exact values', () => {
@@ -27,7 +27,7 @@ test('sanity checks', () => {
   expect(div('1.000000000', '1.000000000').toString()).toBe('1.000000000e+0');
   expect(div('2.000000000', '1.000000000').toString()).toBe('2.000000000e+0');
   expect(div('1.000000000', '2.000000000').toString()).toBe('5.000000000e-1');
-  expect(div('2.000000000', '2.000000000').toString()).toBe('1.000000000e+0');
+  expect(div('2.000000000', '2.000000000').toString()).toBe('1.0000000000e+0');
   expect(div('0.000000000', '1.000000000').toString()).toBe('0.e-9');
   expect(div('0.000000000', '2.000000000').toString()).toBe('0.e-9');
   expect(div('1.000000000', '3.000000000').toString()).toBe('3.333333333e-1');
@@ -41,7 +41,7 @@ test('sanity checks', () => {
 
   expect(div('1.000000000', '4.000000000').toString()).toBe( '2.500000000e-1');
   expect(div('1.000000000', '8.000000000').toString()).toBe( '1.250000000e-1');
-  expect(div('1.000000000', '16.00000000').toString()).toBe( '6.25000000e-2');
+  expect(div('1.000000000', '16.00000000').toString()).toBe( '6.250000000e-2');
   expect(div('1.000000000', '32.00000000').toString()).toBe( '3.125000000e-2');
   expect(div('1.000000000', '64.00000000').toString()).toBe( '1.562500000e-2');
 
@@ -71,9 +71,9 @@ test('Divide into zero', () => {
 });
 
 test('big', () => {
-  expect(div( '343E6000',         '234E-1000'       ).toString()).toBe( '1.47e+7000');
-  expect(div( '343.000E6000',     '234.000E-1000'   ).toString()).toBe( '1.46581e+7000');
-  expect(div( '343.000000E6000',  '234.000000E-1000').toString()).toBe( '1.46581197e+7000');
+  expect(div( '343E6000',         '234E-1000'       ).toString()).toBe( '1.466e+7000');
+  expect(div( '343.000E6000',     '234.000E-1000'   ).toString()).toBe( '1.465812e+7000');
+  expect(div( '343.000000E6000',  '234.000000E-1000').toString()).toBe( '1.465811966e+7000');
                                                                       // 1.465811965811965811965811965811965811966E+7000
 });
 

@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const ln = (v: any) => new Irrational(v).ln();
+const ln = (v: any) => Irrational.from(v).ln();
 
 test('error', () => {
   expect(() => {

@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const abs = (v: any) => new Irrational(v).abs();
+const abs = (v: any) => Irrational.from(v).abs();
 
 test('abs', () => {
   expect(abs( '0.').toString()).toBe('0.e+0');

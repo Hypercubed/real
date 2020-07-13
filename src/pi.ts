@@ -17,7 +17,7 @@ function calcPi(N: number) {
     pi += x / (i + 2n);
     i += 2n;
   }
-  return new Irrational(pi, -e);
+  return Irrational.from(pi, -e);
 }
 
 export class PI /* extends Real */ {

@@ -13,7 +13,7 @@ function calcLN2(N: number) {
     ln += x;
     k++;
   }
-  return new Irrational(ln, -e);
+  return Irrational.from(ln, -e);
 }
 
 export class LN2 /* extends Real */ {

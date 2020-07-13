@@ -1,6 +1,6 @@
 import { Rational } from '../../src/rational';
 
-const add = (x: any, y: any) => new Rational(x).add(new Rational(y));
+const add = (x: any, y: any) => Rational.from(x).add(Rational.from(y));
 
 test('add', () => {
   expect(add(0, 0).toString()).toBe('0');

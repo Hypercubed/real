@@ -1,5 +1,5 @@
 import { Rational } from '../../src/';
-const cmp = (x: any, y: any) => new Rational(x).cmp(new Rational(y));
+const cmp = (x: any, y: any) => Rational.from(x).cmp(Rational.from(y));
 
 test('cmp', () => {
   expect(cmp(0, 0)).toBe(0);

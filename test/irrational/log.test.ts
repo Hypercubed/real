@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const log = (v: any) => new Irrational(v).log10();
+const log = (v: any) => Irrational.from(v).log10();
 
 test('error', () => {
   expect(() => {
@@ -76,7 +76,7 @@ test.skip('log(2) constants', () => {
 // });
 
 test('log', () => {
-  expect(log('2718.').toString()).toBe('3.4344e+0');  // TODO: precision
+  expect(log('2718.').toString()).toBe('3.434e+0');  // TODO: precision
                                      // 3.434249452396475506672867756572026433614541038620377722067
 
 

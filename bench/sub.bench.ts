@@ -4,12 +4,12 @@ import suite from 'chuhai';
 
 import { Irrational } from '../src/irrational';
 
-const FIVE = new Irrational(5);
-const N_FIVE = new Irrational(-5);
+const FIVE = Irrational.from(5);
+const N_FIVE = Irrational.from(-5);
 
 suite('sub', (s: any) => {
   const value = 25;
-  const irr = new Irrational(value);
+  const irr = Irrational.from(value);
   const answer = 20;
 
   let result: number | Irrational = 0;

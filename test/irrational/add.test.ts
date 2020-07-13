@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const add = (x: any, y: any) => new Irrational(x).add(new Irrational(y));
+const add = (x: any, y: any) => Irrational.from(x).add(Irrational.from(y));
 
 test('quick confidence check', () => {
   expect(	add	(	1n	,          	1n	).toString()).toBe(	'2'	);

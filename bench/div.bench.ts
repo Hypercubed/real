@@ -4,11 +4,11 @@ import suite from 'chuhai';
 
 import { Irrational } from '../src/irrational';
 
-const FIVE = new Irrational(5);
+const FIVE = Irrational.from(5);
 
 suite('div', (s: any) => {
   const value = 25;
-  const irr = new Irrational(value);
+  const irr = Irrational.from(value);
   const answer = 0.2;
 
   let result: number | Irrational = 0;

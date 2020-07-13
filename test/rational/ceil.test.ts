@@ -1,6 +1,6 @@
 import { Rational } from '../../src/';
 
-const ceil = (x: any) => new Rational(x).ceil();
+const ceil = (x: any) => Rational.from(x).ceil();
 
 test('ceil', () => {
   expect(ceil( 1).toString()).toBe('1');

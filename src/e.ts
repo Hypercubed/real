@@ -13,7 +13,7 @@ function calcE(N: number) {
     x = x / k;           // 1/k!
     e += x;
   }
-  return new Irrational(e, -n);
+  return Irrational.from(e, -n);
 }
 
 export class E /* extends Real */ {

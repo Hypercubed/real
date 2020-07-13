@@ -1,7 +1,7 @@
 import { guard } from '@hypercubed/dynamo';
 
 import { Irrational } from './irrational';
-import { absDiff } from './util';
+import { absDiff } from './utils/util';
 
 // Babylonian method
 // https://en.wikipedia.org/wiki/Square_root_of_2#Computation_algorithms
@@ -17,7 +17,7 @@ function calcSQRT(N: number) {
     x = (x + e)/2n;
   }
 
-  return new Irrational(x, -n);
+  return Irrational.from(x, -n);
 }
 
 export class SQRT2 /* extends Real */ {

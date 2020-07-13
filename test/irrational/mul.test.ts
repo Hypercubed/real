@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const mul = (x: any, y: any) => new Irrational(x).mul(new Irrational(y));
+const mul = (x: any, y: any) => Irrational.from(x).mul(Irrational.from(y));
 
 test('basics exact', () => {
   expect(mul('2', '2').toString()).toBe('4');

@@ -1,6 +1,6 @@
 import { Rational } from '../../src/';
 
-const fp = (x: any) => new Rational(x).fp();
+const fp = (x: any) => Rational.from(x).fp();
 
 test('fp', () => {
   expect(fp(1).toString()).toBe('0');

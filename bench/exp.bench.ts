@@ -7,7 +7,7 @@ import { Irrational } from '../src/irrational';
 suite('exp integer', (s: any) => {
   const value = 5;
   const bi = BigInt(value);
-  const irr = new Irrational(value);
+  const irr = Irrational.from(value);
   const answer = '148.4132';
 
   let result: number | Irrational = 0;
@@ -43,7 +43,7 @@ suite('exp integer', (s: any) => {
 
 suite('exp x; x < 1', (s: any) => {
   const value = 0.1;
-  const irr = new Irrational(value);
+  const irr = Irrational.from(value);
   const answer = '1.1052';
 
   let result: number | Irrational = 0;

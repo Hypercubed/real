@@ -1,6 +1,6 @@
 import { Irrational } from '../../src/irrational';
 
-const cmp = (x: any, y: any) => new Irrational(x).cmp(new Irrational(y));
+const cmp = (x: any, y: any) => Irrational.from(x).cmp(Irrational.from(y));
 
 test('cmp exact integers', () => {
   expect(cmp('-2', '-2')).toBe( 0);
@@ -252,8 +252,8 @@ test('cmp', () => {
 });
 
 test('tests values with different exponents', () => {
-  const a = new Irrational('10000');
-  const b = new Irrational('0.0000001');
+  const a = Irrational.from('10000');
+  const b = Irrational.from('0.0000001');
 
   expect(a.cmp(a.add(b))).toBe(-1);
 })

@@ -6,7 +6,7 @@ import { Irrational } from '../src/irrational';
 
 suite('sqr', (s: any) => {
   const value = 5;
-  const irr = new Irrational(value);
+  const irr = Irrational.from(value);
   const answer = 25;
 
   let result: number | Irrational = 0;

@@ -1,6 +1,6 @@
 import { Rational } from '../../src/rational';
 
-const sub = (x: any, y: any) => new Rational(x).sub(new Rational(y));
+const sub = (x: any, y: any) => Rational.from(x).sub(Rational.from(y));
 
 test('sub', () => {
   expect(sub(0, 0).toString()).toBe('0');

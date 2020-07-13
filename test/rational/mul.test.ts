@@ -1,6 +1,6 @@
 import { Rational } from '../../src/rational';
 
-const mul = (x: any, y: any) => new Rational(x).mul(new Rational(y));
+const mul = (x: any, y: any) => Rational.from(x).mul(Rational.from(y));
 
 test('mul', () => {
   expect(mul(0, 0).toString()).toBe('0');

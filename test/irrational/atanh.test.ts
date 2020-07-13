@@ -1,7 +1,7 @@
 import { Irrational } from '../../src/irrational';
 
 // @ts-ignore
-const atanh = (x: any) => new Irrational(x).atanh();
+const atanh = (x: any) => Irrational.from(x).atanh();
 
 test('atanh', () => {
                                                   // 5.49306

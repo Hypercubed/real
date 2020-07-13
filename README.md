@@ -29,8 +29,8 @@ import * as RealMath from '@hypercubed/real';
 RealMath.div(1n, 3n),toString(); // 1/3`
 RealMath.div(1n, 3),toString();  // 3.3333333333333333333e-1
 
-RealMath.div(1n, new Rational(3n)),toString();       // 1/3`
-RealMath.div(1n, new Irrational(3n)),toString();     // 3.3333333333333333333e-1
+RealMath.div(1n, Rational.from(3n)),toString();       // 1/3`
+RealMath.div(1n, Irrational.from(3n)),toString();     // 3.3333333333333333333e-1
 ```
 
 ### Methods

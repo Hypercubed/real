@@ -1,6 +1,6 @@
 import { Rational } from '../../src/rational';
 
-const sgn = (n: any, d?: any) => new Rational(n, d).sgn();
+const sgn = (n: any, d?: any) => Rational.from(n, d).sgn();
 
 test('abs', () => {
   expect(sgn(0)).toBe(1);
