@@ -527,39 +527,42 @@ export class Irrational extends Real {
    */
   // TODO: error propagation
   pow(y: Irrational): Irrational {
-    let p = Math.min(this.p, y.p);
+    const px =  this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
+    const py = y.isExact() ? Irrational.DEFAULT_PRECISION : y.p;
+    const p = Math.min(px, py);
+    const po = (this.isExact() && y.isExact()) ? Infinity : p;
 
     if (y.isZero()) {
-      return Irrational.from(1n, 0).withPrecision(p);
+      if (this.isZero()) {
+        throw new Error('Division by zero');
+      }
+      return Irrational.from(1n, 0).withPrecision(po)
+    }
+
+    if (this.isZero()) {
+      return Irrational.from(0n, 0).withPrecision(po);
     }
 
     if (y.isNegitive()) { // x^-y = 1/x^y
       return this.pow(y.abs()).inv();
     }
+
+    if (this.eq(Irrational.ONE)) {
+      return Irrational.from(1n, 0).withPrecision(po);
+    }
+
     if (y.eq(Irrational.ONE)) {
-      return this;
+      return this.withPrecision(po);
     }
 
     const ip = y.ip();
-    
+
     // If y is a small integer use the 'exponentiation by squaring' algorithm.
     if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
-      return this.ipow(ip).withPrecision(p);
+      return this.ipow(ip).withPrecision(po);
     }
 
-    const isExact = this.isExact() && y.isExact();
-    p = isExact ? Irrational.DEFAULT_PRECISION : p;
-    const n = p + 1;
-
-    const xp = this.withPrecision(n);
-    const yp = y.withPrecision(n);
-
-    if (isExact) {
-      p = Infinity;
-    }
-
-    // TODO: use ulp
-    return yp.mul(xp.ln()).exp().withPrecision(p);
+    return y.mul(this.ln()).exp();
   }
 
   // TODO: replace with bigint version avoid using LN10
@@ -633,16 +636,18 @@ export class Irrational extends Real {
       throw new Error('Logarithm of zero');
     }
 
+    const isExact = this.isExact();
+
     const cmp = this.cmp(Irrational.ONE);
 
     // x = 1
     if (cmp === 0) {
-      return Irrational.from(0n, 0).withPrecision(this.p);
+      return Irrational.from(0n, 0).withPrecision(isExact ? Infinity : this.p);
     }
 
     let { s, e, p } = this;
 
-    const isExact = this.isExact();
+    
     p = isExact ? Irrational.DEFAULT_PRECISION : p;
     const n = p + 8;
 
@@ -782,13 +787,17 @@ export class Irrational extends Real {
   }
 
   withPrecision(p: number) {
-    if (this.p === p) {
+    const isExact = !Number.isFinite(p);
+
+    if (isExact && this.isExact()) {
+      return this;
+    }
+
+    if (this.p === p && !this.isExact()) {
       return this;
     }
 
     let { s, e } = this;
-
-    const isExact = !Number.isFinite(p);
 
     if (isExact) {
       // converting to exact, can trim trailing zeros
@@ -812,6 +821,8 @@ export class Irrational extends Real {
   }
 
   withError(u: bigint) {
+    u = bAbs(u);
+
     if (u === this.u) {
       return this;
     }
