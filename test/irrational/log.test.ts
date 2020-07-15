@@ -59,7 +59,7 @@ test.skip('powers of ten', () => {
 
 test.skip('log(2) constants', () => {
                                                 // 3.0102999566398119521373889472449302676818988146210854131042746112710...
-  // expect(	log	(	'2'	          ).toString()).toBe(	'3.01029995663981195213738894724493026768189881462108541310e-1'	); // TODO: value bug
+  expect(	log	(	'2'	          ).toString()).toBe(	'3.01029995663981195213738894724493026768189881462108541310e-1'	); // TODO: value bug
   expect(	log	(	'2.'	        ).toString()).toBe(	'3.e-1'	);
   expect( log(  '2.0'         ).toString()).toBe( '3.0e-1');
   expect( log(  '2.000'       ).toString()).toBe( '3.010e-1');
@@ -76,7 +76,7 @@ test.skip('log(2) constants', () => {
 // });
 
 test('log', () => {
-  expect(log('2718.').toString()).toBe('3.434e+0');  // TODO: precision
+  expect(log('2718.').toString()).toBe('3.4342e+0');
                                      // 3.434249452396475506672867756572026433614541038620377722067
 
 

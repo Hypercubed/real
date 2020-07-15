@@ -165,7 +165,11 @@ export class Irrational extends Real {
   }
 
   neg() {
-    return Irrational.from(this.s * -1n, this.e).withError(this.u);
+    // Improve this
+    return new Irrational({
+      ...this,
+      s: -this.s
+    });
   }
 
   abs() {
@@ -189,13 +193,12 @@ export class Irrational extends Real {
     return this.sub(this.trunc()).isZero();
   }
 
-  @Memoize()
   isExact() {
     return this.u === 0n;
   }
 
   cmp(y: Irrational): number {
-    // TODO: should return zero if two numbers are within precision
+    // TODO: if two numbers are within precision??
     return this.sub(y).sgn();
   }
 
@@ -224,7 +227,7 @@ export class Irrational extends Real {
 
     const d = bSqrt(hu**2n + lu**2n);
 
-    return Irrational.from(hs + ls, low.e).withError(d);
+    return Irrational.from(hs + ls, low.e).withError(d, low.e);
   }
 
   protected inc() {
@@ -249,16 +252,18 @@ export class Irrational extends Real {
     const s = xs * ys;
     const d = bAbs(xs*yd)+bAbs(ys*xd)+xd*yd; // verify
 
-    return Irrational.from(s, this.e + y.e).withError(d);
+    const e = this.e + y.e;
+    return Irrational.from(s, e).withError(d, e);
   }
 
   protected sqr() {
-    const { s, e, u } = this;
+    let { s, e, u } = this;
 
-    // TODO: verify precision
-    const d = 2n*bAbs(s*u)+u**2n;
+    u = 2n*bAbs(s)*u; // TODO: verify precision
+    e *= 2;
+    s **= 2n;
 
-    return Irrational.from(s**2n, e*2).withError(d);
+    return Irrational.from(s, e).withError(u, e);
   }
 
   // TODO: test
@@ -316,7 +321,7 @@ export class Irrational extends Real {
 
     const s = S * xs / ys;
     const r = S * xs % ys;
-    let d = bSqrt((s * xd / xs)**2n + (s * yd / ys)**2n);  // TODO: verify
+    let d = bSqrt((s * xd / xs)**2n + (s * yd / ys)**2n);  // TODO: not correct
     // let d = BigInt(Math.ceil(Math.sqrt(Number(s * xd / xs)**2 + Number(s * yd / ys)**2)));
     // let d = ((S * xd) + (S * xs * yd / ys)) / ys;
 
@@ -325,7 +330,8 @@ export class Irrational extends Real {
       d = 1n;
     }
 
-    return Irrational.from(sgn_x * sgn_y * s, this.e-y.e-psum).withError(d);
+    const e = this.e-y.e-psum;
+    return Irrational.from(sgn_x * sgn_y * s, e).withError(d, e);
   }
 
   trunc() {
@@ -390,7 +396,7 @@ export class Irrational extends Real {
       return this;
     }
 
-    let { s, e, p } = this;
+    let { s, e, p, u } = this;
 
     const isExact = this.isExact();
     p = isExact ? Irrational.DEFAULT_PRECISION : p;
@@ -414,12 +420,13 @@ export class Irrational extends Real {
     e -= n;
     e /= 2;
 
-    // TODO: verify/improve this
-    if (this.isExact() && r === 0n) {
-      p = Infinity;
-    }
+    const z = Irrational.from(x, e);
 
-    return Irrational.from(x, e).withPrecision(p);
+    const uu = (u === 0n && r !== 0n) ?   // TODO: verify
+      Irrational.from(10n, z.e).div(z) :
+      Irrational.from(this.u, this.e).mul(Irrational.HALF).div(z);
+
+    return z.withError(uu);
   }
 
   protected isqrt() {
@@ -471,34 +478,32 @@ export class Irrational extends Real {
    *        = E^ip*exp(fp)
    */
   exp(): Irrational {
-    if (this.isZero() && this.e <= 0) {
-      const {e, u} = this;
-      const S = 10n**BigInt(-e);
-      return Irrational.from(S, e).withError(u);
-    }
     if (this.isNegitive()) {
       return this.neg().exp().inv();
     }
-    const p = this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
-    // TODO: use ulp
-    return this.expm1().inc().withPrecision(p);
+
+    let { e, u } = this;
+
+    if (this.isZero() && e <= 0) {
+      const S = 10n**BigInt(-e);
+      return Irrational.from(S, e).withError(u, e);
+    }
+
+    let uu = Irrational.from(u, e);
+    const z = this.withError(0).expm1().inc();
+    return z.withError(z.mul(uu));
   }
 
   /**
    * calculates e^x - 1 using Taylor series
    */
+  // bigint version??
   protected expm1() {
     if (this.isZero()) {
       return this;
     }
 
-    let { p } = this;
-
-    const isExact = this.isExact();
-    p = isExact ? Irrational.DEFAULT_PRECISION : p;
-    const pp = 2*p;
-
-    const x = this.withPrecision(pp);
+    const x = this;
 
     let n: Irrational = x;  // term
     let s = n;  // summation
@@ -512,13 +517,7 @@ export class Irrational extends Real {
       s = s.add(n);
     }
 
-    // TODO: fix this
-    // if (isExact) {
-    //   p = Infinity;
-    // }
-
-    // TODO: use ulp
-    return s.withPrecision(p);
+    return s;
   }
 
   /**
@@ -602,23 +601,25 @@ export class Irrational extends Real {
    */
   // increase precision
   log10() {
+    if (this.isZero() || this.isNegitive()) {
+      throw new Error('Logarithm of zero');
+    }
+
     if (this.eq(Irrational.ONE)) {
       return Irrational.from(0n, 0).withPrecision(this.p);
     }
 
-    let { s, e, p } = this;
+    let { s, e, u } = this;
 
-    const ss = Irrational.from(s, 0).withPrecision(p);
-    const ee = Irrational.from(e, 0).withPrecision(p);
+    const ss = Irrational.from(s, 0);
+    const ee = Irrational.from(BigInt(e), 0);
+    const uu = Irrational.from(u, e).div(this).mul(Irrational.LOG10E); // TODO: verify
 
     if (s === 1n) {
-      return ee;
+      return ee.withError(uu);
     }
     
-    const a = ss.ln().mul(Irrational.LOG10E);  // TODO: calc log10 without ln
-
-    // TODO: use ulp
-    return ((e === 0) ? a : a.add(ee)).withPrecision(p);
+    return ss.ln().mul(Irrational.LOG10E).withError(uu);
   }
 
   /**
@@ -647,9 +648,8 @@ export class Irrational extends Real {
 
     let { s, e, p } = this;
 
-    
     p = isExact ? Irrational.DEFAULT_PRECISION : p;
-    const n = p + 8;
+    const n = 2*p + 8;
 
     const S = 10n**BigInt(n);  // scale
 
@@ -676,59 +676,8 @@ export class Irrational extends Real {
 
     s = 2n*sum;
 
-    // let d = S * this.u / 10n**BigInt(adj) / this.s * s / S;
-
-    // TODO: improve this
-    if (this.isExact()) {
-      // d = 1n;
-      p = Infinity;
-    }
-
-    // const d = S * this.u / 10n**BigInt(adj);
-    // console.log({ s, d, p }, s.toString().length - d.toString().length);
-
     const ne = Irrational.from(BigInt(e+adj)).mul(Irrational.LN10);
-
-    // TODO: use ulp
     return Irrational.from(s, -n).add(ne).withPrecision(p);
-  }
-
-  /**
-   * calculates inverse hyperbolic tangent of x
-   */
-  // TODO: replace with bigint version
-  protected atanh() {
-    if (this.isZero()) {
-      return this;
-    }
-
-    let p = this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
-    const pp = p + 1;
-
-    let n: Irrational = this.withPrecision(pp);
-    let x = n;
-    let sum = x;
-
-    const sqrd = n.sqr();
-    let d = Irrational.from(1, 0).withPrecision(pp);
-    let ss = 0n;
-    
-    while (ss !== sum.s) {
-      d = d.inc().inc();
-      n = n.mul(sqrd);
-      x = n.div(d);
-      ss = sum.s;
-      sum = sum.add(x);
-    }
-
-    // TODO: improve this
-    if (this.isExact()) {
-      p = Infinity;
-    }
-
-    // TODO: rounding
-    // TODO: use ulp
-    return sum.withPrecision(p);
   }
 
   @Memoize()
@@ -767,8 +716,7 @@ export class Irrational extends Real {
   }
 
   toExponential(fractionDigits: number = (this.p - 1)) {
-    // TODO: eliminate this.digits() (should be = this.p)
-    const digits = this.isExact() ? this.digits() : this.p;
+    const digits = this.p;
     const x = this.trimDigits(digits - 1 - fractionDigits);
     const n = x.isNegitive() ? 2 : 1;
     const s = x.s.toString();
@@ -820,39 +768,56 @@ export class Irrational extends Real {
     });
   }
 
-  withError(u: bigint) {
-    u = bAbs(u);
-
-    if (u === this.u) {
-      return this;
-    }
-
-    const isExact = u === 0n;
+  withError(value: ParseValueInput | Irrational, exponent: number = 0) {
+    // if (value instanceof Rational) {
+    //   // TODO??
+    // }
 
     let { s, e } = this;
+    let u;
+    let pe;
 
-    if (isExact) {
-      // converting to exact, can trim trailing zeros
-      while (u === 0n && s > 10n && s % 10n === 0n) {
-        e++;
-        s /= 10n;
-      } 
+    if (value instanceof Irrational) {
+      u = value.s;
+      pe = value.e;
     } else {
-      let r = 0n;
-      while (u >= 10n) {
-        e++;
-        r = s % 10n;
-        s /= 10n;
-        u /= 10n;
-      }
-      s += BigInt(Math.round(Number(r)/10));      
+      [u, pe] = parseValue(value);
+    }
+    exponent += pe;
+
+    // courece significand and error to same exponent
+    const d = e - exponent;
+    if (d < 0) {
+      const S = 10n**BigInt(-d);
+      u *= S;
+    } else {
+      const S = 10n**BigInt(d);
+      s *= S;
+      e = exponent;
+    }
+
+    // // reduce error to 0 <= u < 10, rounding significand
+    let r = 0n;
+    while (u >= 10n) {
+      e++;
+      r = s;
+      s /= 10n;
+      u /= 10n;
+    }
+    s += BigInt(Math.round(Number(r % 10n)/10));    
+
+    // // remove trailing zeros
+    while (s > 0n && u % 10n === 0n && s % 10n === 0n) {
+      e++;
+      s /= 10n;
+      u /= 10n;
     }
 
     return new Irrational({
       s,
       e,
       p: digits(s),
-      u
+      u: bAbs(u)
     });
   }
 
@@ -868,8 +833,6 @@ export class Irrational extends Real {
 
     let {s, e, p} = this;
 
-    // console.log({s, e, p, n});
-
     const S = 10n ** BigInt(n);
     const r = s % S * 10n / S;
     s /= S;
@@ -877,12 +840,6 @@ export class Irrational extends Real {
     s += BigInt(Math.round(Number(r)/10));  // TODO: use signed rounding method
 
     return Irrational.from(s, e).withPrecision(p);
-  }
-
-  @Memoize()
-  protected digits() {  // digits should always === p
-    const s = this.s.toString().length;
-    return digits(this.s);
   }
 }
 

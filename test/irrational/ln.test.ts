@@ -11,7 +11,7 @@ test('error', () => {
 test('ones', () => {
   expect(	ln	(	1n	          ).toString()).toBe(	'0'	);
   expect(	ln	(	1	            ).toString()).toBe(	'0.00000000000000e-14'	);
-  // expect(	ln	(	'1.'	        ).toString()).toBe(	'0.e+0'	);  // ??
+  expect(	ln	(	'1.'	        ).toString()).toBe(	'0.e+0'	);
   expect(	ln	(	'1.0000'	    ).toString()).toBe(	'0.0000e-4'	);
 });
 
@@ -20,7 +20,7 @@ test('basics', () => {
   expect(	ln	(	'1.500000000'	).toString()).toBe(	'4.054651081e-1'	);
 
   //                                            // 6.93147180559945309417232121458176568075500134360255254120e-1
-  expect( ln  (  2n           ).toString()).toBe( '0.69314718055994530'); // TODO: precision
+  expect( ln  (  2n           ).toString()).toBe( '6.9314718055994531e-1');
   expect(	ln	(	'2.'	        ).toString()).toBe(	'7.e-1'	);
   expect( ln  ( '2.0'         ).toString()).toBe( '6.9e-1');
   expect(	ln	(	'2.000000000'	).toString()).toBe(	'6.931471806e-1'	);
@@ -56,7 +56,7 @@ test('ln near E', () => {  // TODO: slow
 
 test('ln powers of ten', () => {
   //                                            // 2.3025850929940456840179914546843642076011014886287729
-  expect( ln  (  10n          ).toString()).toBe( '2.30258509299404568');
+  expect( ln  (  10n          ).toString()).toBe( '2.3025850929940457e+0');
   expect( ln  ( '10.'         ).toString()).toBe( '2.3e+0');
   expect( ln  ( '10.0'        ).toString()).toBe( '2.30e+0');
   expect(	ln	(	'10.0000'	    ).toString()).toBe(	'2.30259e+0'	);

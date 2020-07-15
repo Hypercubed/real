@@ -104,23 +104,24 @@ test('div', () => {
   expect(Math.div(1n, 3).toString()).toBe('3.33333333333333e-1');
 
   expect(Math.div(1.234, 3.456).toString()).toBe(                                    '3.5706018518518519e-1');
-  expect(Math.div(1.234, Rational.from('3.456')).toString()).toBe(                    '3.570601851851851e-1');
+  expect(Math.div(1.234, Rational.from('3.456')).toString()).toBe(                   '3.5706018518518519e-1');
+
+                                                                                     // 3.57060185185185185195185185185185185185185185185185185185...
   expect(Math.div(Irrational.from('1.234'), Irrational.from('3.456')).toString()).toBe('3.571e-1');
   expect(Math.div(Rational.from('1.234'), Irrational.from('3.456')).toString()).toBe(  '3.571e-1'); 
-  expect(Math.div(Irrational.from('1.234'), Rational.from('3.456')).toString()).toBe(  '3.57e-1');
-                                                                                   // 3.57060185185185185195185185185185185185185185185185185185...
+  expect(Math.div(Irrational.from('1.234'), Rational.from('3.456')).toString()).toBe(  '3.571e-1');
 
+                                                               // 5.78703703703703703703703703703703703703703703703703703703...
   expect(Math.div(2n, Irrational.from('3.456')).toString()).toBe('5.787e-1');
-                                                              // 5.78703703703703703703703703703703703703703703703703703703...
 });
 
 test('inv', () => {
   expect(Math.inv(3n).toString()).toBe('1/3');
   expect(Math.inv(Rational.from('3.456')).toString()).toBe('125/432');
 
+                                                          // 2.89351851851851851851851851851851851851851851851851851851...
   expect(Math.inv(3.456).toString()).toBe(                  '2.89351851851851851e-1');
   expect(Math.inv(Irrational.from('3.456')).toString()).toBe('2.8935e-1');
-                                                          // 2.89351851851851851851851851851851851851851851851851851851...
 });
 
 test('ln', () => {

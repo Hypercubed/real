@@ -282,16 +282,39 @@ test('withPrecision', () => {
   expect(x.withPrecision(Infinity)).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
 });
 
-test('withError', () => {
-  const x = Irrational.from(1.234);
-  expect(x).toEqual({ s: 12340000000000000n, e: -16, p: 17, u: 1n });
+describe('withError', () => {
+  test('bigint', () => {
+    const x = Irrational.from(1234n, -3);
+    expect(x).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
 
-  // @ts-ignore
-  expect(x.withError(10000000000000n)).toEqual({ s: 1234n, e: -3, p: 4, u: 1n });
+    expect(x.withError(1n, -3)).toEqual({ s: 1234n, e: -3, p: 4, u: 1n });
 
-  // @ts-ignore
-  expect(x.withError(200n)).toEqual({ s: 123400000000000n, e: -14, p: 15, u: 2n });  // todo: ulp = 2
+    expect(x.withError(2n, -14)).toEqual({ s: 123400000000000n, e: -14, p: 15, u: 2n });  // todo: ulp = 2
 
-  // @ts-ignore
-  expect(x.withError(0n)).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
+    expect(x.withError(0n)).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
+  });
+
+  test('floats', () => {
+    const x = Irrational.from(1.234);
+    expect(x).toEqual({ s: 12340000000000000n, e: -16, p: 17, u: 1n });
+
+    expect(x.withError(0.001)).toEqual({ s: 1234n, e: -3, p: 4, u: 1n });
+
+    expect(x.withError(2e-14)).toEqual({ s: 123400000000000n, e: -14, p: 15, u: 2n });  // todo: ulp = 2
+
+    expect(x.withError(0)).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
+  });
+
+  test('strings', () => {
+    const x = Irrational.from('1.234');
+    expect(x).toEqual({ s: 1234n, e: -3, p: 4, u: 1n });
+
+    expect(x.withError('0.001')).toEqual({ s: 1234n, e: -3, p: 4, u: 1n });
+
+    expect(x.withError('2e-14')).toEqual({ s: 123400000000000n, e: -14, p: 15, u: 2n });  // todo: ulp = 2
+
+    expect(x.withError('0')).toEqual({ s: 1234n, e: -3, p: 4, u: 0n });
+  });
 });
+
+
