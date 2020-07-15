@@ -221,7 +221,7 @@ test('toFixed', () => {
 
   expect(Irrational.from(77.1234).toFixed(2)).toBe('77.12');
   expect(Irrational.from(77.1234e3).toFixed(2)).toBe('77123.40');
-  expect(Irrational.from(-77.1234e-3).toFixed(2)).toBe('-0.08'); // TODO
+  expect(Irrational.from(-77.1234e-3).toFixed(2)).toBe('-0.08');
   expect(Irrational.from(-77.1234e-10).toFixed(10)).toBe('-0.0000000077');
 });
 

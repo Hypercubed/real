@@ -73,6 +73,7 @@ export class Irrational extends Real {
       return value;
     }
 
+    // tslint:disable-next-line
     if (typeof value === 'bigint') {
       return new Irrational({
         s: value,
@@ -82,40 +83,45 @@ export class Irrational extends Real {
       });
     }
 
-    let [significand, parsed_exponent, precision] = parseValue(value);
+    let [significand, pe, precision] = parseValue(value);
 
     const isExact = !Number.isFinite(precision);
 
-    exponent += parsed_exponent;
+    exponent += pe;
+
+    let u;
 
     // if precision is finite, normalize values
-    if (!isExact) {
+    if (isExact) {
+      u = 0n;
+    } else {
+      u = 1n;
+
       if (significand === 0n) {
         exponent -= precision - 1;
         precision = 1;
+        u = 1n;
       } else {
         const l = digits(significand);
         let lp = l - precision;
 
         significand = trimDigits(significand, lp);
         exponent += lp;
-        precision = digits(significand);
+        
+        // TODO: +-.5
+        // significand *= 10n;
+        // exponent--;
+        // u = 5n;
+
+        // precision = digits(significand);
       }
     }
-    // else {
-    //   // TODO: this should work
-    //   while (significand > 10n && significand % 10n === 0n) {
-    //     significand /= 10n;
-    //     exponent += 1;
-    //   }
-    //   precision = digits(significand);
-    // }
 
     return new Irrational({
       s: significand,
       e: exponent,
       p: precision,
-      u: 1n
+      u
     });
   }
 
@@ -304,8 +310,8 @@ export class Irrational extends Real {
       return this;
     }
 
-    const sgn_x = this.s < 0n ? -1n : 1n;
-    const sgn_y = y.s < 0n ? -1n : 1n;
+    const sx = this.s < 0n ? -1n : 1n;
+    const sy = y.s < 0n ? -1n : 1n;
 
     const px = this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
     const py = y.isExact() ? Irrational.DEFAULT_PRECISION : y.p;
@@ -313,8 +319,8 @@ export class Irrational extends Real {
     const psum = 2*Math.max(px, py);  // in gerneral should be px + py
     const S = 10n**BigInt(psum);
 
-    const xs = sgn_x * this.s;
-    const ys = sgn_y * y.s;
+    const xs = sx * this.s;
+    const ys = sy * y.s;
 
     const xd = this.u;
     const yd = y.u;
@@ -325,13 +331,13 @@ export class Irrational extends Real {
     // let d = BigInt(Math.ceil(Math.sqrt(Number(s * xd / xs)**2 + Number(s * yd / ys)**2)));
     // let d = ((S * xd) + (S * xs * yd / ys)) / ys;
 
-    if (r !== 0n && d === 0n) {
+    if (r !== 0n && d === 0n) {  // TODO: better way to handle remainder??
       // console.log('****');
       d = 1n;
     }
 
     const e = this.e-y.e-psum;
-    return Irrational.from(sgn_x * sgn_y * s, e).withError(d, e);
+    return Irrational.from(sx * sy * s, e).withError(d, e);
   }
 
   trunc() {
@@ -569,24 +575,20 @@ export class Irrational extends Real {
    * cal 10^x
    */
   pow10(): Irrational {
-  
-    if (this.e >= 0 && bAbs(this.s) < MAX_SAFE_INTEGER && this.isExact()) {
-      const { s, e } = this;
-      const x = Number(s) * 10**e;
-      return Irrational.from(1n, x);
-    }
-
     if (this.isNegitive()) return this.abs().pow10().inv();
 
-    if (this.e >= 0) {
-      const { s, e, u } = this;
-      const S = 10n**BigInt(e);
-      const x = s * S;
-      const z = 10n**x;
-      const zu = z * 2302n * S * u / 1000n;
-      return Irrational.from(z, 0).withError(zu);
-    }
+    const { s, e, u } = this;
+    const uu = Irrational.from(u, e);
 
+    if (e >= 0) {
+      const x = s*10n**BigInt(e);
+      const z = (x < MAX_SAFE_INTEGER) ?
+        Irrational.from(1n, Number(x)) :
+        Irrational.from(10n**x, 0);
+      const zu = z.mul(uu).div(Irrational.LN10);
+      return z.withError(zu);
+    }
+    
     // 10^x = exp(x*ln(10))
     return this.mul(Irrational.LN10).exp();
   }
@@ -694,18 +696,16 @@ export class Irrational extends Real {
   }
 
   toFixed(digits?: number): string {
-    const x = this.trimDigits(typeof digits === 'number' ? -this.e - digits : 0);
+    const x = typeof digits === 'number' ? this.withError(1n, -digits) : this;
+
     let ip = x.ip().toString();
-    if (digits === 0) {
-      return ip;
-    }
-    if (ip === '0' && x.isNegitive()) {
-      ip = '-0';
-    }
+    
+    if (digits === 0) return ip;  // just the ip
+
+    if (ip === '0' && x.isNegitive()) ip = '-0';  // keep the sign
+
     const fp = x.fp();
-    if (fp.isZero() && !digits) {
-      return ip;
-    }
+    if (fp.isZero() && !digits) return ip;  // number is an integer
 
     let fps = fp.s.toString();
     fps = zeroPadLeft(fps, fp.e);
@@ -716,9 +716,8 @@ export class Irrational extends Real {
   }
 
   toExponential(fractionDigits: number = (this.p - 1)) {
-    const digits = this.p;
-    const x = this.trimDigits(digits - 1 - fractionDigits);
-    const n = x.isNegitive() ? 2 : 1;
+    const x = this.withPrecision(fractionDigits + 1); 
+    const n = x.s < 0 ? 2 : 1;
     const s = x.s.toString();
     const ip = s.slice(0, n);
     const fp = s.slice(n);
@@ -819,27 +818,6 @@ export class Irrational extends Real {
       p: digits(s),
       u: bAbs(u)
     });
-  }
-
-  /**
-   * Removes n least significant digits
-   * Rounds last digit
-   * 
-   * @param n number of digits to trim
-   */
-  // TODO: get rid of this
-  protected trimDigits(n: number) {
-    if (n <= 0) return this;
-
-    let {s, e, p} = this;
-
-    const S = 10n ** BigInt(n);
-    const r = s % S * 10n / S;
-    s /= S;
-    e += n;
-    s += BigInt(Math.round(Number(r)/10));  // TODO: use signed rounding method
-
-    return Irrational.from(s, e).withPrecision(p);
   }
 }
 
