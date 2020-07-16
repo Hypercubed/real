@@ -119,8 +119,8 @@ test('inv', () => {
   expect(Math.inv(3n).toString()).toBe('1/3');
   expect(Math.inv(Rational.from('3.456')).toString()).toBe('125/432');
 
-                                                          // 2.89351851851851851851851851851851851851851851851851851851...
-  expect(Math.inv(3.456).toString()).toBe(                  '2.89351851851851851e-1');
+                                                           // 2.89351851851851851851851851851851851851851851851851851851...
+  expect(Math.inv(3.456).toString()).toBe(                   '2.89351851851851852e-1');
   expect(Math.inv(Irrational.from('3.456')).toString()).toBe('2.8935e-1');
 });
 

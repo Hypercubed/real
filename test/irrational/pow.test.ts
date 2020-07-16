@@ -85,8 +85,9 @@ describe('inexact', () => {
   
     expect(pow('4.0', '2.0').toString()).toBe('1.6e+1');
   
+                                              // 6.4
     expect(pow('4.',   '3.'  ).toString()).toBe('6.e+1');
-    expect(pow('4.0',  '3.0' ).toString()).toBe('6.4e+1');  // 64
+    expect(pow('4.0',  '3.0' ).toString()).toBe('6.4e+1');  
     expect(pow('4.00', '3.0' ).toString()).toBe('6.4e+1');
     expect(pow('4.0',  '3.00').toString()).toBe('6.4e+1');
     expect(pow('4.00', '3.00').toString()).toBe('6.40e+1');
@@ -193,7 +194,9 @@ describe('exact', () => {
     expect(pow('2', '-8' ).toString()).toBe('0.00390625');
     expect(pow('2', '-16').toString()).toBe('0.0000152587890625');
     expect(pow('2', '-32').toString()).toBe('0.00000000023283064');
-    expect(pow('2', '-64').toString()).toBe('5.42101086242752e-20');
+
+                                          // 5.42101086242752217003726400434970855712890625 × 10^-20
+    expect(pow('2', '-64').toString()).toBe('5.421010862427522e-20');
   });
   
   test('fractional powers', () => {

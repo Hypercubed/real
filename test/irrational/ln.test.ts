@@ -10,9 +10,9 @@ test('error', () => {
 
 test('ones', () => {
   expect(	ln	(	1n	          ).toString()).toBe(	'0'	);
-  expect(	ln	(	1	            ).toString()).toBe(	'0.00000000000000e-14'	);
+  expect(	ln	(	1	            ).toString()).toBe(	'0.e-14'	);
   expect(	ln	(	'1.'	        ).toString()).toBe(	'0.e+0'	);
-  expect(	ln	(	'1.0000'	    ).toString()).toBe(	'0.0000e-4'	);
+  expect(	ln	(	'1.0000'	    ).toString()).toBe(	'0.e-4'	);
 });
 
 test('basics', () => {

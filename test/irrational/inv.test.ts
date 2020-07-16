@@ -68,7 +68,7 @@ test('powers of ten', () => {
 });
 
 test('inv exact values, inexact results', () => {
-  expect(inv( '3').toString()).toBe(  '3.333333333333333333333333333333333e-1');  // ??
+  expect(inv( '3').toString()).toBe(  '3.3333333333333333333333333333333333e-1');  // ??
 
                                                       // 1.1102230246251565404236316680908203125 × 10^-16
   expect(inv('9007199254740992').toExponential(9)).toBe('1.110223025e-16');

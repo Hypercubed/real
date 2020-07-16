@@ -295,10 +295,7 @@ export class Irrational extends Real {
       n--;
     }
 
-    // const d = bAbs(n) * this.u / this.s;
-    // console.log({ d });
-
-    return x;
+    return x;  // dz = n*x*dx/x
   }
 
   inv() {
@@ -316,7 +313,7 @@ export class Irrational extends Real {
     const px = this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
     const py = y.isExact() ? Irrational.DEFAULT_PRECISION : y.p;
 
-    const psum = 2*Math.max(px, py);  // in gerneral should be px + py
+    const psum = px + py + 1;
     const S = 10n**BigInt(psum);
 
     const xs = sx * this.s;
@@ -325,19 +322,13 @@ export class Irrational extends Real {
     const xd = this.u;
     const yd = y.u;
 
-    const s = S * xs / ys;
-    const r = S * xs % ys;
-    let d = bSqrt((s * xd / xs)**2n + (s * yd / ys)**2n);  // TODO: not correct
-    // let d = BigInt(Math.ceil(Math.sqrt(Number(s * xd / xs)**2 + Number(s * yd / ys)**2)));
-    // let d = ((S * xd) + (S * xs * yd / ys)) / ys;
+    const ss = S * xs;
+    const s = ss / ys;
+    const r = ss % ys;
 
-    if (r !== 0n && d === 0n) {  // TODO: better way to handle remainder??
-      // console.log('****');
-      d = 1n;
-    }
-
+    const d = bSqrt((s * xd / xs)**2n + (s * yd / ys)**2n);  // verify
     const e = this.e-y.e-psum;
-    return Irrational.from(sx * sy * s, e).withError(d, e);
+    return Irrational.from(sx * sy * s, e).withError((r !== 0n && d === 0n) ? 1n : d, e);
   }
 
   trunc() {
@@ -435,6 +426,7 @@ export class Irrational extends Real {
     return z.withError(uu);
   }
 
+  // inv sqrt
   protected isqrt() {
     if (this.isNegitive()) {
       throw new Error('Square root of negitive number')
@@ -472,7 +464,7 @@ export class Irrational extends Real {
       p = Infinity;
     }
 
-    return y.withPrecision(p);
+    return y.withPrecision(p);  // use u
   }
 
   /**
@@ -494,6 +486,8 @@ export class Irrational extends Real {
       const S = 10n**BigInt(-e);
       return Irrational.from(S, e).withError(u, e);
     }
+
+    // return this.expm1().inc();
 
     let uu = Irrational.from(u, e);
     const z = this.withError(0).expm1().inc();
@@ -541,11 +535,11 @@ export class Irrational extends Real {
       if (this.isZero()) {
         throw new Error('Division by zero');
       }
-      return Irrational.from(1n, 0).withPrecision(po)
+      return Irrational.from(1n, 0).withPrecision(po); // dz = x*ln(x)
     }
 
     if (this.isZero()) {
-      return Irrational.from(0n, 0).withPrecision(po);
+      return Irrational.from(0n, 0).withPrecision(po);  // dz = 0 ??
     }
 
     if (y.isNegitive()) { // x^-y = 1/x^y
@@ -553,18 +547,18 @@ export class Irrational extends Real {
     }
 
     if (this.eq(Irrational.ONE)) {
-      return Irrational.from(1n, 0).withPrecision(po);
+      return Irrational.from(1n, 0).withPrecision(po);  // dz = y*dx ??
     }
 
     if (y.eq(Irrational.ONE)) {
-      return this.withPrecision(po);
+      return this.withPrecision(po);  // dz^2 = (dx)^2+(x*log(x))^2 ??
     }
 
     const ip = y.ip();
 
     // If y is a small integer use the 'exponentiation by squaring' algorithm.
     if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
-      return this.ipow(ip).withPrecision(po);
+      return this.ipow(ip).withPrecision(po);  
     }
 
     return y.mul(this.ln()).exp();
@@ -578,14 +572,14 @@ export class Irrational extends Real {
     if (this.isNegitive()) return this.abs().pow10().inv();
 
     const { s, e, u } = this;
-    const uu = Irrational.from(u, e);
-
+    
     if (e >= 0) {
+      const uu = Irrational.from(u, e);
       const x = s*10n**BigInt(e);
       const z = (x < MAX_SAFE_INTEGER) ?
         Irrational.from(1n, Number(x)) :
         Irrational.from(10n**x, 0);
-      const zu = z.mul(uu).div(Irrational.LN10);
+      const zu = z.mul(uu).div(Irrational.LN10);  // verify
       return z.withError(zu);
     }
     
@@ -613,14 +607,14 @@ export class Irrational extends Real {
 
     let { s, e, u } = this;
 
-    const ss = Irrational.from(s, 0);
     const ee = Irrational.from(BigInt(e), 0);
     const uu = Irrational.from(u, e).div(this).mul(Irrational.LOG10E); // TODO: verify
 
     if (s === 1n) {
       return ee.withError(uu);
     }
-    
+
+    const ss = Irrational.from(s, 0);
     return ss.ln().mul(Irrational.LOG10E).withError(uu);
   }
 
@@ -641,14 +635,11 @@ export class Irrational extends Real {
 
     const isExact = this.isExact();
 
-    const cmp = this.cmp(Irrational.ONE);
-
-    // x = 1
-    if (cmp === 0) {
-      return Irrational.from(0n, 0).withPrecision(isExact ? Infinity : this.p);
+    if (this.eq(Irrational.ONE)) {
+      return Irrational.from(0n, 0).withError(this.u, this.e);
     }
 
-    let { s, e, p } = this;
+    let { s, e, p, u } = this;
 
     p = isExact ? Irrational.DEFAULT_PRECISION : p;
     const n = 2*p + 8;
@@ -666,17 +657,19 @@ export class Irrational extends Real {
 
     let i = 1n;
     const xn0 = S * sm1 / sp1;
-    const u = S * sm1**2n / sp1**2n;
+    const v = S * sm1**2n / sp1**2n;
     let xn = xn0;
     let sum = xn;
 
     // basically atanh
     while (xn > 0n) {
-      xn = xn * u * (i++) / (++i) / S;  // xn * (s - 1n)**2n / (s + 1n)**2n * i / (i + 2)
+      xn = xn * v * (i++) / (++i) / S;  // xn * (s - 1n)**2n / (s + 1n)**2n * i / (i + 2)
       sum += xn;
     }
 
     s = 2n*sum;
+
+    // const uu = Irrational.from(this.u, this.e).div(this);  // need to account for error in series
 
     const ne = Irrational.from(BigInt(e+adj)).mul(Irrational.LN10);
     return Irrational.from(s, -n).add(ne).withPrecision(p);
