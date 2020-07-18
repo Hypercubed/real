@@ -5,7 +5,7 @@ import Real from './real';
 import { ParseValueInput, parseValue, zeroPadRight, zeroPadLeft } from './utils/util';
 import { Rational } from './rational';
 import { Memoize } from './utils/decorators';
-import { bAbs, bSqrt } from './utils/bigint-tools';
+import { bAbs, bSqrt, bDiv, bSgn } from './utils/bigint-tools';
 
 /**
  * modulo
@@ -231,9 +231,9 @@ export class Irrational extends Real {
     const hs = high.s * S;
     const ls = low.s;
 
-    const d = bSqrt(hu**2n + lu**2n);
+    const u = bSqrt((hu*10n)**2n + (lu*10n)**2n);
 
-    return Irrational.from(hs + ls, low.e).withError(d, low.e);
+    return Irrational.from(hs + ls, low.e).withError(u, low.e-1);
   }
 
   protected inc() {
@@ -256,20 +256,23 @@ export class Irrational extends Real {
     const yd = y.u;
 
     const s = xs * ys;
-    const d = bAbs(xs*yd)+bAbs(ys*xd)+xd*yd; // verify
-
     const e = this.e + y.e;
-    return Irrational.from(s, e).withError(d, e);
+
+    const d = bSqrt((10n * xs*yd)**2n+bAbs(10n * ys*xd)**2n+bAbs(10n*xd*yd)**2n);  // Goodman's expression
+    return Irrational.from(s, e).withError(d, e-1);
   }
 
-  protected sqr() {
+  sqr() {
     let { s, e, u } = this;
 
-    u = 2n*bAbs(s)*u; // TODO: verify precision
+    // u = 2n*bAbs(s)*u; // TODO: verify precision
     e *= 2;
     s **= 2n;
 
-    return Irrational.from(s, e).withError(u, e);
+    u **= 2n;
+    u = bSqrt( 100n*2n*s*u + 100n*u**2n ); // from Goodman's expression
+
+    return Irrational.from(s, e).withError(u, e-1);
   }
 
   // TODO: test
@@ -327,6 +330,7 @@ export class Irrational extends Real {
     const r = ss % ys;
 
     const d = bSqrt((s * xd / xs)**2n + (s * yd / ys)**2n);  // verify
+
     const e = this.e-y.e-psum;
     return Irrational.from(sx * sy * s, e).withError((r !== 0n && d === 0n) ? 1n : d, e);
   }
@@ -487,11 +491,9 @@ export class Irrational extends Real {
       return Irrational.from(S, e).withError(u, e);
     }
 
-    // return this.expm1().inc();
-
-    let uu = Irrational.from(u, e);
     const z = this.withError(0).expm1().inc();
-    return z.withError(z.mul(uu));
+    let uu = z.mul(Irrational.from(u, e));      // z*dx
+    return z.withError(uu);
   }
 
   /**
@@ -590,10 +592,10 @@ export class Irrational extends Real {
   /**
    * calculates logarithm of x to the base 10
    * 
-   * log(x) = log(s*10^n)
-   *        = log(s) + log(10^n)
-   *        = ln(s)/ln(10) + n*log(10)
-   *        = ln(s)*log10(e) + n
+   * log(x) = log(s*10^e)
+   *        = log(s) + log(10^e)
+   *        = ln(s)/ln(10) + e*log(10)
+   *        = ln(s)*log10(E) + e
    */
   // increase precision
   log10() {
@@ -614,8 +616,8 @@ export class Irrational extends Real {
       return ee.withError(uu);
     }
 
-    const ss = Irrational.from(s, 0);
-    return ss.ln().mul(Irrational.LOG10E).withError(uu);
+    const ss = Irrational.from(s, 0).ln().mul(Irrational.LOG10E);
+    return ee.add(ss).withError(uu);
   }
 
   /**
@@ -669,10 +671,14 @@ export class Irrational extends Real {
 
     s = 2n*sum;
 
-    // const uu = Irrational.from(this.u, this.e).div(this);  // need to account for error in series
+    const uu = Irrational.from(u, e).div(this);  // need to account for error in series
 
     const ne = Irrational.from(BigInt(e+adj)).mul(Irrational.LN10);
-    return Irrational.from(s, -n).add(ne).withPrecision(p);
+    const z = Irrational.from(s, -n).add(ne);
+    if (this.u === 0n) {
+      return z.withPrecision(p);
+    }
+    return z.withError(uu);
   }
 
   @Memoize()
@@ -788,17 +794,22 @@ export class Irrational extends Real {
       e = exponent;
     }
 
-    // // reduce error to 0 <= u < 10, rounding significand
+    // // reduce error to 0 <= u < 20, rounding significand
     let r = 0n;
+    let ru = 0n;
     while (u >= 10n) {
-      e++;
-      r = s;
-      s /= 10n;
-      u /= 10n;
+      while (u >= 10n) {
+        e++;
+        r = s;
+        ru = u;
+        s /= 10n;
+        u /= 10n;
+      }
+      s += bAbs(r) % 10n >= 5 ? bSgn(r) * 1n : 0n; // round towards closest
+      u += ru % 10n !== 0n ? 1n : 0n;  // round to +inf
     }
-    s += BigInt(Math.round(Number(r % 10n)/10));    
 
-    // // remove trailing zeros
+    // remove trailing zeros
     while (s > 0n && u % 10n === 0n && s % 10n === 0n) {
       e++;
       s /= 10n;

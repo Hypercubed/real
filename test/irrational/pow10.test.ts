@@ -1,6 +1,23 @@
 import { Irrational } from '../../src/irrational';
 const pow10 = (x: any) => Irrational.from(x).pow10();
 
+test('error propagation', () => {
+  expect(pow10(
+    Irrational.from(4).withError(0.1)
+    )).toEqual(
+    Irrational.from(1, 4).withError(3,3));
+
+  expect(pow10(
+    Irrational.from(8).withError(0.005)
+    )).toEqual(
+    Irrational.from(1, 8).withError(2, 6));
+
+  expect(pow10(
+    Irrational.from(0.1).withError(0.009)
+    )).toEqual(
+      Irrational.from(1.26).withError(0.03));
+});
+
 test('pow10', () => {
   expect(pow10('1.').toString()).toBe('1.0e+1');  // error
   expect(pow10('2.').toString()).toBe('1.0e+2');

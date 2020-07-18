@@ -8,6 +8,23 @@ test('error', () => {
   }).toThrow('Square root of negitive number')
 });
 
+test('error propagation', () => {
+  expect(sqrt(
+    Irrational.from(4).withError(0.1)
+    )).toEqual(
+    Irrational.from(2).withError(0.03));
+
+  expect(sqrt(
+    Irrational.from(2).withError(0.01)
+    )).toEqual(
+    Irrational.from(1.414).withError(0.004));
+
+  expect(sqrt(
+    Irrational.from(3).withError(0.08)
+    )).toEqual(
+    Irrational.from(1.73).withError(0.03));
+});
+
 test('zeros', () => {
   expect(	sqrt(	'0'	      ).toString()).toBe(	'0'	);
   expect(	sqrt(	'0.0000'	).toString()).toBe(	'0.e-4'	);
@@ -33,8 +50,8 @@ test('basics', () => {
   // expect(	sqrt(	'2.0000000'	).toString()).toBe(	'1.4142136e+0'	);
 
                                               // 1.732050807568877293527446341505872366942805253810380628055
-  // expect(	sqrt(	'3.'	      ).toString()).toBe(	'2.e+0'	);
-  // expect(	sqrt(	'3.0000000'	).toString()).toBe(	'1.7320508e+0'	);
+  expect(	sqrt(	'3.'	      ).toString()).toBe(	'1.7e+0'	);
+  expect(	sqrt(	'3.0000000'	).toString()).toBe(	'1.73205081e+0'	);
 });
 
 test('fractions', () => {

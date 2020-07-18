@@ -8,6 +8,23 @@ test('error', () => {
   }).toThrow('Division by zero')
 });
 
+test('error propagation', () => {
+  expect(inv(
+    Irrational.from(4).withError(0.1),
+    )).toEqual(
+    Irrational.from(0.25).withError(0.007));
+
+  expect(inv(
+    Irrational.from(8).withError(0.005),
+    )).toEqual(
+    Irrational.from(0.125).withError(0.00008));
+
+  expect(inv(
+    Irrational.from(0.1).withError(0.009),
+    )).toEqual(
+      Irrational.from(10).withError(0.9));
+});
+
 test('inv', () => {
   expect(inv('1.').toString()).toBe('1.e+0');
   expect(inv('-1.').toString()).toBe('-1.e+0');

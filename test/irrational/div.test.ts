@@ -2,6 +2,20 @@ import { Irrational } from '../../src/irrational';
 
 const div = (x: any, y: any) => Irrational.from(x).div(Irrational.from(y));
 
+test('error propagation', () => {
+  expect(div(
+    Irrational.from(2.31).withError(0.01),
+    Irrational.from(2.12).withError(0.05)
+  )).toEqual(
+    Irrational.from(1.09).withError(0.03));
+
+  expect(	div	(
+    Irrational.from(231).withError(6),
+    Irrational.from(0.0212).withError(0.0008)
+  )).toEqual(
+    Irrational.from(109e+2).withError(5e2));
+});
+
 test('precision tests', () => {
   expect(div('1.',   '1.'  ).toString()).toBe('1.e+0');
   expect(div('1.0', '1.'  ).toString()).toBe('1.e+0');  // ??
@@ -45,14 +59,14 @@ test('sanity checks', () => {
   expect(div('1.000000000', '32.00000000').toString()).toBe( '3.125000000e-2');
   expect(div('1.000000000', '64.00000000').toString()).toBe( '1.562500000e-2');
 
-  expect(div('99999999999',   '1.00000000').toString()).toBe( '1.000000000e+11');  // TODO: rounding error?
+  expect(div('99999999999',   '1.00000000').toString()).toBe( '1.00000000e+11');  // TODO: rounding error?
   expect(div('99999999999.4', '1.00000000').toString()).toBe( '1.00000000e+11');  // TODO: rounding error?
 });
 
 test('imprecise results', () => {
   expect(div( '391.000000',  '597.000000').toString()).toBe( '6.54941374e-1');
-  expect(div( '391.000000', '-597.000000').toString()).toBe('-6.54941373e-1');  // TODO: verify rounding
-  expect(div('-391.000000',  '597.000000').toString()).toBe('-6.54941373e-1');  // TODO: verify rounding
+  expect(div( '391.000000', '-597.000000').toString()).toBe('-6.54941374e-1');  // TODO: verify rounding
+  expect(div('-391.000000',  '597.000000').toString()).toBe('-6.54941374e-1');  // TODO: verify rounding
   expect(div('-391.000000', '-597.000000').toString()).toBe( '6.54941374e-1');
 });
 

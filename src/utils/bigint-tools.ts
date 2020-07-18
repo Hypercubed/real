@@ -1,4 +1,4 @@
-export function bIDiv(dividend: bigint, divisor: bigint, n: number): [bigint, bigint, number] {
+export function bDiv(dividend: bigint, divisor: bigint, n: number): [bigint, bigint, number] {
   const sgnDividend = dividend < 0n ? -1n : 1n;
   const sgnDivisor = divisor < 0n ? -1n : 1n;
 
@@ -35,6 +35,10 @@ export function bSqr(s: bigint, e: number): [bigint, number] {
   return [s**2n, e*2];
 }
 
+export function bSgn(s: bigint): bigint {
+  return s < 0n ? -1n : 1n;
+}
+
 export function bAbs(s: bigint): bigint {
   return s < 0n ? -s : s;
 }
@@ -42,7 +46,7 @@ export function bAbs(s: bigint): bigint {
 // TODO: return remainder
 export function bSqrt(value: bigint): bigint {
   if (value < 0n) {
-      throw 'square root of negative numbers is not supported'
+      throw new Error('square root of negative numbers is not supported');
   }
 
   if (value < 2n) {

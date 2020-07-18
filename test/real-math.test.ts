@@ -136,8 +136,8 @@ test('ln', () => {
   expect(Math.ln(Irrational.from('1.234')).toString()).toBe(    '2.103e-1');
                                                              // 2.102609254831960713608294360152747699866305851127995
 
-  expect(Math.ln(3.456).toString()).toBe(                     '1.2401118509418092e+0');
+                                                             // 1.240111850941809188052386196921720467667668148103716205948...
+  expect(Math.ln(3.456).toString()).toBe(                      '1.24011185094180919e+0');
   expect(Math.ln(Rational.from(3.456)).toExponential(5)).toBe( '1.24011e+0');
-  expect(Math.ln(Irrational.from('3.456')).toString()).toBe(   '1.240e+0');
-                                                            // 1.240111850941809188052386196921720467667668148103716205948...
+  expect(Math.ln(Irrational.from('3.456')).toString()).toBe(   '1.2401e+0');
 });

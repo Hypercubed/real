@@ -2,6 +2,20 @@ import { Irrational } from '../../src/irrational';
 
 const mul = (x: any, y: any) => Irrational.from(x).mul(Irrational.from(y));
 
+test('error propagation', () => {
+  expect(	mul	(
+    Irrational.from(2.31).withError(0.01),
+    Irrational.from(2.12).withError(0.05)
+  )).toEqual(
+    Irrational.from(4.9).withError(0.2));
+
+  expect(	mul	(
+    Irrational.from(231).withError(6),
+    Irrational.from(0.0212).withError(0.0008)
+  )).toEqual(
+    Irrational.from(4.9).withError(0.3));
+});
+
 test('basics exact', () => {
   expect(mul('2', '2').toString()).toBe('4');
   expect(mul('2', '3').toString()).toBe('6');
@@ -59,12 +73,12 @@ test('nines', () => {
   expect(mul('9', '999e-99999999').toString()).toBe('8.991e-99999996');
 });
 
-test('zeros', () => {
+test('zeros', () => {  // ??
   expect(mul('0.', '0.').toString()).toBe('0.e+0');
   expect(mul('-0.', '0.').toString()).toBe('0.e+0');
 
-  expect(mul('0.0', '0.0').toString()).toBe('0.e-2');  // ??
-  expect(mul('-0.0', '0.00').toString()).toBe('0.e-3');  // ??
+  expect(mul('0.0', '0.0').toString()).toBe('0.e-2');
+  expect(mul('-0.0', '0.00').toString()).toBe('0.e-3');
 });
 
 test('mul', () => {

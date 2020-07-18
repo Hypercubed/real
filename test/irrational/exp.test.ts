@@ -2,6 +2,23 @@ import { Irrational } from '../../src/irrational';
 
 const exp = (v: any) => Irrational.from(v).exp();
 
+test('error propagation', () => {
+  expect(exp(
+    Irrational.from(4).withError(0.1)
+    )).toEqual(
+    Irrational.from(55).withError(6));
+
+  expect(exp(
+    Irrational.from(8).withError(0.005)
+    )).toEqual(
+    Irrational.from(2981).withError(15));
+
+  expect(exp(
+    Irrational.from(0.1).withError(0.009)
+    )).toEqual(
+      Irrational.from(1.11).withError(0.01));
+});
+
 test('exp', () => {
                                       // 7.389056098930650227230427460575007813180315570551847324087
   // expect(exp(2n      ).toString()).toBe('7.3890560989306502e+0');  // should not be exact

@@ -2,12 +2,42 @@ import { Irrational } from '../../src/irrational';
 
 const add = (x: any, y: any) => Irrational.from(x).add(Irrational.from(y));
 
+test('error propagation', () => {
+  expect(add(
+    Irrational.from(12.3013).withError(0.0002),
+    Irrational.from(4.2100).withError(0.0002)
+    )).toEqual(
+    Irrational.from(165113n, -4).withError(3n, -4));
+
+  expect(add(
+    Irrational.from(1.2).withError(0.2),
+    Irrational.from(123).withError(6)
+    )).toEqual(
+    Irrational.from(124).withError(6));
+});
+
+describe('exact', ( )=> {
+  test('quick confidence check', () => {
+    expect(	add	(	0n	,	1n	).toString()).toBe(	'1'	);
+    expect(	add	(	1n	,	1n	).toString()).toBe(	'2'	);
+    expect(	add	(	2n	,	1n	).toString()).toBe(	'3'	);
+    expect(	add	(	3n	,	1n	).toString()).toBe(	'4'	);
+    expect(	add	(	4n	,	1n	).toString()).toBe(	'5'	);
+    expect(	add	(	5n	,	1n	).toString()).toBe(	'6'	);
+    expect(	add	(	6n	,	1n	).toString()).toBe(	'7'	);
+    expect(	add	(	7n	,	1n	).toString()).toBe(	'8'	);
+    expect(	add	(	8n	,	1n	).toString()).toBe( '9'	);
+    expect(	add	(	9n	,	1n	).toString()).toBe(	'10' );
+
+    expect(	add	(	2n	,          	3n	).toString()).toBe(	'5'	);
+
+    expect(	add	(	5n	,	         -3n	).toString()).toBe(	'2'	);
+    expect(	add	(	-5n	,	         -3n	).toString()).toBe(	'-8'	);
+  });
+});
+
 test('quick confidence check', () => {
-  expect(	add	(	1n	,          	1n	).toString()).toBe(	'2'	);
-  expect(	add	(	2n	,          	3n	).toString()).toBe(	'5'	);
   expect(	add	(	'5.75'	,     	'3.30'	).toString()).toBe(	'9.05e+0'	);
-  expect(	add	(	5n	,	         -3n	).toString()).toBe(	'2'	);
-  expect(	add	(	-5n	,	         -3n	).toString()).toBe(	'-8'	);
   expect(	add	(	-7n	,	          '2.5'	).toString()).toBe(	'-4.5e+0'	);
   expect(	add	(	'0.7'	,       	'0.3'	).toString()).toBe(	'1.0e+0'	);
   expect(	add	(	'1.25'	,     	'1.25'	).toString()).toBe(	'2.50e+0'	);
@@ -24,17 +54,6 @@ test('quick confidence check', () => {
   expect(	add	(	'0.4444444445001'	,	0n	).toString()).toBe(	'4.444444445001e-1'	);
   expect(	add	( '0.444444444501'	,	0n	).toString()).toBe(	'4.44444444501e-1'	);
   expect(	add	(	'0.44444444451' 	,	0n	).toString()).toBe(	'4.4444444451e-1'	);
-  
-  expect(	add	(	0n	,	1n	).toString()).toBe(	'1'	);
-  expect(	add	(	1n	,	1n	).toString()).toBe(	'2'	);
-  expect(	add	(	2n	,	1n	).toString()).toBe(	'3'	);
-  expect(	add	(	3n	,	1n	).toString()).toBe(	'4'	);
-  expect(	add	(	4n	,	1n	).toString()).toBe(	'5'	);
-  expect(	add	(	5n	,	1n	).toString()).toBe(	'6'	);
-  expect(	add	(	6n	,	1n	).toString()).toBe(	'7'	);
-  expect(	add	(	7n	,	1n	).toString()).toBe(	'8'	);
-  expect(	add	(	8n	,	1n	).toString()).toBe( '9'	);
-  expect(	add	(	9n	,	1n	).toString()).toBe(	'10' );
 });
 
 test('carry', () => {
@@ -74,7 +93,9 @@ test('some funny zeros', () => {
   expect(	add	(	'0.'	,	'1'	).toString()).toBe(	'1.e+0'	);
   expect(	add	(	 '.0'	,	'1'	).toString()).toBe(	'1.e+0'	);
   expect(	add	(	'0.0'	,	'1'	).toString()).toBe(	'1.0e+0'	);
-  expect(	add	(	'0.00',	'1'	).toString()).toBe(	'1.00e+0'	);  
+  expect(	add	(	'0.00',	'1'	).toString()).toBe(	'1.00e+0'	);
+
+  expect( add('0.1', '0.').toString()).toBe('0.e+0');
 })
 
 test('add', () => {
@@ -119,8 +140,4 @@ test('add', () => {
 
   expect(add(Irrational.TWO, 1).toString()).toBe('3.00000000000000e+0');
   expect(add(1, Irrational.TWO).toString()).toBe('3.00000000000000e+0');
-});
-
-test('more zeros', () => {
-  expect(add('0.1', '0.').toString()).toBe('0.e+0');  // ??
 });
