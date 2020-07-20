@@ -7,12 +7,6 @@ import { Rational } from './rational';
 import { Memoize } from './utils/decorators';
 import { bAbs, bSqrt, bDiv, bSgn } from './utils/bigint-tools';
 
-/**
- * modulo
- * sin, cos, tan
- * asin, acos, atan
- */
-
 const MAX_SAFE_INTEGER = BigInt(Number.MAX_SAFE_INTEGER);
 
 // enum RoundingMethod {
@@ -196,7 +190,9 @@ export class Irrational extends Real {
 
   @Memoize()
   isInteger() {
-    return this.sub(this.trunc()).isZero();
+    if (this.e >= 0) return true;
+    const S = 10n**BigInt(-this.e);
+    return this.s % S === 0n;
   }
 
   isExact() {
@@ -265,7 +261,6 @@ export class Irrational extends Real {
   sqr() {
     let { s, e, u } = this;
 
-    // u = 2n*bAbs(s)*u; // TODO: verify precision
     e *= 2;
     s **= 2n;
 
@@ -340,8 +335,8 @@ export class Irrational extends Real {
       return this;
     }
 
-    const s =  this.s / 10n ** BigInt(-this.e);
-    return Irrational.from(s, 0);
+    const S = 10n ** BigInt(-this.e);
+    return Irrational.from(this.s / S, 0);
   }
 
   /**
@@ -349,7 +344,7 @@ export class Irrational extends Real {
    */
   floor() {
     const t = this.trunc();
-    if (this.isNegitive() && !this.fp().isZero()) {
+    if (this.isNegitive() && !this.isInteger()) {
       return t.dec();
     }
     return t;
@@ -360,7 +355,7 @@ export class Irrational extends Real {
    */
   ceil() {
     const t = this.trunc();
-    if (this.isPositive() && !this.fp().isZero()) {
+    if (this.isPositive() && !this.isInteger()) {
       return t.inc();
     }
     return t;
@@ -559,17 +554,18 @@ export class Irrational extends Real {
     const ip = y.ip();
 
     // If y is a small integer use the 'exponentiation by squaring' algorithm.
-    if (y.fp().isZero() && ip < MAX_SAFE_INTEGER) {
+    if (y.isInteger() && ip < MAX_SAFE_INTEGER) {
       return this.ipow(ip).withPrecision(po);  
     }
 
     return y.mul(this.ln()).exp();
   }
 
-  // TODO: replace with bigint version avoid using LN10
+  
   /**
    * cal 10^x
    */
+  // TODO: replace with bigint version avoid using LN10?
   pow10(): Irrational {
     if (this.isNegitive()) return this.abs().pow10().inv();
 
@@ -581,7 +577,7 @@ export class Irrational extends Real {
       const z = (x < MAX_SAFE_INTEGER) ?
         Irrational.from(1n, Number(x)) :
         Irrational.from(10n**x, 0);
-      const zu = z.mul(uu).div(Irrational.LN10);  // verify
+      const zu = z.mul(uu).mul(Irrational.LOG10E);  // verify
       return z.withError(zu);
     }
     

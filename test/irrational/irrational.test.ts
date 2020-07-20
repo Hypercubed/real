@@ -317,4 +317,9 @@ describe('withError', () => {
   });
 });
 
-
+test('isInteger', () => {
+  expect(Irrational.from('1.234').isInteger()).toEqual(false);
+  expect(Irrational.from(1234n).isInteger()).toEqual(true);
+  expect(Irrational.from(1234n, -6).isInteger()).toEqual(false);
+  expect(Irrational.from(1234n, -6).isInteger()).toEqual(false);
+});
