@@ -3,6 +3,7 @@ import { guard, conversion } from '@hypercubed/dynamo';
 
 import Real from './real';
 import { ParseValueInput, parseValue, zeroPadRight, gcd } from './utils/util';
+import { bGcd } from './utils/bigint-tools';
 
 export class Rational extends Real {
   static ONE = Rational.from(1n, 1n);
@@ -57,6 +58,10 @@ export class Rational extends Real {
       this.n = ns * (e > 1 ? 10n ** BigInt(e) : 1n);
       this.d = ds * (e < 1 ? 10n ** BigInt(-e) : 1n);      
     }
+
+    const g = bGcd(this.n, this.d);
+    this.n /= g;
+    this.d /= g;
 
     lazyAss(
       this.d !== 0n,

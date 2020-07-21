@@ -1,20 +1,38 @@
 import { guard } from '@hypercubed/dynamo';
+import { Rational, Irrational } from '.';
 
-import { Irrational } from './irrational';
+function calculator() {
+  let n0 = 2n;
+  let d0 = 1n;
 
-function calcE(N: number) {
-  const n = N + 20;
-  const S = 10n ** BigInt(n);
-  let k = 0n;      // index
-  let x = S;      // each term
-  let e = x;      // sum of terms
-  while (x > 0) {
-    k++;
-    x = x / k;           // 1/k!
-    e += x;
+  let n1 = 3n;
+  let d1 = 1n;
+
+  let n: bigint;
+  let d = 1n;
+  let x: bigint;
+
+  let i = -1n;
+  
+  // continued fractions
+  return function(N: number | bigint) {
+    const S = 10n**BigInt(N);
+    while (S > d) {
+      x = ++i % 3n ? 1n : 2n*i/3n + 2n;
+      n = x*n1 + n0;
+      d = x*d1 + d0;
+
+      n0 = n1;
+      n1 = n;
+      d0 = d1;
+      d1 = d;
+    }
+
+    return [ n, d ];
   }
-  return Irrational.from(e, -n);
 }
+
+const calcE = calculator();
 
 export class E /* extends Real */ {
   @guard()
@@ -63,15 +81,20 @@ export class E /* extends Real */ {
   }
 
   toFixed(digits: number) {
-    return this.toRationalApproximation(digits).toFixed(digits);
+    return this.toIrrationalApproximation(digits).toFixed(digits);
   }
 
   toExponential(digits: number) {
-    return this.toRationalApproximation(digits).toExponential(digits);
+    return this.toIrrationalApproximation(digits).toExponential(digits);
   }
 
-  // TODO: cache this
-  private toRationalApproximation(digits: number) {
-    return calcE(digits);
+  toRationalApproximation(digits: number) {
+    const [n, d] = calcE(digits);
+    return Rational.from(n, d);
+  }
+
+  toIrrationalApproximation(digits: number) {
+    const [n, d] = calcE(digits);
+    return Irrational.from(n).div(Irrational.from(d));
   }
 }

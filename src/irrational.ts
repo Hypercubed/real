@@ -308,8 +308,8 @@ export class Irrational extends Real {
     const sx = this.s < 0n ? -1n : 1n;
     const sy = y.s < 0n ? -1n : 1n;
 
-    const px = this.isExact() ? Irrational.DEFAULT_PRECISION : this.p;
-    const py = y.isExact() ? Irrational.DEFAULT_PRECISION : y.p;
+    const px = Math.max(this.isExact() ? Irrational.DEFAULT_PRECISION : this.p, this.p);
+    const py = Math.max(y.isExact() ? Irrational.DEFAULT_PRECISION : y.p, y.p);
 
     const psum = px + py + 1;
     const S = 10n**BigInt(psum);
@@ -418,8 +418,8 @@ export class Irrational extends Real {
 
     const z = Irrational.from(x, e);
 
-    const uu = (u === 0n && r !== 0n) ?   // TODO: verify
-      Irrational.from(10n, z.e).div(z) :
+    const uu = (u === 0n && r !== 0n) ?
+      Irrational.from(10n, z.e).div(z) :   // TODO: verify
       Irrational.from(this.u, this.e).mul(Irrational.HALF).div(z);
 
     return z.withError(uu);

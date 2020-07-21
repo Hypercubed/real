@@ -216,7 +216,7 @@ describe('exact', () => {
     expect(pow('2', '-32').toString()).toBe('0.00000000023283064');
 
                                           // 5.42101086242752217003726400434970855712890625 × 10^-20
-    expect(pow('2', '-64').toString()).toBe('5.421010862427522e-20');
+    expect(pow('2', '-64').toString()).toBe('5.421010862427522170e-20');
   });
   
   test('fractional powers', () => {

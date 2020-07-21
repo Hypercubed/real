@@ -43,14 +43,14 @@ export function bAbs(s: bigint): bigint {
   return s < 0n ? -s : s;
 }
 
-// TODO: return remainder
+// TODO: return error
 export function bSqrt(value: bigint): bigint {
   if (value < 0n) {
-      throw new Error('square root of negative numbers is not supported');
+    throw new Error('square root of negative numbers is not supported');
   }
 
   if (value < 2n) {
-      return value;
+    return value;
   }
 
   function newtonIteration(n: bigint, x0: bigint): bigint {
@@ -62,4 +62,15 @@ export function bSqrt(value: bigint): bigint {
   }
 
   return newtonIteration(value, 1n);
+}
+
+export function bGcd(x: bigint, y: bigint) {
+  x = bAbs(x);
+  y = bAbs(y);
+  while(y) {
+    var t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
 }

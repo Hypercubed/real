@@ -3,22 +3,33 @@ import { guard } from '@hypercubed/dynamo';
 import { Irrational } from './irrational';
 import { absDiff } from './utils/util';
 
-// Babylonian method
-// https://en.wikipedia.org/wiki/Square_root_of_2#Computation_algorithms
-function calcSQRT(N: number) {
-  const n = N + 1;
-  const d = 10n ** BigInt(n);  // scale
-  const S = d*d*2n;   // S=2n for sqrt(2)
+function calculator(SS: bigint) {
+  let p = 15;                                     // precision of initial guess
+  let s = 10n**BigInt(p);                         // scale
+  let S = SS*s**2n;                               // x^2=SS
+  let x = BigInt(Math.floor(Math.SQRT2*Number(s)));   // initial guess for x=sqrt(2)
 
-  let x = d*99n/70n;  // initial guess for sqrt(2)
-  let e = 0n;         // S/x
+  // Newton method
+  return function(N: number): [bigint, number] {
+    const d = N - p;
+    if (d > 0) {
+      s = 10n**BigInt(d);
+      p = N;
+      x *= s;
+      S *= s**2n;
 
-  while (absDiff(x, e = S/x) > 1n) {  // same as x^2 - S = 0
-    x = (x + e)/2n;
+      let e = 0n;         // S/x
+      while (absDiff(x, e) > 1n) {  // x - S/x, same as x^2 - S = 0
+        e = S/x
+        x = (x + e)/2n;
+      }
+    }
+    // console.log({ p, s, S, x });
+    return [x, -p];
   }
-
-  return Irrational.from(x, -n);
 }
+
+const calcSQRT = calculator(2n);
 
 export class SQRT2 /* extends Real */ {
   @guard()
@@ -67,15 +78,15 @@ export class SQRT2 /* extends Real */ {
   }
 
   toFixed(digits: number) {
-    return this.toRationalApproximation(digits).toFixed(digits);
+    return this.toIrrationalApproximation(digits).toFixed(digits);
   }
 
   toExponential(digits: number) {
-    return this.toRationalApproximation(digits).toExponential(digits);
+    return this.toIrrationalApproximation(digits).toExponential(digits);
   }
 
-  // TODO: cache this
-  private toRationalApproximation(digits: number) {
-    return calcSQRT(digits);
+  toIrrationalApproximation(digits: number) {
+    const [n, e] = calcSQRT(digits + 1);
+    return Irrational.from(n, e);
   }
 }
